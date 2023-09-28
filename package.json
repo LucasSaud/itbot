@@ -1,0 +1,51 @@
+{
+  "name": "autoatende",
+  "version": "2.0.0",
+  "description": "AutoAtende WhatsApp Bot",
+  "main": "index.js",
+  "bin": "index.js",
+  "type": "commonjs",
+  "assets": [
+    "imagens/*"
+  ],
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "termux",
+    "whatsapp-lsbot",
+    "whatsapp-bot",
+    "whatsapp-baileys",
+    "baileys-md",
+    "bot-wa",
+    "bot-md",
+    "whatsapp-multi-device"
+  ],
+  "author": "Lucas Marinho Saud",
+  "license": "MIT",
+  "dependencies": {
+    "@hapi/boom": "^10.0.1",
+    "@whiskeysockets/baileys": "^6.5.0",
+    "awesome-phonenumber": "^2.64.0",
+    "axios": "^1.4.0",
+    "canvas": "^2.11.2",
+    "child_process": "^1.0.2",
+    "crypto": "^1.0.1",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
+    "mariadb": "^3.2.0",
+    "mime-types": "^2.1.35",
+    "moment-timezone": "^0.5.43",
+    "mysql2": "^3.6.1",
+    "node-cache": "^5.1.2",
+    "path": "^0.12.7",
+    "pino": "^7.11.0",
+    "pm2": "^5.3.0",
+    "qrcode-terminal": "^0.12.0",
+    "sequelize": "^6.32.1",
+    "util": "^0.12.5"
+  },
+  "directories": {
+    "src": "src"
+  }
+}
