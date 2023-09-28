@@ -51,8 +51,6 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
     const replyImage = m.replyImage;
     const sender = m.sender;
     const mek = chatUpdate.messages[0];
-    //const groupMetadata = m.isGroup ? await client.groupMetadata(m.chat).catch((e) => {}) : '';
-    //const groupName = m.isGroup ? groupMetadata.subject : '';
     const isIndividualChat = m.isGroup === false;
     const senderNumber = m.sender.replace('@s.whatsapp.net', '');
     const itsMe = senderNumber == config.empresa.botNumber.replace('@s.whatsapp.net', '') ? true : false;
@@ -99,10 +97,8 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
           const args = cleanedCommand.trim().split(' ');
 
           let phoneNumber = args[1];
-          if (phoneNumber && phoneNumber.length === 9) {
-            phoneNumber = `5516${phoneNumber}`;
-          }
-
+          if (phoneNumber && phoneNumber.length === 9) phoneNumber = `5516${phoneNumber}`;
+          
           const modifiedPhoneNumber = phoneNumber + '@s.whatsapp.net';
 
           if (args.length === 2 && args[1].startsWith('1')) {

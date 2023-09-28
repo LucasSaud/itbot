@@ -272,7 +272,6 @@ const generateBarChart = async (client, sender, labels, data, title, barColors) 
   const buffer = canvas.toBuffer();
   const graphFilePath = path.join(__dirname, '..', 'img', 'charts', `barcharts_${randomNum()}.png`);
   fs.writeFileSync(graphFilePath, buffer);
-
   const graphBuffer = await util.promisify(fs.readFile)(graphFilePath);
   await client.sendImage(sender, graphBuffer, title);
 };
@@ -495,9 +494,7 @@ const verificarComando = async (client, pushname, body, mek, DB, sender) => {
           await client.sendMessage(sender, { text: config.empresa.pedidoSaiuParaEntrega });
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi avisado que o pedido saiu para entrega.`});
-          if (!isBlocked(senderNumber)) {
-            doNotHandleNumbers.push(senderNumber);
-          }
+          if (!isBlocked(senderNumber)) doNotHandleNumbers.push(senderNumber);
           break;
 
         case 'retirada':
@@ -505,9 +502,7 @@ const verificarComando = async (client, pushname, body, mek, DB, sender) => {
           DB.updateContact(senderNumber, 0, 1); 
           await client.sendMessage(sender, { text: config.empresa.pedidoProntoRetirada });
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi avisado para vir buscar o pedido.`});
-          if (!isBlocked(senderNumber)) {
-            doNotHandleNumbers.push(senderNumber);
-          }
+          if (!isBlocked(senderNumber)) doNotHandleNumbers.push(senderNumber);
           break;
 
         case 'bot':
