@@ -6,7 +6,7 @@
   "bin": "index.js",
   "type": "commonjs",
   "assets": [
-    "imagens/*"
+    "img/*"
   ],
   "scripts": {
     "start": "node index.js"

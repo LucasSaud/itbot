@@ -7,7 +7,7 @@ const { Sequelize, DataTypes, Op } = require('sequelize');
 const { createCanvas, loadImage } = require('canvas');
 const moment = require('moment-timezone');
 
-const graphicsFolder = path.join(__dirname, '..', 'imagens', 'charts');
+const graphicsFolder = path.join(__dirname, '..', 'img', 'charts');
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
@@ -116,14 +116,14 @@ const isBlocked = (numero) => {
 
 // Função para enviar uma mensagem de imagem
 const sendImageMessage = async (client, chatId, imageFile, caption) => {
-    const imageFilePath = path.join(__dirname, '..', 'imagens', imageFile);
+    const imageFilePath = path.join(__dirname, '..', 'img', imageFile);
     const imageBuffer = await util.promisify(fs.readFile)(imageFilePath);
     await client.sendImage(chatId, imageBuffer, caption);
 };
 
 // Função para enviar uma imagem de marketing
 const sendImageMkt = async (client, chatId, caption) => {
-    const imageFilePath = path.join(__dirname, '..', 'imagens', 'mkt01.jpg');
+    const imageFilePath = path.join(__dirname, '..', 'img', 'mkt01.jpg');
     const imageBuffer = await util.promisify(fs.readFile)(imageFilePath);
     await client.sendImage(chatId, imageBuffer, caption);
 };
@@ -211,7 +211,7 @@ const generatePieChart = async (client, sender, labels, data, title) => {
     }
 
     const buffer = canvas.toBuffer();
-    const graphFilePath = path.join(__dirname, '..', 'imagens', 'charts', `piechart.png`);
+    const graphFilePath = path.join(__dirname, '..', 'img', 'charts', `piechart.png`);
     fs.writeFileSync(graphFilePath, buffer);
 
     const graphBuffer = await util.promisify(fs.readFile)(graphFilePath);
@@ -270,7 +270,7 @@ const generateBarChart = async (client, sender, labels, data, title, barColors) 
   });
 
   const buffer = canvas.toBuffer();
-  const graphFilePath = path.join(__dirname, '..', 'imagens', 'charts', `barcharts_${randomNum()}.png`);
+  const graphFilePath = path.join(__dirname, '..', 'img', 'charts', `barcharts_${randomNum()}.png`);
   fs.writeFileSync(graphFilePath, buffer);
 
   const graphBuffer = await util.promisify(fs.readFile)(graphFilePath);
