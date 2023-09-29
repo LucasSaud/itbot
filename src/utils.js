@@ -21,7 +21,7 @@ const randomNum = () => {
 const formatUptime = (uptimeInSeconds) => {
   const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
   const hours = Math.floor(uptimeInSecondsRounded / 3600);
-  const minutes = Math.floor((uptimeInSecondsRounded % 3600) / 60);pm2
+  const minutes = Math.floor((uptimeInSecondsRounded % 3600) / 60);
   const seconds = uptimeInSecondsRounded % 60;
   return `${hours} horas, ${minutes} minutos e ${seconds} segundos`;
 }
