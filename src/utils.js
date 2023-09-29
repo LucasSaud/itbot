@@ -7,8 +7,6 @@ const { Sequelize, DataTypes, Op } = require('sequelize');
 const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 const moment = require('moment-timezone');
 
-
-
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
 const randomNum = () => {
@@ -514,7 +512,7 @@ const generatePieChart = async (client, sender, labels, data, title) => {
   const configuration = {
     type: 'pie',
     data: {
-      labels: labels, // Usar rótulos para as fatias
+      labels: labels,
       datasets: [
         {
           data: data,
@@ -526,11 +524,6 @@ const generatePieChart = async (client, sender, labels, data, title) => {
       plugins: {
         legend: {
           display: true,
-          position: 'bottom',
-        },
-        datalabels: { // Habilitar a exibição dos valores dentro das fatias
-          display: true,
-          color: 'white', // Cor dos valores
         },
       },
       layout: {
@@ -559,8 +552,8 @@ const generatePieChart = async (client, sender, labels, data, title) => {
     const graphFilePath = path.join(__dirname, '..', 'img', 'charts', `piechart.png`);
     fs.writeFileSync(graphFilePath, chartBuffer);
 
-    const graphBuffer = await util.promisify(fs.readFile)(graphFilePath);
-    await client.sendImage(sender, graphBuffer, title);
+    // Enviar a legenda personalizada junto com o gráfico
+    await client.sendImage(sender, graphFilePath, title);
   } catch (error) {
     console.error('Erro ao gerar gráfico de pizza:', error);
   }
@@ -587,7 +580,7 @@ const generateBarChart = async (client, sender, labels, data, title, barColors) 
     options: {
       plugins: {
         legend: {
-          display: false,
+          display: true,
         },
       },
       layout: {
