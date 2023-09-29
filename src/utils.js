@@ -4,7 +4,7 @@ const util = require('util');
 const path = require('path');
 const config = require('../config');
 const { Sequelize, DataTypes, Op } = require('sequelize');
-const { createCanvas, loadImage } = require('canvas');
+const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 const moment = require('moment-timezone');
 
 const graphicsFolder = path.join(__dirname, '..', 'img', 'charts');
@@ -21,7 +21,7 @@ const randomNum = () => {
 const formatUptime = (uptimeInSeconds) => {
   const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
   const hours = Math.floor(uptimeInSecondsRounded / 3600);
-  const minutes = Math.floor((uptimeInSecondsRounded % 3600) / 60);
+  const minutes = Math.floor((uptimeInSecondsRounded % 3600) / 60);pm2
   const seconds = uptimeInSecondsRounded % 60;
   return `${hours} horas, ${minutes} minutos e ${seconds} segundos`;
 }
@@ -138,143 +138,7 @@ const sendLocationMessage = async (client, chatId, latitude, longitude, caption)
       await client.sendMessage(chatId, { location });
 };
 
-// Função para gerar o gráfico de pizza
-const generatePieChart = async (client, sender, labels, data, title) => {
-    const canvasWidth = 800;
-    const canvasHeight = 600;
-    const canvas = createCanvas(canvasWidth, canvasHeight);
-    const ctx = canvas.getContext('2d');
-  
-    const centerX = canvasWidth / 2;
-    const centerY = canvasHeight / 2;
-    const radius = Math.min(centerX, centerY) - 100;
 
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-  
-    const total = data.reduce((sum, value) => sum + value, 0);
-    const angles = data.map(value => (value / total) * Math.PI * 2);
-  
-    let currentAngle = -Math.PI / 2;
-    const defaultColors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#95a5a6'];
-  
-    for (let i = 0; i < labels.length; i++) {
-      const startAngle = currentAngle;
-      const endAngle = currentAngle + angles[i];
-  
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-      ctx.closePath();
-      const color = defaultColors[i % defaultColors.length];
-      ctx.fillStyle = color;
-      ctx.fill();
-  
-      const sliceCenterAngle = currentAngle + angles[i] / 2;
-      const sliceRadius = radius * 0.75;
-      const labelX = centerX + Math.cos(sliceCenterAngle) * sliceRadius;
-      const labelY = centerY + Math.sin(sliceCenterAngle) * sliceRadius;
-  
-      ctx.fillStyle = 'black';
-      ctx.font = '14px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-  
-      ctx.fillText(data[i].toString(), labelX, labelY);
-  
-      currentAngle = endAngle;
-    }
-  
-    ctx.fillStyle = 'black';
-    ctx.font = 'bold 18px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText(title, centerX, canvasHeight - 20);
-  
-    const legendWidth = 200;
-    const legendHeight = 20;
-    const legendStartX = canvasWidth - legendWidth - 10;
-    const legendStartY = 10;
-  
-    for (let i = 0; i < labels.length; i++) {
-      const legendX = legendStartX;
-      const legendY = legendStartY + i * (legendHeight + 5);
-  
-      ctx.fillStyle = defaultColors[i % defaultColors.length];
-      ctx.fillRect(legendX, legendY, legendHeight, legendHeight);
-  
-      ctx.fillStyle = 'black';
-      ctx.font = '14px Arial';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'top';
-      ctx.fillText(labels[i], legendX + legendHeight + 5, legendY);
-    }
-
-    const buffer = canvas.toBuffer();
-    const graphFilePath = path.join(__dirname, '..', 'img', 'charts', `piechart.png`);
-    fs.writeFileSync(graphFilePath, buffer);
-
-    const graphBuffer = await util.promisify(fs.readFile)(graphFilePath);
-    await client.sendImage(sender, graphBuffer, title);
-};
-
-const generateBarChart = async (client, sender, labels, data, title, barColors) => {
-  // Verifique se labels e data são arrays válidos
-  if (!Array.isArray(labels) || !Array.isArray(data)) {
-    console.error('labels or data is not a valid array');
-    return;
-  }
-
-  // Certifique-se de que labels e data têm o mesmo comprimento
-  if (labels.length !== data.length) {
-    console.error('labels and data arrays must have the same length');
-    return;
-  }
-
-  const canvasWidth = 800;
-  const canvasHeight = 600;
-  const canvas = createCanvas(canvasWidth, canvasHeight);
-  const ctx = canvas.getContext('2d');
-
-  const chartMargin = 50;
-  const chartWidth = canvasWidth - 2 * chartMargin;
-  const chartHeight = canvasHeight - 3 * chartMargin;
-  const barWidth = chartWidth / labels.length;
-
-  ctx.font = 'bold 16px Arial';
-
-  ctx.fillStyle = 'white';
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-  ctx.fillStyle = 'black';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'bottom';
-  ctx.fillText(title, canvasWidth / 2, canvasHeight - chartMargin);
-
-  ctx.textBaseline = 'middle';
-
-  ctx.translate(chartMargin, canvasHeight - 2 * chartMargin);
-
-  data.forEach((value, index) => {
-    const barHeight = (value / Math.max(...data)) * chartHeight;
-    const x = index * barWidth;
-    const y = -barHeight;
-
-    const barColor = barColors[index % barColors.length];
-    ctx.fillStyle = barColor;
-    ctx.fillRect(x, y, barWidth, barHeight);
-
-    ctx.fillStyle = 'black';
-    ctx.fillText(value.toString(), x + barWidth / 2, y - 10);
-    ctx.fillText(labels[index], x + barWidth / 2, 20);
-  });
-
-  const buffer = canvas.toBuffer();
-  const graphFilePath = path.join(__dirname, '..', 'img', 'charts', `barcharts_${randomNum()}.png`);
-  fs.writeFileSync(graphFilePath, buffer);
-  const graphBuffer = await util.promisify(fs.readFile)(graphFilePath);
-  await client.sendImage(sender, graphBuffer, title);
-};
 
 const sendInactiveMessage = async (client, m, DB) => {
     try {
@@ -632,6 +496,127 @@ const searchCEP = async (axios, client, mensagem, sender) => {
     return false;
   }
 }
+
+// Função para gerar gráfico de pizza com chartjs-node-canvas
+const generatePieChart = async (client, sender, labels, data, title) => {
+  const canvasWidth = 800;
+  const canvasHeight = 600;
+
+  const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: canvasWidth, height: canvasHeight, backgroundColour: 'white' });
+
+  const configuration = {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          data: data,
+          backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'],
+        },
+      ],
+    },
+    options: {
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+        },
+      },
+      layout: {
+        padding: {
+          top: 20,
+        },
+      },
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: title,
+          font: {
+            size: 18,
+            family: 'Arial',
+          },
+        },
+      },
+    },
+  };
+
+  try {
+    const chartBuffer = await chartJSNodeCanvas.renderToBuffer(configuration);
+
+    const graphFilePath = path.join(__dirname, '..', 'img', 'charts', `piechart.png`);
+    fs.writeFileSync(graphFilePath, chartBuffer);
+
+    const graphBuffer = await util.promisify(fs.readFile)(graphFilePath);
+    await client.sendImage(sender, graphBuffer, title);
+  } catch (error) {
+    console.error('Erro ao gerar gráfico de pizza:', error);
+  }
+};
+
+// Função para gerar gráfico de barras com chartjs-node-canvas
+const generateBarChart = async (client, sender, labels, data, title, barColors) => {
+  const canvasWidth = 800;
+  const canvasHeight = 600;
+
+  const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: canvasWidth, height: canvasHeight, backgroundColour: 'white' });
+
+  const configuration = {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          data: data,
+          backgroundColor: barColors,
+        },
+      ],
+    },
+    options: {
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+      layout: {
+        padding: {
+          top: 20,
+        },
+      },
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: title,
+          font: {
+            size: 18,
+            family: 'Arial',
+          },
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  };
+
+  try {
+    const chartBuffer = await chartJSNodeCanvas.renderToBuffer(configuration);
+
+    const graphFilePath = path.join(__dirname, '..', 'img', 'charts', `barcharts_${randomNum()}.png`);
+    fs.writeFileSync(graphFilePath, chartBuffer);
+
+    const graphBuffer = await util.promisify(fs.readFile)(graphFilePath);
+    await client.sendImage(sender, graphBuffer, title);
+  } catch (error) {
+    console.error('Erro ao gerar gráfico de barras:', error);
+  }
+};
+
 
 async function generateAnalyticsReport(client, sender, DB) {
   try {

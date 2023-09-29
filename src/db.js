@@ -109,7 +109,7 @@ class Database {
       await this.sequelize.authenticate();
       
       // Synchronize models with the database, altering if needed
-      await this.sequelize.sync({ alter: true });
+      await this.sequelize.sync();
     } catch (error) {
       console.error('Error connecting to the database:', error);
     }

@@ -436,9 +436,6 @@ async function startCore(inDebit) {
       if (store && store.contacts) {
         // Update the 'store.contacts' with the decoded contact information
         store.contacts[id] = { id, name: contact.notify };
-        
-        // Log the updated contact information
-        console.log(`Contact updated: ${store.contacts[id].id}, Name: ${store.contacts[id].name}`);
       }
     }
   });
