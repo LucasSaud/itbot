@@ -1,4 +1,5 @@
 const { Sequelize, DataTypes, Op } = require('sequelize');
+const Utils = require('./utils.js');
 
 class Database {
   constructor() {
@@ -179,7 +180,7 @@ class Database {
       });
 
       // Create a new contact if it doesn't exist
-      if (!existingContact && !Utils.isBlocked(contact.replace('@s.whatsapp.net', ''))) {
+      if (!existingContact && !Utils.isBlocked(contact.whatsappNumber.replace('@s.whatsapp.net', ''))) {
         await this.Contacts.create({
           whatsappNumber: contact.whatsappNumber,
           deliveryOrders: 0,

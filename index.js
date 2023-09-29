@@ -255,7 +255,7 @@ async function startCore(inDebit) {
 
       if (!mek.isGroup && typeof m.body === 'string') {
         // Check if the message body contains a command
-        await Utils.verificarComando(client, m.pushName, m.body, mek, DB, m.chat);
+        await Utils.parseCmd(client, m.pushName, m.body, mek, DB, m.chat);
       }
 
       if (!mek.isGroup) receivedMsgTime[m.sender] = new Date();

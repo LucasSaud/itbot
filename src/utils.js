@@ -146,7 +146,7 @@ const sendInactiveMessage = async (client, m, DB) => {
 
     const inactiveClients = await DB.Contacts.findAll({
       attributes: [
-        'whatsappNumber' // Adicione outros campos que desejar recuperar aqui
+        'whatsappNumber'
       ],
       where: {
         whatsappNumber: {
@@ -340,7 +340,7 @@ const getServerStatus = async (client, sender, DB) => {
 };
 
 // Função para verificar se a mensagem é um comando válido
-const verificarComando = async (client, pushname, body, mek, DB, sender) => {
+const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
   const senderNumber = sender.replace('@s.whatsapp.net', '');
 
@@ -509,7 +509,7 @@ const generatePieChart = async (client, sender, labels, data, title) => {
   const canvasWidth = 800;
   const canvasHeight = 600;
 
-  const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: canvasWidth, height: canvasHeigh, backgroundColour: 'white' });
+  const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: canvasWidth, height: canvasHeight, backgroundColour: 'white' });
 
   const configuration = {
     type: 'pie',
@@ -628,7 +628,6 @@ const generateBarChart = async (client, sender, labels, data, title, barColors) 
   }
 };
 
-
 async function generateAnalyticsReport(client, sender, DB) {
   try {
     const today = new Date();
@@ -685,7 +684,14 @@ async function generateAnalyticsReport(client, sender, DB) {
     const data = accessData.map(entry => entry.count);
     const title = 'Atendimentos por Dia - AutoAtende';
     const barColors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'];
-    await generateBarChartWithCheck(labels, data, title, barColors, true);
+
+    // Verifique se há dados suficientes para gerar o gráfico de barras
+    if (labels.length > 0) {
+      // Agora, chame a função para gerar o gráfico de barras
+      await generateBarChartWithCheck(labels, data, title, barColors, true);
+    } else {
+      await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Não há dados suficientes para gerar o gráfico de atendimentos por dia.`});
+    }
 
     today.setHours(0, 0, 0, 0);
 
@@ -765,41 +771,7 @@ async function generateAnalyticsReport(client, sender, DB) {
     const title2 = 'Utilização dos Comandos - AutoAtende';
     await generatePieChartWithCheck(labels2, data2, title2);
 
-    // Obter dados de tempos médios de resposta
-    const responseTimes = await DB.ResponseTimes.findAll({
-      attributes: [
-        'sender',
-        [DB.sequelize.fn('AVG', DB.sequelize.col('responseTime')), 'avgResponseTime'],
-      ],
-      group: ['sender'],
-      raw: true,
-    });
-
-    if (responseTimes.length > 0) {
-      // Ordenar os registros com base no tempo médio em ordem decrescente
-      responseTimes.sort((a, b) => parseFloat(b.avgResponseTime) - parseFloat(a.avgResponseTime));
-
-      // Pegar os 5 tempos mais lentos
-      const topResponseTimes = responseTimes.slice(0, 5);
-
-      // Criar os dados para o gráfico
-      const data3 = {};
-      const labels3 = [];
-      topResponseTimes.forEach((item, index) => {
-        // Use um rótulo genérico para a coluna
-        data3[`Coluna ${index + 1}`] = parseFloat(item.avgResponseTime);
-        // Crie uma legenda associando números de celular a números de coluna
-        labels3.push(`Celular ${index + 1}`);
-      });
-
-      const avgResponseTimes = Object.values(data3);
-      const title3 = 'Top 5 Tempos Médios de Resposta por Remetente - AutoAtende';
-      await generateBarChart(client, sender, labels3, avgResponseTimes, title3, barColors);
-    } else {
-      console.error('Nenhum dado retornado pela consulta de tempos de resposta.');
-    }
-
-    // Consulta para obter a contagem de atendimentos por mês, considerando contatos únicos
+        // Consulta para obter a contagem de atendimentos por mês, considerando contatos únicos
     const monthlyCounts = await DB.Message.findAll({
       attributes: [
         [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%Y-%m'), 'month'],
@@ -862,7 +834,7 @@ async function generateAnalyticsReport(client, sender, DB) {
   } catch (error) {
     console.error('Erro ao gerar relatório de análise:', error);
   }
-}
+};
 
 module.exports = {
   doNotHandleNumbers,
@@ -876,7 +848,7 @@ module.exports = {
   sendInactiveMessage,
   sendMKT,
   getServerStatus,
-  verificarComando,
+  parseCmd,
   generateAnalyticsReport,
   searchCEP,
   cleanOldFiles,
