@@ -45,11 +45,7 @@ class Database {
       timestamp: {
         type: DataTypes.DATE,
         allowNull: false,
-      },
-      isInactive: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
+      }
     });
 
     // Define a model for contacts
@@ -71,6 +67,10 @@ class Database {
         defaultValue: DataTypes.NOW,
       },
       isMktSent: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      isInactive: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
@@ -109,7 +109,7 @@ class Database {
       await this.sequelize.authenticate();
       
       // Synchronize models with the database, altering if needed
-      await this.sequelize.sync();
+      await this.sequelize.sync({});
     } catch (error) {
       console.error('Error connecting to the database:', error);
     }
@@ -137,7 +137,7 @@ class Database {
       });
   
       if (existingContact) {
-        // Update contact fields if deliveryOrders or pickupOrders are 1
+        // Update contact fiel&&ds if deliveryOrders or pickupOrders are 1
         if (deliveryOrders === 1 || pickupOrders === 1) {
           const updatedFields = {};
   
@@ -155,14 +155,16 @@ class Database {
           const updatedContact = await existingContact.update(updatedFields);
         }
       } else {
-        // Create a new contact if it doesn't exist
-        const newContact = await this.Contacts.create({
-          whatsappNumber: whatsappNumber,
-          deliveryOrders: deliveryOrders === 1 ? 1 : 0,
-          pickupOrders: pickupOrders === 1 ? 1 : 0,
-          lastOrderDate: new Date(),
-          isMktSent: 0
-        });
+        if (!Utils.isBlocked(whatsappNumber.replace('@s.whatsapp.net', ''))) {
+          // Create a new contact if it doesn't exist
+          const newContact = await this.Contacts.create({
+            whatsappNumber: whatsappNumber,
+            deliveryOrders: deliveryOrders === 1 ? 1 : 0,
+            pickupOrders: pickupOrders === 1 ? 1 : 0,
+            lastOrderDate: new Date(),
+            isMktSent: 0
+          });
+        }
       }
     } catch (error) {
       console.error('Error updating the contact:', error);
@@ -177,7 +179,7 @@ class Database {
       });
 
       // Create a new contact if it doesn't exist
-      if (!existingContact) {
+      if (!existingContact && !Utils.isBlocked(contact.replace('@s.whatsapp.net', ''))) {
         await this.Contacts.create({
           whatsappNumber: contact.whatsappNumber,
           deliveryOrders: 0,

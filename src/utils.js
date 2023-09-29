@@ -139,46 +139,56 @@ const sendLocationMessage = async (client, chatId, latitude, longitude, caption)
 };
 
 const sendInactiveMessage = async (client, m, DB) => {
-    try {
-        const currentDate = new Date();
-        const daysAgo = new Date();
-        daysAgo.setDate(currentDate.getDate() - config.numOfDaysOff);
-    
-        const inactiveClients = await DB.Message.findAll({
-          attributes: [
-            [DB.sequelize.fn('DISTINCT', DB.sequelize.col('sender')), 'phoneNumber']
-          ],
-          where: {
-            sender: {
-              [Sequelize.Op.ne]: config.empresa.botNumber
-            },
-            timestamp: {
-              [Sequelize.Op.lt]: daysAgo
-            },
-            isInactive: false,
-          },
-          raw: true,
-        });
-          
-        if (inactiveClients.length === 0) {
-          m.reply('⚠️ Não há clientes inativos a mais de 30 dias.');
+  try {
+    const currentDate = new Date();
+    const daysAgo = new Date();
+    daysAgo.setDate(currentDate.getDate() - config.numOfDaysOff);
+
+    const inactiveClients = await DB.Contacts.findAll({
+      attributes: [
+        'whatsappNumber' // Adicione outros campos que desejar recuperar aqui
+      ],
+      where: {
+        whatsappNumber: {
+          [Sequelize.Op.not]: config.empresa.botNumber
+        },
+        lastOrderDate: {
+          [Sequelize.Op.lt]: daysAgo
+        },
+        isInactive: false,
+      },
+      raw: true,
+    });
+
+    if (config.showLog === true) console.log(`Resultado da consulta: ${JSON.stringify(inactiveClients)}`);
+
+    if (inactiveClients.length === 0) {
+      m.reply('⚠️ Não há clientes inativos a mais de 30 dias.');
+    } else {
+      for (const { whatsappNumber } of inactiveClients) {
+        // Verifique se whatsappNumber é uma string válida antes de enviar a mensagem
+        if (typeof whatsappNumber === 'string' && whatsappNumber.length > 0) {
+          await client.sendMessage(whatsappNumber, { text: config.msgClientesInativos });
+
+          // Atualize o campo isInactive na tabela Contacts
+          await DB.Contacts.update({ isInactive: true }, {
+            where: {
+              whatsappNumber: whatsappNumber,
+            }
+          });
+
+          await DB.saveLogs(`Mensagem enviada para ${whatsappNumber}`);
+          m.reply(`✅ Mensagem enviada para ${whatsappNumber}.`);
+          await new Promise(resolve => setTimeout(resolve, 3000));
         } else {
-          for (const { phoneNumber } of inactiveClients) {
-            await client.sendMessage(phoneNumber, { text: config.msgClientesInativos });
-            await DB.saveLogs(`Mensagem enviada para ${phoneNumber}`);
-            m.reply('✅ Mensagem enviada para ${phoneNumber}.');
-            await DB.Message.update({ isInactive: true }, {
-              where: {
-                sender: phoneNumber,
-              }
-            });
-            await new Promise(resolve => setTimeout(resolve, 3000));
-          }
-          m.reply(`✅ Prontinho. Mensagem enviada aos clientes inativos.`);
-        }    
-      } catch (error) {
-        m.reply('⚠️ Ocorreu um erro ao enviar as mensagens:', error);
+          console.error(`Número de telefone inválido: ${whatsappNumber}`);
+        }
       }
+      m.reply(`✅ Prontinho. Mensagem enviada aos clientes inativos.`);
+    }
+  } catch (error) {
+    m.reply('⚠️ Ocorreu um erro ao enviar as mensagens:', error);
+  }
 };
 
 const sendMKT = async (DB, client) => {

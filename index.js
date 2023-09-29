@@ -485,9 +485,6 @@ async function startCore(inDebit) {
   // Define a custom function 'serializeM' in the client object
   client.serializeM = (m) => smsg(client, m, store);
 
-
-
-
   client.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;
 
