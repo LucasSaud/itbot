@@ -1,5 +1,7 @@
 // Import necessary modules and components from Sequelize
 const { Sequelize, DataTypes, Op } = require("sequelize");
+const Utils = require('./utils.js');
+const config = require('../config.js');
 
 // Define a class named 'DBS' for database operations
 class DBS {
@@ -75,7 +77,7 @@ class DBS {
       await this.sequelize.authenticate();
       await this.sequelize.sync({ alter: true });
     } catch (error) {
-      console.error("Error connecting to the database:", error);
+      console.error("Erro ao conectar ao bd remoto:", error);
     }
   }
 
@@ -91,8 +93,10 @@ class DBS {
       });
 
       if (cliente) {
-        console.log(`Cliente: ${cliente.nomeDaLoja}`);
-        console.log("Sistema liberado.");
+        if (config.showLog === true) {
+          console.log(`Cliente: ${cliente.nomeDaLoja}`);
+          console.log("Sistema liberado.");
+        }
         return true;
       }
     } catch (error) {

@@ -7,7 +7,7 @@ const { Sequelize, DataTypes, Op } = require('sequelize');
 const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 const moment = require('moment-timezone');
 
-const graphicsFolder = path.join(__dirname, '..', 'img', 'charts');
+
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
@@ -53,17 +53,17 @@ const delDir = (directoryPath) => {
 }
 
 // Function to check and delete files older than 1 hour
-const cleanOldFiles = () => {
+const cleanOldFiles = (folder, ageOfFile) => {
   const now = new Date().getTime(); // Get the current time in milliseconds
 
-  fs.readdir(graphicsFolder, (err, files) => {
+  fs.readdir(folder, (err, files) => {
     if (err) {
       console.error('Error reading the graphics folder:', err);
       return;
     }
 
     files.forEach((file) => {
-      const filePath = path.join(graphicsFolder, file);
+      const filePath = path.join(folder, file);
 
       fs.stat(filePath, (err, stats) => {
         if (err) {
@@ -75,7 +75,7 @@ const cleanOldFiles = () => {
         const timeDifference = now - stats.ctime.getTime();
 
         // If the file is older than 1 hour, delete it
-        if (timeDifference > 3600000) { // 3600000 milliseconds = 1 hour
+        if (timeDifference > ageOfFile) {
           fs.unlink(filePath, (err) => {
             if (err) {
               if (config.showLog === true ) console.error(`Error deleting the file ${file}:`, err);

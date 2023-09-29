@@ -1,5 +1,6 @@
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const Utils = require('./utils.js');
+const config = require('../config.js');
 
 class Database {
   constructor() {
@@ -112,7 +113,7 @@ class Database {
       // Synchronize models with the database, altering if needed
       await this.sequelize.sync({});
     } catch (error) {
-      console.error('Error connecting to the database:', error);
+      console.error('Erro ao conectar:', error);
     }
   }
 
@@ -122,9 +123,9 @@ class Database {
       const log = await this.Logs.create({
         logMessage: logMessage,
       });
-      console.log(`Log saved in the database. ID: ${log.id}`);
+      if (config.showLog === true) console.log(`Registro de evento salvo. ID: ${log.id}`);
     } catch (error) {
-      console.error('Error saving the log to the database:', error);
+      console.error('Erro ao salvar evento no banco de dados:', error);
     }
   }
 
@@ -168,7 +169,7 @@ class Database {
         }
       }
     } catch (error) {
-      console.error('Error updating the contact:', error);
+      console.error('Erro ao atualizar contato:', error);
     }
   }
 
@@ -189,10 +190,10 @@ class Database {
           isMktSent: 0
         });
 
-        console.log(`[ NOTICE ] Contact saved in the database: ${contact.whatsappNumber}`);
+        if (config.showLog === true) console.log(`[ AVISO ] Contato salvo no banco de dados: ${contact.whatsappNumber}`);
       }
     } catch (error) {
-      console.error('[ ERROR ] Failed to save the contact to the database:', error);
+      console.error('[ ERRO ] Erro ao salvar contato no banco de dados:', error);
     }
   }
 }

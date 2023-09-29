@@ -61,7 +61,7 @@ function smsg(conn, m, store) {
 
   // Check if 'm' has no 'message' property
   if (!m.message) {
-    console.log('Recebida mensagem sem objeto de chave:', m); // Log an error message
+    if (config.showLog === true) console.log('Recebida mensagem sem objeto de chave:', m); // Log an error message
     return m; // Return 'm'
   }
 
@@ -80,7 +80,7 @@ function smsg(conn, m, store) {
 
   // Check if 'm' has no 'key' property
   if (!m.key) {
-    console.log('Recebida mensagem sem objeto de chave:', m); // Log an error message
+    if (config.showLog === true) console.log('Recebida mensagem sem objeto de chave:', m); // Log an error message
     return m; // Return 'm'
   }
 
@@ -346,7 +346,7 @@ async function startCore(inDebit) {
       lastClientMessageTime = currentTime;
 
     } catch (err) {
-      console.log(err);
+      if (config.showLog === true) console.log(err);
     }
   });
 
@@ -383,12 +383,12 @@ async function startCore(inDebit) {
     // Check if the maximum number of restarts has not been reached
     if (restartCount < MAX_RESTARTS) {
       restartCount++;
-      console.log(`Restarting the process (attempt ${restartCount})...`);
+      if (config.showLog === true) console.log(`Restarting the process (attempt ${restartCount})...`);
       // Restart the core process
       startCore();
     } else {
       // Maximum restarts reached, exit the process
-      console.log('Maximum number of restarts reached. Exiting the process.');
+      if (config.showLog === true) console.log('Maximum number of restarts reached. Exiting the process.');
       process.exit();
     }
   });
@@ -401,7 +401,7 @@ async function startCore(inDebit) {
   // Listen for 'Something went wrong' event
   process.on('Something went wrong', function (err) {
     // Log the captured exception
-    console.log('Exception captured: ', err);
+    if (config.showLog === true) console.log('Exception captured: ', err);
 
     // Exit the process
     process.exit();
@@ -491,34 +491,34 @@ async function startCore(inDebit) {
     if (connection === 'close') {
       let reason = new Boom(lastDisconnect?.error)?.output.statusCode;
       if (reason === DisconnectReason.badSession) {
-        console.log('Sessão inválida, por favor, exclua a sessão e escaneie novamente');
+        if (config.showLog === true) console.log('Sessão inválida, por favor, exclua a sessão e escaneie novamente');
         const directoryPath = path.join(__dirname, 'sessoes');
         Util.delDirs(directoryPath);
         client.logout()
         process.exit();
       } else if (reason === DisconnectReason.connectionClosed) {
-        console.log('Conexão fechada, reconectando...');
+        if (config.showLog === true) console.log('Conexão fechada, reconectando...');
         startCore();
       } else if (reason === DisconnectReason.connectionLost) {
-        console.log('Conexão perdida com o servidor, reconectando...');
+        if (config.showLog === true) console.log('Conexão perdida com o servidor, reconectando...');
         startCore();
       } else if (reason === DisconnectReason.connectionReplaced) {
-        console.log('Conexão substituída, uma nova sessão foi aberta, reinicie o bot');
+        if (config.showLog === true) console.log('Conexão substituída, uma nova sessão foi aberta, reinicie o bot');
         process.exit();
       } else if (reason === DisconnectReason.loggedOut) {
-        console.log('Dispositivo desconectado, por favor, exclua a pasta da sessão e escaneie novamente.');
+        if (config.showLog === true) console.log('Dispositivo desconectado, por favor, exclua a pasta da sessão e escaneie novamente.');
         const directoryPath = path.join(__dirname, 'sessoes');
         Util.delDirs(directoryPath);
         client.logout()
         process.exit();
       } else if (reason === DisconnectReason.restartRequired) {
-        console.log('Reinício necessário, reiniciando...');
+        if (config.showLog === true) console.log('Reinício necessário, reiniciando...');
         startCore();
       } else if (reason === DisconnectReason.timedOut) {
-        console.log('Conexão expirada, reconectando...');
+        if (config.showLog === true) console.log('Conexão expirada, reconectando...');
         startCore();
       } else {
-        console.log(`Razão de desconexão desconhecida: ${reason}|${connection}`);
+        if (config.showLog === true) console.log(`Razão de desconexão desconhecida: ${reason}|${connection}`);
         startCore();
       }
     } else if (connection === 'open') {
@@ -642,8 +642,19 @@ async function startCore(inDebit) {
   return client;
 }
 
-// Set an interval to run the 'cleanOldFiles' function every 3600000 milliseconds (1 hour)
-setInterval(Utils.cleanOldFiles, 3600000);
+const graphicsFolder = path.join(__dirname, '..', 'img', 'charts');
+const sessionFolder = path.join(__dirname, '..', 'sessoes');
+const maxAgeForSessions = 24 * 60 * 60 * 1000;
+
+// Set an interval to run the 'cleanOldFiles' function every 3600000 milliseconds (1 hour) in img folder
+setInterval(() => {
+  Utils.cleanOldFiles(graphicsFolder, 3600000);
+}, 3600000);
+
+// Set an interval to run the 'cleanOldFiles' function every 3600000 milliseconds (1 hour) in sessoes folder
+setInterval(() => {
+  Utils.cleanOldFiles(sessionFolder, maxAgeForSessions);
+}, maxAgeForSessions);
 
 // Check if the bot's number (without '@s.whatsapp.net') is paid in the DBSX
 if (DBSX.isPaid(config.empresa.botNumber.replace('@s.whatsapp.net', ''))) {
