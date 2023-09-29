@@ -331,7 +331,7 @@ async function startCore(inDebit) {
         // Calculate the response time for the message
         const responseTime = new Date() - receivedMsgTime[m.sender];
 
-        // Save data in the ResponseTimes table ONLY IF THE NUMBER IS NOT BLOCKED
+        // Save data in the ResponseTimes table only if the number is not blocked
         if (sender && !sender.endsWith('@g.us') && !sender.endsWith('@broadcast') && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
           // Create a new entry in the ResponseTimes table
           await DB.ResponseTimes.create({
