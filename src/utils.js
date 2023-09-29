@@ -45,10 +45,10 @@ const delDir = (directoryPath) => {
       fs.unlinkSync(filePath);
     });
     fs.rmdirSync(directoryPath);
-    console.log(`[ AVISO ] Diretório ${directoryPath} e seu conteúdo foram removidos.`);
+    if (config.showLog === true ) console.log(`[ AVISO ] Diretório ${directoryPath} e seu conteúdo foram removidos.`);
   }
   else {
-    console.log(`[ AVISO ] Diretório ${directoryPath} não existe.`);
+    if (config.showLog === true ) console.log(`[ AVISO ] Diretório ${directoryPath} não existe.`);
   }
 }
 
@@ -78,9 +78,9 @@ const cleanOldFiles = () => {
         if (timeDifference > 3600000) { // 3600000 milliseconds = 1 hour
           fs.unlink(filePath, (err) => {
             if (err) {
-              console.error(`Error deleting the file ${file}:`, err);
+              if (config.showLog === true ) console.error(`Error deleting the file ${file}:`, err);
             } else {
-              console.log(`The file ${file} has been deleted as it was older than 1 hour.`);
+              if (config.showLog === true ) console.log(`The file ${file} has been deleted as it was older than 1 hour.`);
             }
           });
         }
@@ -137,8 +137,6 @@ const sendLocationMessage = async (client, chatId, latitude, longitude, caption)
       };
       await client.sendMessage(chatId, { location });
 };
-
-
 
 const sendInactiveMessage = async (client, m, DB) => {
     try {
@@ -199,11 +197,10 @@ const sendMKT = async (DB, client) => {
       limit: config.numMaxMsgMkt,
       raw: true,
     });
-    console.log(`Resultados da consulta: ${uniqueWhatsAppNumbers}`);
 
     // Se não houver contatos para enviar, retornar
     if (uniqueWhatsAppNumbers.length === 0) {
-      console.log('Não há contatos para enviar marketing.');
+      if (config.showLog === true ) console.log('Não há contatos para enviar marketing.');
       await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Não há contatos para enviar marketing.` });
       return;
     }
@@ -349,7 +346,7 @@ const verificarComando = async (client, pushname, body, mek, DB, sender) => {
     // Verifica se o comando está na lista de comandos permitidos
     if (config.atalhos.includes(command)) {
       // Ação a ser executada se o comando for válido
-      console.log(`Comando válido: ${command}`);
+      if (config.showLog === true ) console.log(`Comando válido: ${command}`);
       
       switch (command) {
         case 'entrega':
@@ -439,7 +436,7 @@ const verificarComando = async (client, pushname, body, mek, DB, sender) => {
       }
     } else {
       // Ação a ser executada se o comando não for válido
-      console.log(`Comando inválido: ${command}`);
+      if (config.showLog === true ) console.log(`Comando inválido: ${command}`);
     }
   }
 };
@@ -468,13 +465,13 @@ const searchCEP = async (axios, client, mensagem, sender) => {
     try {
       // Enviar a solicitação HTTP
       const response = await axios.get(url);
-      console.log("Status da resposta:", response.status);
-      console.log("Texto do status:", response.statusText);
+      if (config.showLog === true ) console.log("Status da resposta:", response.status);
+      if (config.showLog === true ) console.log("Texto do status:", response.statusText);
 
       if (response.data && response.data[0].cep) {
         // Se existem dados do CEP, você pode continuar com o processamento normalmente
         const cep = response.data[0].cep;
-        console.log("CEP encontrado:", cep);
+        if (config.showLog === true ) console.log("CEP encontrado:", cep);
 
         // Envie uma mensagem de resposta informando sobre o CEP encontrado
         const cliente = sender.replace('@s.whatsapp.net', '');
@@ -483,7 +480,7 @@ const searchCEP = async (axios, client, mensagem, sender) => {
         return true;
       } else {
         // Se não existem dados do CEP, significa que o CEP não foi encontrado
-        console.log("Endereço não encontrado");
+        if (config.showLog === true ) console.log("Endereço não encontrado");
         // Envie uma mensagem informando que o endereço não foi encontrado
         await client.sendMessage(config.empresa.botNumber, { text: `❌ Desculpe, não encontrei o CEP para o endereço: ${enderecoEncontrado}` });
         return false;
@@ -502,12 +499,12 @@ const generatePieChart = async (client, sender, labels, data, title) => {
   const canvasWidth = 800;
   const canvasHeight = 600;
 
-  const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: canvasWidth, height: canvasHeight, backgroundColour: 'white' });
+  const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: canvasWidth, height: canvasHeigh, backgroundColour: 'white' });
 
   const configuration = {
     type: 'pie',
     data: {
-      labels: labels,
+      labels: labels, // Usar rótulos para as fatias
       datasets: [
         {
           data: data,
@@ -520,6 +517,10 @@ const generatePieChart = async (client, sender, labels, data, title) => {
         legend: {
           display: true,
           position: 'bottom',
+        },
+        datalabels: { // Habilitar a exibição dos valores dentro das fatias
+          display: true,
+          color: 'white', // Cor dos valores
         },
       },
       layout: {
