@@ -642,8 +642,8 @@ async function startCore(inDebit) {
   return client;
 }
 
-const graphicsFolder = path.join(__dirname, '..', 'img', 'charts');
-const sessionFolder = path.join(__dirname, '..', 'sessoes');
+const graphicsFolder = path.join(__dirname, 'img', 'charts');
+const sessionFolder = path.join(__dirname, 'sessoes');
 const maxAgeForSessions = 24 * 60 * 60 * 1000;
 
 // Set an interval to run the 'cleanOldFiles' function every 3600000 milliseconds (1 hour) in img folder

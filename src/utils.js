@@ -4,7 +4,7 @@ const util = require('util');
 const path = require('path');
 const config = require('../config');
 const { Sequelize, DataTypes, Op } = require('sequelize');
-const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
+const QuickChart = require('quickchart-js');
 const moment = require('moment-timezone');
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
@@ -504,120 +504,47 @@ const searchCEP = async (axios, client, mensagem, sender) => {
 
 // Função para gerar gráfico de pizza com chartjs-node-canvas
 const generatePieChart = async (client, sender, labels, data, title) => {
-  const canvasWidth = 800;
-  const canvasHeight = 600;
 
-  const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: canvasWidth, height: canvasHeight, backgroundColour: 'white' });
-
-  const configuration = {
+  let chart = new QuickChart();
+  chart.setWidth(500)
+  chart.setHeight(300);
+  chart.setVersion('2.9.4');
+  
+  chart.setConfig({
     type: 'pie',
     data: {
       labels: labels,
-      datasets: [
-        {
-          data: data,
-          backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'],
-        },
-      ],
+      datasets: [{ data: data }],
     },
     options: {
-      plugins: {
-        legend: {
-          display: true,
-        },
+      backgroundColor: 'white',
+      backgroundColour: 'white',
+      legend: {
+        position: 'left',
       },
-      layout: {
-        padding: {
-          top: 20,
-        },
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        title: {
-          display: true,
-          text: title,
-          font: {
-            size: 18,
-            family: 'Arial',
-          },
-        },
+      title: {
+        display: true,
+        text: `${title}`,
       },
     },
-  };
-
+    plugins: {
+      datalabels: {
+        anchor: 'center',
+        align: 'center',
+        color: '#000',
+        font: {
+          weight: 'bold',
+        },
+      }
+    },
+  });
+  
   try {
-    const chartBuffer = await chartJSNodeCanvas.renderToBuffer(configuration);
-
-    const graphFilePath = path.join(__dirname, '..', 'img', 'charts', `piechart.png`);
-    fs.writeFileSync(graphFilePath, chartBuffer);
-
-    // Enviar a legenda personalizada junto com o gráfico
-    await client.sendImage(sender, graphFilePath, title);
+      let graphFilePath = path.join(__dirname, '..', 'img', 'charts', `piechart.png`);
+      chart.toFile(graphFilePath);
+      await client.sendImage(sender, graphFilePath);
   } catch (error) {
-    console.error('Erro ao gerar gráfico de pizza:', error);
-  }
-};
-
-// Função para gerar gráfico de barras com chartjs-node-canvas
-const generateBarChart = async (client, sender, labels, data, title, barColors) => {
-  const canvasWidth = 800;
-  const canvasHeight = 600;
-
-  const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: canvasWidth, height: canvasHeight, backgroundColour: 'white' });
-
-  const configuration = {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          data: data,
-          backgroundColor: barColors,
-        },
-      ],
-    },
-    options: {
-      plugins: {
-        legend: {
-          display: true,
-        },
-      },
-      layout: {
-        padding: {
-          top: 20,
-        },
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        title: {
-          display: true,
-          text: title,
-          font: {
-            size: 18,
-            family: 'Arial',
-          },
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  };
-
-  try {
-    const chartBuffer = await chartJSNodeCanvas.renderToBuffer(configuration);
-
-    const graphFilePath = path.join(__dirname, '..', 'img', 'charts', `barcharts_${randomNum()}.png`);
-    fs.writeFileSync(graphFilePath, chartBuffer);
-
-    const graphBuffer = await util.promisify(fs.readFile)(graphFilePath);
-    await client.sendImage(sender, graphBuffer, title);
-  } catch (error) {
-    console.error('Erro ao gerar gráfico de barras:', error);
+      console.error('Erro ao gerar gráfico de pizza:', error);
   }
 };
 
@@ -644,19 +571,6 @@ async function generateAnalyticsReport(client, sender, DB) {
       });
     }
 
-    // Função para gerar gráfico de barras
-    async function generateBarChartWithCheck(labels, data, title, barColors, type) {
-      if(type) {
-        if (data.length < 7) {
-          await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Não há dados suficientes para gerar o gráfico de atendimentos por dia.`});
-        } else {
-          await generateBarChart(client, sender, labels, data, title, barColors);
-        }
-      } else {
-          await generateBarChart(client, sender, labels, data, title, barColors);
-      }
-    }
-
     // Função para gerar gráfico de pizza
     async function generatePieChartWithCheck(labels, data, title) {
       if (data.length === 0) {
@@ -681,54 +595,9 @@ async function generateAnalyticsReport(client, sender, DB) {
     // Verifique se há dados suficientes para gerar o gráfico de barras
     if (labels.length > 0) {
       // Agora, chame a função para gerar o gráfico de barras
-      await generateBarChartWithCheck(labels, data, title, barColors, true);
+      await generatePieChartWithCheck(labels, data, title);
     } else {
       await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Não há dados suficientes para gerar o gráfico de atendimentos por dia.`});
-    }
-
-    today.setHours(0, 0, 0, 0);
-
-    // Obter dados de atendimentos por hora
-    const frequentTimes = await DB.Message.findAll({
-      attributes: [
-        [Sequelize.fn('HOUR', Sequelize.col('timestamp')), 'hour'],
-        [Sequelize.fn('COUNT', Sequelize.fn('DISTINCT', Sequelize.col('sender'))), 'count']
-      ],
-      where: {
-        timestamp: {
-          [Op.gte]: today,
-          [Op.lt]: new Date(today.getTime() + 12 * 60 * 60 * 1000), // Buscar um período de 12 horas
-        },
-      },
-      group: [
-        Sequelize.fn('HOUR', Sequelize.col('timestamp'))
-      ],
-      order: [
-        [Sequelize.fn('HOUR', Sequelize.col('timestamp')), 'ASC']
-      ],
-      raw: true
-    });
-
-    // Verifique se passaram mais de 4 horas desde o início do turno
-    const currentTime = new Date();
-    const timeDifferenceInHours = (currentTime - today) / (1000 * 60 * 60);
-
-    if (timeDifferenceInHours > 4) {
-      // Gerar gráfico de atendimentos por hora
-      const labels1 = Array.from({ length: 12 }, (_, i) => `${i}:00`); // Gerar rótulos de 0:00 a 11:00
-      const data1 = Array.from({ length: 12 }, () => 0); // Inicializar dados para cada hora como 0
-
-      frequentTimes.forEach((timeData) => {
-        // Preencher os dados com a contagem correspondente para cada hora
-        const hour = timeData.hour;
-        data1[hour] = timeData.count;
-      });
-
-      const title1 = 'Atendimentos por Hora - AutoAtende';
-      const barColors1 = ['rgba(75, 192, 192, 0.8)', 'rgba(192, 75, 192, 0.8)', 'rgba(192, 192, 75, 0.8)'];
-      await generateBarChart(client, sender, labels1, data1, title1, barColors1);
-    } else {
-      await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Não passaram mais de quatro horas desde o início do turno. Aguarde um pouco para gerar o gráfico.`});
     }
 
     // Obter dados de utilização de comandos
@@ -791,7 +660,7 @@ async function generateAnalyticsReport(client, sender, DB) {
       });
 
       const title4 = 'Atendimentos por Mês - AutoAtende';
-      await generateBarChartWithCheck(months, counts, title4, barColors, false);
+      await generatePieChartWithCheck(months, counts, title4);
     } else {
       console.error('Nenhum dado retornado pela consulta de atendimentos mensais.');
     }
@@ -837,7 +706,6 @@ module.exports = {
   sendImageMkt,
   sendLocationMessage,
   generatePieChart,
-  generateBarChart,
   sendInactiveMessage,
   sendMKT,
   getServerStatus,
