@@ -237,8 +237,18 @@ const sendMKT = async (DB, client) => {
   }
 };
 
+const sendDevInfo = async (client, sender, DB, msg) => {
+  const devMSG = `AutoAtende v${config.botVersion}\n` +
+                 `Cliente: ${config.empresa.nomeDaLoja}\n` +
+                 `Informaçoes:\n\n` +
+                 (config.sendServerStatusDevMsg === true) ? getServerStatus(client, sender, DB, true) : `Não disponivel.` +
+                 `Mensagem de erro: ${msg}`;
+
+  await client.sendMessage(config.devNumber, { text: devMSG });
+}
+
 // Função para coletar informações do servidor e retornar uma mensagem formatada
-const getServerStatus = async (client, sender, DB) => {
+const getServerStatus = async (client, sender, DB, devInfo) => {
   try {
 
     // Tempo de atividade do sistema operacional em segundos
@@ -329,8 +339,13 @@ const getServerStatus = async (client, sender, DB) => {
       `${nodejsVersion}\n` +
       `${lsbotInfo}`;
 
+    if(devInfo === true) {
+      return statusMessage;
+    } else {
+      await client.sendMessage(sender, { text: statusMessage });
+    } 
     // Enviar a mensagem ao cliente
-    await client.sendMessage(sender, { text: statusMessage });
+    
   } catch (error) {
     console.error('Erro ao obter status do servidor:', error);
     // Tratar o erro aqui, se necessário
@@ -708,6 +723,7 @@ module.exports = {
   generatePieChart,
   sendInactiveMessage,
   sendMKT,
+  sendDevInfo,
   getServerStatus,
   parseCmd,
   generateAnalyticsReport,

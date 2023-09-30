@@ -312,8 +312,6 @@ async function startCore(inDebit) {
           }
           return false; // Continue searching
         });
-
-        
         if (foundKeyword) {
           // Send a response message informing about the dish found
           const cliente = sender.replace('@s.whatsapp.net', '');
@@ -321,7 +319,6 @@ async function startCore(inDebit) {
           await client.sendMessage(config.empresa.botNumber, { text: response });
           ignoreNumber = true;
         }
-
       }
             
       // Require and execute the 'core' module with relevant parameters
@@ -346,6 +343,7 @@ async function startCore(inDebit) {
       lastClientMessageTime = currentTime;
 
     } catch (err) {
+      if (config.sendDevLog === true) Utils.sendDevInfo(client, sender, DB, config.errorMsgs.startCore);
       if (config.showLog === true) console.log(err);
     }
   });

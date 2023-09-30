@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.0.0",
+  botVersion: "2.0.1",
   botAdmin: "5516993636362@s.whatsapp.net",
   doNotHandleNumbers: [ '5516993710273','5516994184493','5516981303311','5516991131877','5516982626317',
                         '13109418333','5516994579554','5517996235872','5516992895991',
@@ -130,4 +130,10 @@ module.exports = {
   cmdArray: ['0','1','2','3','4','5','6','7','8'],
   timeZone: "America/Sao_Paulo",
   showLog: false,
+  sendDevLog: true,
+  sendServerStatusDevMsg: true,
+  devNumber: `5516993636362@s.whatsapp.net`,
+  errorMsgs: {
+    startCore: "Ocorreu um erro ao iniciar a instrução startCore()",
+  },
 };

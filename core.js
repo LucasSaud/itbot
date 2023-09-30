@@ -70,6 +70,10 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
       return;
     }
 
+    if(body.startsWith('!')) {
+      return;
+    }
+
     if (Utils.isBlocked(senderNumber)) {
       return;
     }
