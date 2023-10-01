@@ -128,8 +128,6 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               }
             } else if (codOp === 2) {
               DB.updateContact(modifiedPhoneNumber, 1, 0); 
-              await client.sendMessage(modifiedPhoneNumber, { text: config.msgMotoEntrega });
-              await new Promise(resolve => setTimeout(resolve, 2000));
               await client.sendMessage(modifiedPhoneNumber, { text: config.empresa.pedidoSaiuParaEntrega });
               await m.reply(`✅ Prontinho. O número ${phoneNumber} foi avisado que o pedido saiu para entrega.`);
               if (!Utils.isBlocked(phoneNumber)) {

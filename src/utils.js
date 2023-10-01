@@ -339,13 +339,11 @@ const getServerStatus = async (client, sender, DB, devInfo) => {
       `${nodejsVersion}\n` +
       `${lsbotInfo}`;
 
-    if(devInfo === true) {
-      return statusMessage;
-    } else {
-      await client.sendMessage(sender, { text: statusMessage });
-    } 
-    // Enviar a mensagem ao cliente
-    
+      if(devInfo === true) {
+        return statusMessage;
+      } else {
+        await client.sendMessage(sender, { text: statusMessage });
+      }  
   } catch (error) {
     console.error('Erro ao obter status do servidor:', error);
     // Tratar o erro aqui, se necessário
@@ -468,16 +466,15 @@ const searchCEP = async (axios, client, mensagem, sender) => {
   // Converter a mensagem para letras minúsculas para evitar problemas de capitalização
   mensagem = mensagem.toLowerCase();
 
-  // Construir um padrão de expressão regular com os tipos de logradouro válidos
-  const padrao = `\\b(${config.tiposDeLogradouros.join('|')})\\s+([a-zA-Z\\s]+)\\b`;
-
-  // Usar a expressão regular para encontrar o endereço na mensagem
-  const regex = new RegExp(padrao);
+  // Construir um padrão de expressão regular com os tipos de logradouro válidos para encontrar o endereço na mensagem
+  const regex = new RegExp(`\\b(?:${config.tiposDeLogradouros.join('|')})\\s+[a-zA-Z\\s]+\\s+\\d+\\b`, 'g');
   const match = mensagem.match(regex);
 
   if (match) {
     // Retorna o endereço encontrado sem o logradouro
     const enderecoEncontrado = match[2];
+
+    if (config.showLog === true ) console.log("encontrei o endereço: " + enderecoEncontrado);
 
     // Codificar o endereço para URL
     const enderecoCodificado = encodeURIComponent(enderecoEncontrado);
