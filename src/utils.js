@@ -175,7 +175,7 @@ const sendInactiveMessage = async (client, m, DB) => {
             }
           });
 
-          await DB.saveLogs(`Mensagem enviada para ${whatsappNumber}`);
+          await DB.saveLogs(`[ INFO ] Mensagem enviada para ${whatsappNumber}`);
           m.reply(`✅ Mensagem enviada para ${whatsappNumber}.`);
           await new Promise(resolve => setTimeout(resolve, 3000));
         } else {
@@ -219,7 +219,7 @@ const sendMKT = async (DB, client) => {
     for (const { phoneNumber } of uniqueWhatsAppNumbers) {
       numOfMsgsSent++;
       await client.sendMessage(phoneNumber, { text: config.msgMkt });
-      await DB.saveLogs(`Mensagem enviada para ${phoneNumber}.`);
+      await DB.saveLogs(`[ INFO ] Mensagem enviada para ${phoneNumber}.`);
       await client.sendMessage(config.empresa.botNumber, { text: `✅ Mensagem enviada para ${phoneNumber}.` });
       await DB.Contacts.update({ isMktSent: true }, {
         where: {
@@ -233,7 +233,7 @@ const sendMKT = async (DB, client) => {
 
   } catch (error) {
     await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Ocorreu um erro ao enviar as mensagens ${error}.` });
-    await DB.saveLogs('Error: Ocorreu um erro ao enviar as mensagens', error);
+    await DB.saveLogs('[ ERROR ] Ocorreu um erro ao enviar as mensagens', error);
   }
 };
 
