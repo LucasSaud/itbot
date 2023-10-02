@@ -79,10 +79,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
     }
     else if (!m.isGroup && !Utils.isOpen() && Utils.isBlocked(senderNumber) && !itsAdm && !itsMe) {
       await client.sendMessage(config.empresa.botNumber, {
-        text: `🗣️ O usuário ${pushname} (${sender.replace(
-          '@s.whatsapp.net',
-          ''
-        )}) entrou em contato conosco enquanto estávamos fechados.`,
+        text: `🗣️ O usuário ${sender.replace('@s.whatsapp.net','')} entrou em contato conosco enquanto estávamos fechados.`,
       });
       await m.reply(
         `🤩 Olá, ${pushname} 👋!\n ${config.msgLojaFechada}`
@@ -101,7 +98,8 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
           const args = cleanedCommand.trim().split(' ');
 
           let phoneNumber = args[1];
-          if (phoneNumber && phoneNumber.length === 9) phoneNumber = `5516${phoneNumber}`;
+          let phonePrefix = `${config.botCountryCode}${config.botDDDCode}`;
+          if (phoneNumber && phoneNumber.length === 9) phoneNumber = `${phonePrefix}${phoneNumber}`;
           
           const modifiedPhoneNumber = phoneNumber + '@s.whatsapp.net';
 
@@ -111,13 +109,13 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
           else if (args.length === 2 && args[1].startsWith('2')) {
             await Utils.sendInactiveMessage(client, m, DB); 
           }
-          else if (args.length === 2 && args[1].startsWith('3')) {
+          else if (config.enableStats === true && args.length === 2 && args[1].startsWith('3')) {
             Utils.generateAnalyticsReport(client, sender, DB);
           }
-          else if (args.length === 2 && args[1].startsWith('4')) {
+          else if (config.enableStatus === true && args.length === 2 && args[1].startsWith('4')) {
             await Utils.getServerStatus(client, sender, DB);
           }
-          else if (args.length === 3 && phoneNumber.startsWith('55')) {      
+          else if (args.length === 3 && phoneNumber.startsWith(config.botCountryCode)) {      
             const codOp = parseInt(args[2]);
             if (codOp === 1) {
               DB.updateContact(modifiedPhoneNumber, 0, 1); 
@@ -171,7 +169,11 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
 
           switch (command) {
             case '0':
-              await Utils.getServerStatus(client, sender, DB);        
+              if(config.enableStatus === true) {
+                await Utils.getServerStatus(client, sender, DB);    
+              } else {
+                await m.reply("A função *status* está desabilitada.");
+              }    
               break;
 
             case '1':

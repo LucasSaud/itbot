@@ -422,12 +422,20 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
         case 'status':
           await client.sendMessage(sender, { delete: mek.key });
-          getServerStatus(client, sender, DB);
+          if (config.enableStatus === true) {
+            getServerStatus(client, sender, DB);
+          } else {
+            await client.sendMessage(config.empresa.botNumber, { text: `A função *status* está desabilidata.`});
+          }
           break;
 
         case 'stats':
-          await client.sendMessage(sender, { delete: mek.key });          
-          generateAnalyticsReport(client, sender, DB);
+          await client.sendMessage(sender, { delete: mek.key });
+          if (config.enableStats === true) {
+            generateAnalyticsReport(client, sender, DB);
+          } else {
+            await client.sendMessage(config.empresa.botNumber, { text: `A função *stats* está desabilidata.`});
+          }
           break;
 
         case 'oi':
@@ -518,8 +526,6 @@ const searchCEP = async (axios, client, mensagem, sender) => {
   // Se nenhum endereço foi encontrado na mensagem
   return false;
 }
-
-
 
 // Função para gerar gráfico de pizza com chartjs-node-canvas
 const generatePieChart = async (client, sender, labels, data, title) => {
