@@ -9,12 +9,6 @@ const moment = require('moment-timezone');
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
-const randomNum = () => {
-    const min = 1000; // O menor número de 4 dígitos (1000)
-    const max = 9999; // O maior número de 4 dígitos (9999)
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 // Função para formatar o tempo de atividade em horas, minutos e segundos
 const formatUptime = (uptimeInSeconds) => {
   const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
@@ -739,5 +733,5 @@ module.exports = {
   generateAnalyticsReport,
   searchCEP,
   cleanOldFiles,
-  delDir,
+  delDir
 };

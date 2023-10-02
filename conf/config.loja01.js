@@ -1,5 +1,5 @@
 module.exports = {
-  "botVersion": "2.1.1",
+  "botVersion": "2.1.2",
   "botAdmin": "5516993636362@s.whatsapp.net",
   "botCountryCode": "55",
   "botDDDCode": "16",
@@ -310,5 +310,7 @@ module.exports = {
   "enableKeywordDetector": true,
   "enableAddrDetector": false,
   "enableStats": false,
-  "enableEmogiReact": true
+  "enableEmogiReact": true,
+  "enableDB": false,
+  "chartDir": "chart"
 };

@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const semver = require('semver');
 const readline = require('readline');
 const config = require('../conf/config.js');
@@ -10,6 +11,7 @@ const rl = readline.createInterface({
 });
 
 function updateVersionAndAddNewConfig() {
+  let doNothing = false;
   if (
     semver.gt(config.botVersion, configLoja01.botVersion) &&
     semver.valid(config.botVersion) &&
@@ -18,34 +20,35 @@ function updateVersionAndAddNewConfig() {
     console.log(`A versão em config é maior (${config.botVersion}) do que em configLoja01 (${configLoja01.botVersion}). Atualizando...`);
     configLoja01.botVersion = config.botVersion;
   } else {
-    console.log('Nenhuma atualização necessária.');
-    return;
+    console.log('Nenhuma atualização necessária de versao.');
+    doNothing = true;
   }
 
-  // Verificar e adicionar novas configurações
-  for (const key in config) {
-    if (!(key in configLoja01)) {
-      console.log(`Nova configuração encontrada em config: ${key}`);
-      configLoja01[key] = config[key];
+  if(doNothing != true) {
+    // Verificar e adicionar novas configurações
+    for (const key in config) {
+      if (!(key in configLoja01)) {
+        console.log(`Nova configuração encontrada em config: ${key}`);
+        configLoja01[key] = config[key];
+      }
     }
-  }
 
-  // Remover configurações ausentes em config.js
-  for (const key in configLoja01) {
-    if (!(key in config)) {
-      console.log(`Configuração ausente em config.js: ${key}. Removendo de configLoja01.`);
-      delete configLoja01[key];
+    // Remover configurações ausentes em config.js
+    for (const key in configLoja01) {
+      if (!(key in config)) {
+        console.log(`Configuração ausente em config.js: ${key}. Removendo de configLoja01.`);
+        delete configLoja01[key];
+      }
     }
+    const backupFileName = path.join(__dirname, '..', 'conf', 'bkp', 'config.loja01.backup.js');
+    const configLoja01File = path.join(__dirname, '..', 'conf', 'config.loja01.js');
+    fs.copyFileSync(configLoja01File, backupFileName);
+    console.log(`Backup criado: ${backupFileName}`);
+  
+    const updatedConfig = JSON.stringify(configLoja01, null, 2);
+    fs.writeFileSync(configLoja01File, `module.exports = ${updatedConfig};`, 'utf-8');
+    console.log('Versão atualizada.');
   }
-
-  const backupFileName = path.join(__dirname, '..', 'conf', 'bkp', 'config.loja01.backup.js');
-  const configLoja01File = path.join(__dirname, '..', 'conf', 'config.loja01.js');
-  fs.copyFileSync(configLoja01File, backupFileName);
-  console.log(`Backup criado: ${backupFileName}`);
-
-  const updatedConfig = JSON.stringify(configLoja01, null, 2);
-  fs.writeFileSync(configLoja01File, `module.exports = ${updatedConfig};`, 'utf-8');
-  console.log('Versão atualizada.');
 }
 
 function menu() {
