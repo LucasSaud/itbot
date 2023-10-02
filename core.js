@@ -3,7 +3,7 @@ const util = require('util');
 const path = require('path');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const moment = require('moment-timezone');
-const config = require('./config');
+const config = require('./conf/config');
 const Database = require('./src/db');
 const Utils = require('./src/utils');
 

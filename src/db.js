@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const Utils = require('./utils.js');
-const config = require('../config.js');
+const config = require('../conf/config.js');
 
 class Database {
   constructor() {
