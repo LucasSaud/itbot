@@ -466,53 +466,60 @@ const searchCEP = async (axios, client, mensagem, sender) => {
   // Converter a mensagem para letras minúsculas para evitar problemas de capitalização
   mensagem = mensagem.toLowerCase();
 
-  // Construir um padrão de expressão regular com os tipos de logradouro válidos para encontrar o endereço na mensagem
-  const regex = new RegExp(`\\b(?:${config.tiposDeLogradouros.join('|')})\\s+[a-zA-Z\\s]+\\s+\\d+\\b`, 'g');
-  const match = mensagem.match(regex);
+  // Construir um padrão de expressão regular com os tipos de logradouro válidos
+  const padrao = `\\b(${config.tiposDeLogradouros.join('|')})\\s+([a-zA-Z\\s]+)\\b`;
 
-  if (match) {
-    // Retorna o endereço encontrado sem o logradouro
-    const enderecoEncontrado = match[2];
+  // Usar a expressão regular para encontrar o endereço na mensagem
+  const regex = new RegExp(padrao);
+  const matches = mensagem.match(regex);
 
-    if (config.showLog === true ) console.log("encontrei o endereço: " + enderecoEncontrado);
+  if (matches) {
+    for (const match of matches) {
+      // Retorna o endereço encontrado
+      const enderecoEncontrado = match;
 
-    // Codificar o endereço para URL
-    const enderecoCodificado = encodeURIComponent(enderecoEncontrado);
+      if (config.showLog === true) console.log("Encontrei o endereço:", enderecoEncontrado);
 
-    // Construir a URL para a consulta do CEP
-    const url = `http://viacep.com.br/ws/SP/Franca/${enderecoCodificado}/json`;
+      // Codificar o endereço para URL
+      const enderecoCodificado = encodeURIComponent(enderecoEncontrado);
 
-    try {
-      // Enviar a solicitação HTTP
-      const response = await axios.get(url);
-      if (config.showLog === true ) console.log("Status da resposta:", response.status);
-      if (config.showLog === true ) console.log("Texto do status:", response.statusText);
+      // Construir a URL para a consulta do CEP
+      const url = `http://viacep.com.br/ws/SP/Franca/${enderecoCodificado}/json`;
 
-      if (response.data && response.data[0].cep) {
-        // Se existem dados do CEP, você pode continuar com o processamento normalmente
-        const cep = response.data[0].cep;
-        if (config.showLog === true ) console.log("CEP encontrado:", cep);
+      try {
+        // Enviar a solicitação HTTP
+        const response = await axios.get(url);
+        if (config.showLog === true) console.log("Status da resposta:", response.status);
+        if (config.showLog === true) console.log("Texto do status:", response.statusText);
 
-        // Envie uma mensagem de resposta informando sobre o CEP encontrado
-        const cliente = sender.replace('@s.whatsapp.net', '');
-        const msg01 = `⚠️ O número ${cliente} passou um endereço residencial ou comercial.\nCEP: ${cep}.\nOlhar a conversa.`;
-        await client.sendMessage(config.empresa.botNumber, { text: msg01 });
-        return true;
-      } else {
-        // Se não existem dados do CEP, significa que o CEP não foi encontrado
-        if (config.showLog === true ) console.log("Endereço não encontrado");
-        // Envie uma mensagem informando que o endereço não foi encontrado
-        await client.sendMessage(config.empresa.botNumber, { text: `❌ Desculpe, não encontrei o CEP para o endereço: ${enderecoEncontrado}` });
-        return false;
+        if (response.data && response.data.cep) {
+          // Se existem dados do CEP, você pode continuar com o processamento normalmente
+          const cep = response.data.cep;
+          if (config.showLog === true) console.log("CEP encontrado:", cep);
+
+          // Envie uma mensagem de resposta informando sobre o CEP encontrado
+          const cliente = sender.replace('@s.whatsapp.net', '');
+          const msg01 = `⚠️ O número ${cliente} passou um endereço residencial ou comercial.\nCEP: ${cep}.\nOlhar a conversa.`;
+          await client.sendMessage(config.empresa.botNumber, { text: msg01 });
+          return true;
+        } else {
+          // Se não existem dados do CEP, significa que o CEP não foi encontrado
+          if (config.showLog === true) console.log("Endereço não encontrado");
+          // Envie uma mensagem informando que o endereço não foi encontrado
+          await client.sendMessage(config.empresa.botNumber, { text: `❌ Desculpe, não encontrei o CEP para o endereço: ${enderecoEncontrado}` });
+        }
+      } catch (error) {
+        console.error('Erro durante o processo de atualização:', error.message);
+        await client.sendMessage(config.empresa.botNumber, { text: `❌ Desculpe, ocorreu um erro ao buscar o CEP para o endereço: ${enderecoEncontrado}` });
       }
-    } catch (error) {
-      await client.sendMessage(config.empresa.botNumber, { text: `❌ Desculpe, não encontrei o CEP para o endereço: ${enderecoEncontrado}` });
-      return false;
     }
-  } else {
-    return false;
   }
+
+  // Se nenhum endereço foi encontrado na mensagem
+  return false;
 }
+
+
 
 // Função para gerar gráfico de pizza com chartjs-node-canvas
 const generatePieChart = async (client, sender, labels, data, title) => {

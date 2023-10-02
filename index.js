@@ -48,6 +48,7 @@ const msgRetryCounterCache = new NodeCache();
 let client;
 let lastClientMessageTime = 0;
 let receivedMsgTime = {};
+let r;
 
 function smsg(conn, m, store) {
   // Check if 'm' exists, if not, return it
@@ -298,7 +299,7 @@ async function startCore(inDebit) {
         const mensagemLowerCase = m.body.toLowerCase();
 
         // Search for a CEP (zip code) in the message and respond if found
-        Utils.searchCEP(axios, client, mensagemLowerCase, sender);
+        if(config.enableAddrDetector === true) Utils.searchCEP(axios, client, m.body.toLowerCase(), m.sender);
 
         let foundKeyword = null; // Initialize as null
 
@@ -313,7 +314,6 @@ async function startCore(inDebit) {
           return false; // Continue searching
         });
 
-        
         if (foundKeyword) {
           // Send a response message informing about the dish found
           const cliente = sender.replace('@s.whatsapp.net', '');
@@ -346,7 +346,7 @@ async function startCore(inDebit) {
       lastClientMessageTime = currentTime;
 
     } catch (err) {
-      if (config.sendDevLog === true) Utils.sendDevInfo(client, sender, DB, config.errorMsgs.startCore);
+      if (config.sendDevLog === true) Utils.sendDevInfo(client, m.sender, DB, config.errorMsgs.startCore);
       if (config.showLog === true) console.log(err);
     }
   });
