@@ -193,6 +193,11 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             case '3':
               await Utils.sendLocationMessage(client, from, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
               await new Promise(resolve => setTimeout(resolve, 2000));
+              if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
+                await m.reply(
+                  config.msgAvisoSegundas
+                );
+              }
               await m.reply(
                 config.empresa.nossaLocalizacao
               );
@@ -251,6 +256,12 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               await m.reply(
               msgEndCardapio
               );
+
+              if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
+                await m.reply(
+                  config.msgAvisoSegundas
+                );
+              }
 
               if(config.mostrarMsgEntregaReduzida) {
                 await m.reply(

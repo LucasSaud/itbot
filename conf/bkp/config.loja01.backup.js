@@ -1,5 +1,5 @@
 module.exports = {
-  "botVersion": "2.1.3",
+  "botVersion": "2.1.2",
   "botAdmin": "5516993636362@s.whatsapp.net",
   "botCountryCode": "55",
   "botDDDCode": "16",
@@ -312,6 +312,5 @@ module.exports = {
   "enableStats": false,
   "enableEmogiReact": true,
   "enableDB": false,
-  "chartDir": "chart",
-  "msgAvisoSegundas": "☝🏼 *Aviso:* As segundas-feiras a Loja01 da Ital'in House Franca funciona em outra localização. 📁\n\nRua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP"
+  "chartDir": "chart"
 };

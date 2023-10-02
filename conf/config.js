@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.1.2",
+  botVersion: "2.1.3",
   botAdmin: "5516993636362@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -96,6 +96,7 @@ module.exports = {
   msgReforcoCliente: `👋 Olá, novamente! Parece que você está explorando nosso atendimento virtual. Se precisar de ajuda com nosso cardápio delicioso ou quiser fazer um pedido, é só me chamar! Estou aqui para tornar sua experiência na Ital'in House incrível. 😊🍝🥂\n\nSe você tiver qualquer dúvida, envie "8" e aguarde, ok?`,
   msgEntregaReduzida: `🍝🏙️ Descubra a Ital'In House no bairro Cidade Nova! Nossos deliciosos pratos de macarrão estão a poucos passos de você. E tem mais: se você mora nos bairros da zona NORTE, NORDESTE ou NOROESTE, aproveite nossas taxas de entrega reduzidas. 🛵🤑`,
   msgMotoEntrega: `🤩 Olá 👋! Passando pra dizer que seu pedido já esta pronto.\nSe tiver qualquer problema, pode me enviar aqui mesmo, ou nos ligar no telefone (16) 99788-8800 para resolvermos imediatamente.\n\nE se tiver gostado, a sua avaliação nos ajuda MUITO a crescer, e se destacar entre tantos.\n\nEstamos participando de uma competição, e se nos der 5 estrelas, nos deixará mais próximo de vencer ! ✨\n\nO SEU FEEDBACK SERÁ SEMPRE MUITO IMPORTANTE PARA NÓS.\n\nMil vezes obrigado!\nItal'in House! 💚🤍❤️🍝🧑🏼‍🍳\n\nAhh, outra coisa… Se puder, nos marque como “favoritos”, assim você receberá promoções exclusivas 😍🍝`,
+  msgAvisoSegundas: "☝🏼 *Aviso:* As segundas-feiras a Loja01 da Ital'in House Franca funciona em outra localização. 📁\n\nRua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP",
   empresa: {
     nomeDaLoja: "Ital'in House Franca Loja 02",
     enderecoDaLoja: "Rua Alváro Abranches, 1057, Cidade Nova, Franca-SP",

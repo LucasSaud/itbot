@@ -9,7 +9,6 @@ const moment = require('moment-timezone');
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
-// Função para formatar o tempo de atividade em horas, minutos e segundos
 const formatUptime = (uptimeInSeconds) => {
   const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
   const hours = Math.floor(uptimeInSecondsRounded / 3600);
@@ -18,7 +17,6 @@ const formatUptime = (uptimeInSeconds) => {
   return `${hours} horas, ${minutes} minutos e ${seconds} segundos`;
 }
 
-// Função para formatar bytes em uma representação legível
 const formatBytes = (bytes, decimals = 2) => {
   if (!+bytes) return '0 Bytes';
   const k = 1024;
@@ -28,7 +26,6 @@ const formatBytes = (bytes, decimals = 2) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-// Function to delete directory and all it content
 const delDir = (directoryPath) => {
   if (fs.existsSync(directoryPath)) {
     const files = fs.readdirSync(directoryPath);
@@ -44,7 +41,6 @@ const delDir = (directoryPath) => {
   }
 }
 
-// Function to check and delete files older than 1 hour
 const cleanOldFiles = (folder, ageOfFile) => {
   const now = new Date().getTime(); // Get the current time in milliseconds
 
@@ -62,11 +58,7 @@ const cleanOldFiles = (folder, ageOfFile) => {
           console.error(`Error getting file information for ${file}:`, err);
           return;
         }
-
-        // Calculate the time difference between the current time and the file's creation time
         const timeDifference = now - stats.ctime.getTime();
-
-        // If the file is older than 1 hour, delete it
         if (timeDifference > ageOfFile) {
           fs.unlink(filePath, (err) => {
             if (err) {
@@ -81,7 +73,6 @@ const cleanOldFiles = (folder, ageOfFile) => {
   });
 }
 
-// Verificação de horário de funcionamento
 const isOpen = () => {
   const d = new Date();
   const hora = d.getHours();
@@ -97,6 +88,12 @@ const isOpen = () => {
     return false;
   }
 }
+
+const isMonday = () => {
+  const currentDate = new Date();
+  const dayOfWeek = currentDate.getDay();
+  return dayOfWeek === 1;
+};
  
 const isBlocked = (numero) => {
   if(doNotHandleNumbers.includes(numero)) {
@@ -376,7 +373,13 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'retirada':
           await client.sendMessage(sender, { delete: mek.key });
           DB.updateContact(senderNumber, 0, 1); 
-          await client.sendMessage(sender, { text: config.empresa.pedidoProntoRetirada });
+          
+          if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
+            await client.sendMessage(sender, { text: config.msgAvisoSegundas });
+          } else {
+            await client.sendMessage(sender, { text: config.empresa.pedidoProntoRetirada });
+          }
+          
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi avisado para vir buscar o pedido.`});
           if (!isBlocked(senderNumber)) doNotHandleNumbers.push(senderNumber);
           break;
@@ -443,7 +446,12 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           await client.sendMessage(sender, { text: msgBoasVindas });
           await client.sendMessage(sender, { text: config.msgBV1 });
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
-          await client.sendMessage(sender, { text: msgEndCardapio });              
+          await client.sendMessage(sender, { text: msgEndCardapio });    
+          
+          if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
+            await client.sendMessage(sender, { text: config.msgAvisoSegundas });
+          }
+
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem de boas vindas.`});
           break;
 
@@ -721,6 +729,7 @@ module.exports = {
   doNotHandleNumbers,
   isOpen,
   isBlocked,
+  isMonday,
   sendImageMessage,
   sendImageMkt,
   sendLocationMessage,
