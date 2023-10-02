@@ -1,6 +1,8 @@
 module.exports = {
   botVersion: "2.0.1",
   botAdmin: "5516993636362@s.whatsapp.net",
+  botCountryCode: "55",
+  botDDDCode: "16",
   doNotHandleNumbers: [ '5516993710273','5516994184493','5516981303311','5516991131877',
                         '13109418333','5516994579554','5517996235872','5516992895991',
                         '553197137788','5516994622366','5517981436608','5511950825321',
@@ -136,4 +138,8 @@ module.exports = {
   errorMsgs: {
     startCore: "Ocorreu um erro ao iniciar a instrução startCore()",
   },
+  enableKeywordDetector: true,
+  enableAddrDetector: false,
+  enableStats: false,
+  enableEmogiReact: true,
 };

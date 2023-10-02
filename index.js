@@ -262,7 +262,7 @@ async function startCore(inDebit) {
       if (!mek.isGroup) receivedMsgTime[m.sender] = new Date();
       if (m.mtype === 'videoMessage' && m.body) return;
 
-      if (mek.message && mek.message.documentMessage && !itsMe) {
+      if (config.enableEmogiReact === true && mek.message && mek.message.documentMessage && !itsMe) {
         const documentMessage = mek.message.documentMessage;
         if (documentMessage.mimetype === 'application/pdf') {
           // React to a PDF document with a money emoji
@@ -277,7 +277,7 @@ async function startCore(inDebit) {
       }
 
       // Check if 'm.body' is a number between 1 and 8
-      if(!mek.isGroup && m.body && m.body.length === 1) {
+      if(config.enableEmogiReact === true && !mek.isGroup && m.body && m.body.length === 1) {
         const number = parseInt(m.body);
         if (!mek.isGroup && (number >= 1 && number <= 8) && !itsMe) {
           // Check if there is a corresponding emoji in the mapping
@@ -301,27 +301,28 @@ async function startCore(inDebit) {
         // Search for a CEP (zip code) in the message and respond if found
         if(config.enableAddrDetector === true) Utils.searchCEP(axios, client, m.body.toLowerCase(), m.sender);
 
-        let foundKeyword = null; // Initialize as null
+        if(config.enableKeywordDetector === true) {
+          let foundKeyword = null; // Initialize as null
 
-        // Check if any menu keywords or their variants are present in the message
-        Object.keys(config.palavrasChave).some((keyword) => {
-          const variants = config.palavrasChave[keyword];
-          const foundVariant = variants.find((variant) => mensagemLowerCase.includes(variant.toLowerCase()));
-          if (foundVariant) {
-            foundKeyword = keyword; // Store the found keyword
-            return true; // Exit the loop as soon as the first match is found
+          // Check if any menu keywords or their variants are present in the message
+          Object.keys(config.palavrasChave).some((keyword) => {
+            const variants = config.palavrasChave[keyword];
+            const foundVariant = variants.find((variant) => mensagemLowerCase.includes(variant.toLowerCase()));
+            if (foundVariant) {
+              foundKeyword = keyword; // Store the found keyword
+              return true; // Exit the loop as soon as the first match is found
+            }
+            return false; // Continue searching
+          });
+
+          if (foundKeyword) {
+            // Send a response message informing about the dish found
+            const cliente = sender.replace('@s.whatsapp.net', '');
+            const response = `⚠️⚠️⚠️ *O número ${cliente} quer fazer um pedido. Palavra-chave encontrada: ${foundKeyword}. Olhar a conversa.* ⚠️⚠️⚠️`;
+            await client.sendMessage(config.empresa.botNumber, { text: response });
+            ignoreNumber = true;
           }
-          return false; // Continue searching
-        });
-
-        if (foundKeyword) {
-          // Send a response message informing about the dish found
-          const cliente = sender.replace('@s.whatsapp.net', '');
-          const response = `⚠️⚠️⚠️ *O número ${cliente} quer fazer um pedido. Palavra-chave encontrada: ${foundKeyword}. Olhar a conversa.* ⚠️⚠️⚠️`;
-          await client.sendMessage(config.empresa.botNumber, { text: response });
-          ignoreNumber = true;
         }
-
       }
             
       // Require and execute the 'core' module with relevant parameters
