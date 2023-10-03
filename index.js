@@ -634,7 +634,7 @@ async function startCore(inDebit) {
         if (config.showLog === true) console.log('Dispositivo desconectado, por favor, exclua a pasta da sessão e escaneie novamente.');
         const directoryPath = path.join(__dirname, 'sessoes');
         Util.delDirs(directoryPath);
-        client.logout()
+        client.logout();
         process.exit();
       } else if (reason === DisconnectReason.restartRequired) {
         if (config.showLog === true) console.log('Reinício necessário, reiniciando...');
