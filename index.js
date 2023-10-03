@@ -55,15 +55,16 @@ const makeCacheableSignalKeyStore = baileys.makeCacheableSignalKeyStore;
 const isJidBroadcast = baileys.isJidBroadcast;
 const MessageRetryMap = baileys.MessageRetryMap;
 const getAggregateVotesInPollMessage = baileys.getAggregateVotesInPollMessage;
+const jidDecode = baileys.jidDecode;
+const getContentType = baileys.getContentType;
 
 // Initialize a logger using pino with a silent log level
 const logger = pino({ level: 'silent' });
 
 // Create instances of custom Database and DBS classes
-if(config.enableDB === true) {
-	const DB = new Database();
-	const DBSX = new DBS();
-}
+const DB = new Database();
+const DBSX = new DBS();
+
 // Create an in-memory store using Baileys
 const store = makeInMemoryStore({ logger });
 
@@ -74,7 +75,6 @@ const msgRetryCounterCache = new NodeCache();
 let client;
 let lastClientMessageTime = 0;
 let receivedMsgTime = {};
-let r;
 
 function smsg(conn, m, store) {
   // Check if 'm' exists, if not, return it
@@ -470,7 +470,7 @@ async function startCore(inDebit) {
       lastClientMessageTime = currentTime;
 
     } catch (err) {
-      if (config.sendDevLog === true) Utils.sendDevInfo(client, m.sender, DB, config.errorMsgs.startCore);
+      //if (config.sendDevLog === true) Utils.sendDevInfo(client, m.sender, DB, config.errorMsgs.startCore);
       if (config.showLog === true) console.log(err);
     }
   });

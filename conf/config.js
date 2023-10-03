@@ -142,8 +142,8 @@ module.exports = {
   },
   enableKeywordDetector: true,
   enableAddrDetector: false,
-  enableStats: false,
+  enableStats: true,
   enableEmogiReact: true,
-  enableDB: false,
+  enableDB: true,
   chartDir: "chart",
 };
