@@ -17,27 +17,53 @@ const sessionName = 'sessoes';
 
 // Aliases for Baileys library components
 const coreConnect = baileys.default;
-const useMultiFileAuthState = baileys.useMultiFileAuthState;
 const DisconnectReason = baileys.DisconnectReason;
-const fetchLatestBaileysVersion = baileys.fetchLatestBaileysVersion;
-const makeInMemoryStore = baileys.makeInMemoryStore;
-const jidDecode = baileys.jidDecode;
-const isJidBroadcast = baileys.isJidBroadcast;
-const proto = baileys.proto;
-const getContentType = baileys.getContentType;
 const Browsers = baileys.Browsers;
-const fetchLatestWaWebVersion = baileys.fetchLatestWaWebVersion;
-const makeCacheableSignalKeyStore = baileys.makeCacheableSignalKeyStore;
 const WAMessageContent = baileys.WAMessageContent;
 const WAMessageKey = baileys.WAMessageKey;
+const AnyMessageContent = baileys.AnyMessageContent;
+const delay = baileys.delay;
+const MessageType = baileys.MessageType;
+const MessageOptions = baileys.MessageOptions;
+const Mimetype = baileys.Mimetype;
+const isJidGroup = baileys.isJidGroup;
+const loadMessages = baileys.loadMessages;
+const fetchLatestBaileysVersion = baileys.fetchLatestBaileysVersion;
+const fetchLatestWaWebVersion = baileys.fetchLatestWaWebVersion;
+const WASocket = baileys.WASocket;
+const AuthenticationState = baileys.AuthenticationState;
+const BufferJSON = baileys.BufferJSON;
+const getMessage = baileys.getMessage;
+const WA_DEFAULT_EPHEMERAL = baileys.WA_DEFAULT_EPHEMERAL;
+const initInMemoryKeyStore = baileys.initInMemoryKeyStore;
+const WAMessage = baileys.WAMessage;
+const Contact = baileys.Contact;
+const SocketConfig = baileys.SocketConfig;
+const BaileysEventMap = baileys.BaileysEventMap;
+const GroupMetadata = baileys.GroupMetadata;
+const MiscMessageGenerationOptions = baileys.MiscMessageGenerationOptions;
+const generateWAMessageFromContent = baileys.generateWAMessageFromContent;
+const downloadContentFromMessage = baileys.downloadContentFromMessage;
+const downloadHistory = baileys.downloadHistory;
+const proto = baileys.proto;
+const generateWAMessageContent = baileys.generateWAMessageContent;
+const prepareWAMessageMedia = baileys.prepareWAMessageMedia;
+const WAUrlInfo = baileys.WAUrlInfo;
+const useMultiFileAuthState = baileys.useMultiFileAuthState;
+const makeInMemoryStore = baileys.makeInMemoryStore;
+const makeCacheableSignalKeyStore = baileys.makeCacheableSignalKeyStore;
+const isJidBroadcast = baileys.isJidBroadcast;
+const MessageRetryMap = baileys.MessageRetryMap;
+const getAggregateVotesInPollMessage = baileys.getAggregateVotesInPollMessage;
 
 // Initialize a logger using pino with a silent log level
 const logger = pino({ level: 'silent' });
 
 // Create instances of custom Database and DBS classes
-const DB = new Database();
-const DBSX = new DBS();
-
+if(config.enableDB === true) {
+	const DB = new Database();
+	const DBSX = new DBS();
+}
 // Create an in-memory store using Baileys
 const store = makeInMemoryStore({ logger });
 
@@ -201,17 +227,114 @@ async function startCore(inDebit) {
 
   // Initialize the WhatsApp client
   client = coreConnect({
-    logger,
-    printQRInTerminal: true,
-    auth: {
-      creds: state.creds,
-      keys: makeCacheableSignalKeyStore(state.keys, logger),
-    },
-    browser: Browsers.macOS('Desktop'),
-    msgRetryCounterCache,
-    generateHighQualityLinkPreview: true,
-    shouldIgnoreJid: jid => isJidBroadcast(jid),
-  });
+		/** the WS url to connect to WA */
+		//waWebSocketUrl: config.WA_URL,
+		/** Fails the connection if the socket times out in this interval */
+		connectTimeoutMs: 60000,
+		/** Default timeout for queries, undefined for no timeout */
+		defaultQueryTimeoutMs: undefined,
+		/** ping-pong interval for WS connection */
+		keepAliveIntervalMs: 5000,
+		/** proxy agent */
+		agent: undefined,
+		/** pino logger */
+		logger: pino({ level: 'error' }),
+		/** version to connect with */
+		version: version || undefined,
+		/** override browser config */
+		browser: Browsers.macOS('Desktop'),
+		/** agent used for fetch requests -- uploading/downloading media */
+		fetchAgent: undefined,
+		/** should the QR be printed in the terminal */
+		printQRInTerminal: true,
+		/** should events be emitted for actions done by this socket connection */
+		emitOwnEvents: false,
+		/** provide a cache to store media, so does not have to be re-uploaded */
+		//mediaCache: NodeCache,
+		/** custom upload hosts to upload media to */
+		//customUploadHosts: MediaConnInfo['hosts'],
+		/** time to wait between sending new retry requests */
+		retryRequestDelayMs: 5000,
+		/** time to wait for the generation of the next QR in ms */
+		qrTimeout: 15000,
+		/** provide an auth state object to maintain the auth state */
+		//auth: state,
+		auth: {
+			creds: state.creds,
+				//caching makes the store faster to send/recv messages
+				keys: makeCacheableSignalKeyStore(state.keys, logger),
+		},
+		/** manage history processing with this control; by default will sync up everything */
+		//shouldSyncHistoryMessage: boolean,
+		/** transaction capability options for SignalKeyStore */
+		//transactionOpts: TransactionCapabilityOptions,
+		/** provide a cache to store a user's device list */
+		//userDevicesCache: NodeCache,
+		/** marks the client as online whenever the socket successfully connects */
+		//markOnlineOnConnect: setOnline,
+		/**
+		* map to store the retry counts for failed messages;
+		* used to determine whether to retry a message or not */
+		msgRetryCounterCache: msgRetryCounterCache,
+		/** width for link preview images */
+		linkPreviewImageThumbnailWidth: 192,
+		/** Should Baileys ask the phone for full history, will be received async */
+		syncFullHistory: true,
+		/** Should baileys fire init queries automatically, default true */
+		fireInitQueries: true,
+		/**
+		* generate a high quality link preview,
+		* entails uploading the jpegThumbnail to WA
+		* */
+		generateHighQualityLinkPreview: true,
+		/** options for axios */
+		//options: AxiosRequestConfig || undefined,
+		// ignore all broadcast messages -- to receive the same
+		// comment the line below out
+		shouldIgnoreJid: jid => isJidBroadcast(jid),
+		/** By default true, should history messages be downloaded and processed */
+		downloadHistory: true,
+		/**
+		* fetch a message from your store
+		* implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
+		* */
+		// implement to handle retries
+		getMessage: async (key) => {
+			if (store) {
+				const msg = await store?.loadMessage(key?.remoteJid, key?.id);
+				return msg?.message || undefined;
+			}
+			//
+			// only if store is present
+			return {
+				conversation: 'hello'
+			}
+		},
+		// For fix button, template list message
+		patchMessageBeforeSending: (message) => {
+			const requiresPatch = !!(
+							message.buttonsMessage ||
+							message.templateMessage ||
+							message.listMessage
+			);
+			if (requiresPatch) {
+				message = {
+								viewOnceMessage: {
+									message: {
+										messageContextInfo: {
+											deviceListMetadataVersion: 2,
+											deviceListMetadata: {},
+										},
+										...message,
+									},
+								},
+				}
+			}
+			//
+			return message;
+			}
+		});
+
 
   // Bind the client to the store
   store.bind(client.ev);
@@ -659,7 +782,7 @@ setInterval(() => {
 }, maxAgeForSessions);
 
 // Check if the bot's number (without '@s.whatsapp.net') is paid in the DBSX
-if (DBSX.isPaid(config.empresa.botNumber.replace('@s.whatsapp.net', ''))) {
+if (config.enableDB === true && DBSX.isPaid(config.empresa.botNumber.replace('@s.whatsapp.net', ''))) {
   // If the bot's number is paid, start the 'startCore' function with 'false' parameter
   startCore(false);
 } else {
