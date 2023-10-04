@@ -6,11 +6,13 @@ const moment = require('moment-timezone');
 const config = require('./conf/config');
 const Database = require('./src/db');
 const Utils = require('./src/utils');
+const Chart = require('./src/chart.js');
 
 module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
   try {
 
     const DB = new Database();
+    const Graphs = new Chart();
     const cmdArray = config.cmdArray;
     const currentTime = moment.tz(config.timeZone);
     const timestamp = currentTime.format('YYYY-MM-DD HH:mm:ss');
@@ -110,10 +112,11 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             await Utils.sendInactiveMessage(client, m, DB); 
           }
           else if (config.enableStats === true && args.length === 2 && args[1].startsWith('3')) {
-            Utils.generateAnalyticsReport(client, sender, DB);
+            Utils.generateAnalyticsReport(client, sender, DB, mek);
+            Graphs.sql01(client, from, DB, mek);
           }
           else if (config.enableStatus === true && args.length === 2 && args[1].startsWith('4')) {
-            await Utils.getServerStatus(client, sender, DB);
+            await Utils.getServerStatus(client, sender, DB, mek);
           }
           else if (args.length === 3 && phoneNumber.startsWith(config.botCountryCode)) {      
             const codOp = parseInt(args[2]);
@@ -184,7 +187,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
 
             case '2':
               try {
-                await Utils.sendImageMessage(client, from, "cardapio.jpg", config.empresa.verCardapio);
+                await Utils.sendImageMessage(client, from, "cardapio.jpg", config.empresa.verCardapio, false);
               } catch (error) {
                 await DB.saveLogs(`[ ERRO ] Erro ao enviar imagem do cardápio. Motivo: ${error}`);
               }
@@ -216,7 +219,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               break;
 
             case '6':
-              await Utils.sendImageMessage(client, from, "pagamentos.jpeg", config.empresa.legendaPagamentos);
+              await Utils.sendImageMessage(client, from, "pagamentos.jpeg", config.empresa.legendaPagamentos, false);
               await new Promise(resolve => setTimeout(resolve, 2000));
               await m.reply(
                 config.empresa.opcoesPagamento
@@ -268,7 +271,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
                   config.msgEntregaReduzida
                 );
               } else if (config.mostrarRestSuper) {
-                await Utils.sendImageMessage(client, from, "restsuper.jpeg", config.legendaRestSuper);
+                await Utils.sendImageMessage(client, from, "restsuper.jpeg", config.legendaRestSuper, false);
               }
 
               if (isCmd2 && budy.toLowerCase() != undefined) {

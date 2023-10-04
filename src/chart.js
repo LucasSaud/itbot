@@ -1,27 +1,26 @@
 const fs = require('fs');
+const util = require('util');
 const path = require('path');
+const { Sequelize, DataTypes, Op } = require('sequelize');
 const QuickChart = require('quickchart-js');
 const config = require('../conf/config.js');
 const utils = require('./utils');
-const Database = require('./db');
 
 class Chart {
-    constructor() {
+    constructor () {
       this.version = '0.0.2';  
-      if(config.enableDB === true) this.DB = new Database(); 
     }
 
-    async sql01() {
-        if (config.enableDB === true) {
+    async sql01 (client, from, DB) {
             // Consulta para calcular a taxa de conversão
-            const orderCount = await this.DB.Message.count({
+            const orderCount = await DB.Message.count({
                 where: {
                 body: '5' // Mensagens com body igual a 5 representam pedidos
                 }
             });
         
             // Consulta para contar o número de números de telefone únicos na tabela `contacts` que têm pedidos
-            const uniqueNumbersWithOrdersCount = await this.DB.Contacts.count({
+            const uniqueNumbersWithOrdersCount = await DB.Contacts.count({
                 where: {
                 whatsappNumber: {
                     [Sequelize.Op.in]: Sequelize.literal(`(SELECT DISTINCT sender FROM messages WHERE body = '5')`)
@@ -30,14 +29,111 @@ class Chart {
             });
             // Calcular a taxa de conversão
             const conversionRate = (uniqueNumbersWithOrdersCount / orderCount) * 100;
-            this.cBarGraph(conversionRate.toFixed(2));
-        } else {
-            const conversionRate = '92';
-            this,this.cBarGraph(conversionRate);
-        }
+            return this.cBarGraph(client, from, conversionRate.toFixed(2));
     }
+
+    async sql01a (client, from, DB) {
+          // Obter a data de início e fim do mês atual (outubro)
+          const currentDate = new Date();
+          const startOfMonth = new Date(currentDate.getFullYear(), 9, 1); // O mês de outubro é representado como 9 (0-indexed) em JavaScript
+          const endOfMonth = new Date(currentDate.getFullYear(), 10, 0);
   
-    async barGraph() {
+          // Consulta para calcular a taxa de conversão
+          const orderCount = await DB.Message.count({
+              where: {
+                  body: '5', // Mensagens com body igual a 5 representam pedidos
+                  timestamp: {
+                      [Op.between]: [startOfMonth, endOfMonth] // Filtrar pelo mês de outubro
+                  }
+              }
+          });
+  
+          // Consulta para contar o número de números de telefone únicos na tabela `contacts` que têm pedidos
+          const uniqueNumbersWithOrdersCount = await DB.Contacts.count({
+              where: {
+                  whatsappNumber: {
+                      [Op.in]: [
+                          Sequelize.literal(`SELECT DISTINCT sender FROM messages WHERE body = '5' AND timestamp BETWEEN '${startOfMonth.toISOString()}' AND '${endOfMonth.toISOString()}'`)
+                      ]
+                  }
+              }
+          });
+  
+          // Calcular a taxa de conversão
+          const conversionRate = (uniqueNumbersWithOrdersCount / orderCount) * 100;
+          return this.cBarGraph(client, from, conversionRate.toFixed(2));
+  }
+
+  async createBarChart (client, from, data) {
+    // Organize os dados da consulta em um formato adequado para o gráfico
+    const labels = data.map((entry) => entry.month); // Meses
+    const counts = data.map((entry) => entry.count); // Número de atendimentos
+    
+    // Crie um gráfico de barras
+    const chart = new QuickChart();
+  
+    chart.setWidth(500);
+    chart.setHeight(300);
+    chart.setVersion('2');
+  
+    chart.setConfig({
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Atendimentos',
+            data: counts,
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgb(54, 162, 235)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Mês',
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Número de Atendimentos',
+            },
+          },
+        },
+        plugins: {
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#fff',
+            backgroundColor: 'rgba(34, 139, 34, 0.6)',
+            borderColor: 'rgba(34, 139, 34, 1.0)',
+            borderWidth: 1,
+            borderRadius: 5,
+            formatter: (value) => {
+              return value + 'k';
+            },
+          },
+        },
+      },
+    });
+  
+    try {
+      const fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+      const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
+      const chartImage = await chart.toFile(fN);
+      await client.sendImage(from, fN, `Atendimentos por mês`);
+    } catch (error) {
+      console.error('Erro ao criar o gráfico:', error);
+    }
+  }
+  
+  
+    async barGraph () {
         let chart = new QuickChart();
         let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
@@ -81,12 +177,13 @@ class Chart {
           const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
           const chartImage = await chart.toFile(fN); // Gera a imagem do gráfico
           console.log('Gráfico gerados com sucesso: ' + fN);
+          return fN;
         } catch (error) {
           console.error('Erro ao criar o gráfico:', error);
         }
     }
 
-    async aBarGraph() {
+    async aBarGraph () {
         let chart2 = new QuickChart();
 
         let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
@@ -157,15 +254,16 @@ class Chart {
         });
 
         try {
-            const fN01 = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
-            const chartImage01 = await chart2.toFile(fN01); // Gera a imagem do gráfico
-            console.log('Gráfico gerados com sucesso: ' + fN01);
+            const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
+            const chartImage = await chart2.toFile(fN); // Gera a imagem do gráfico
+            console.log('Gráfico gerados com sucesso: ' + fN);
+            return fN;
         } catch (error) {
           console.error('Erro ao criar o gráfico:', error);
         }
     }
 
-    async cBarGraph(num) {
+    async cBarGraph (client, from, num) {
         let chart01 = new QuickChart();
 
         let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
@@ -265,17 +363,13 @@ class Chart {
           },
         });
         try {
-            const fN01 = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
-            const chartImage01 = await chart01.toFile(fN01); // Gera a imagem do gráfico
-            console.log('Gráfico gerados com sucesso: ' + fN01);
+            const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
+            const chartImage01 = await chart01.toFile(fN);
+            await client.sendImage(from, fN, `Taxa de Conversão de Clientes: ${num}%`);
         } catch (error) {
           console.error('Erro ao criar o gráfico:', error);
         }
     }
 }
 
-console.log('usage:');
-const c = new Chart();
-c.sql01(); // cria imagem da taxa de conversao de clientes
-c.aBarGraph();
-c.barGraph();
+module.exports = Chart;

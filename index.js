@@ -17,46 +17,19 @@ const sessionName = 'sessoes';
 
 // Aliases for Baileys library components
 const coreConnect = baileys.default;
+const useMultiFileAuthState = baileys.useMultiFileAuthState;
 const DisconnectReason = baileys.DisconnectReason;
+const fetchLatestBaileysVersion = baileys.fetchLatestBaileysVersion;
+const makeInMemoryStore = baileys.makeInMemoryStore;
+const jidDecode = baileys.jidDecode;
+const isJidBroadcast = baileys.isJidBroadcast;
+const proto = baileys.proto;
+const getContentType = baileys.getContentType;
 const Browsers = baileys.Browsers;
+const fetchLatestWaWebVersion = baileys.fetchLatestWaWebVersion;
+const makeCacheableSignalKeyStore = baileys.makeCacheableSignalKeyStore;
 const WAMessageContent = baileys.WAMessageContent;
 const WAMessageKey = baileys.WAMessageKey;
-const AnyMessageContent = baileys.AnyMessageContent;
-const delay = baileys.delay;
-const MessageType = baileys.MessageType;
-const MessageOptions = baileys.MessageOptions;
-const Mimetype = baileys.Mimetype;
-const isJidGroup = baileys.isJidGroup;
-const loadMessages = baileys.loadMessages;
-const fetchLatestBaileysVersion = baileys.fetchLatestBaileysVersion;
-const fetchLatestWaWebVersion = baileys.fetchLatestWaWebVersion;
-const WASocket = baileys.WASocket;
-const AuthenticationState = baileys.AuthenticationState;
-const BufferJSON = baileys.BufferJSON;
-const getMessage = baileys.getMessage;
-const WA_DEFAULT_EPHEMERAL = baileys.WA_DEFAULT_EPHEMERAL;
-const initInMemoryKeyStore = baileys.initInMemoryKeyStore;
-const WAMessage = baileys.WAMessage;
-const Contact = baileys.Contact;
-const SocketConfig = baileys.SocketConfig;
-const BaileysEventMap = baileys.BaileysEventMap;
-const GroupMetadata = baileys.GroupMetadata;
-const MiscMessageGenerationOptions = baileys.MiscMessageGenerationOptions;
-const generateWAMessageFromContent = baileys.generateWAMessageFromContent;
-const downloadContentFromMessage = baileys.downloadContentFromMessage;
-const downloadHistory = baileys.downloadHistory;
-const proto = baileys.proto;
-const generateWAMessageContent = baileys.generateWAMessageContent;
-const prepareWAMessageMedia = baileys.prepareWAMessageMedia;
-const WAUrlInfo = baileys.WAUrlInfo;
-const useMultiFileAuthState = baileys.useMultiFileAuthState;
-const makeInMemoryStore = baileys.makeInMemoryStore;
-const makeCacheableSignalKeyStore = baileys.makeCacheableSignalKeyStore;
-const isJidBroadcast = baileys.isJidBroadcast;
-const MessageRetryMap = baileys.MessageRetryMap;
-const getAggregateVotesInPollMessage = baileys.getAggregateVotesInPollMessage;
-const jidDecode = baileys.jidDecode;
-const getContentType = baileys.getContentType;
 
 // Initialize a logger using pino with a silent log level
 const logger = pino({ level: 'silent' });
@@ -77,8 +50,8 @@ let lastClientMessageTime = 0;
 let receivedMsgTime = {};
 
 function smsg(conn, m, store) {
-  // Check if 'm' exists, if not, return it
-  if (!m) return m;
+  // Check if 'm' exists and has a 'message' property
+  if (!m || !m.message) return m;
 
   // Define 'M' as 'proto.WebMessageInfo'
   let M = proto.WebMessageInfo;
@@ -121,6 +94,7 @@ function smsg(conn, m, store) {
       m.mtype = getContentType(m.message);
       m.msg = m.message[m.mtype];
     }
+
     m.msg =
       m.mtype == 'viewOnceMessage'
         ? m.message[m.mtype].message[getContentType(m.message[m.mtype].message)]
@@ -133,12 +107,12 @@ function smsg(conn, m, store) {
       m.text;
 
     // Extract quoted message information
-    if (m.msg.contextInfo && m.msg.contextInfo.quotedMessage) {
-      quoted = m.msg.contextInfo.quotedMessage;
+    if (m.msg?.contextInfo && m.msg?.contextInfo?.quotedMessage) {
+      quoted = m.msg?.contextInfo?.quotedMessage;
     }
-    if (m.message.contextInfo && m.message.contextInfo.quotedMessage) {
-      quoted = m.message.contextInfo.quotedMessage;
-      m.mentionedJid = m.message.contextInfo.mentionedJid || [];
+    if (m.message?.contextInfo && m.message?.contextInfo?.quotedMessage) {
+      quoted = m.message?.contextInfo?.quotedMessage;
+      m.mentionedJid = m.message?.contextInfo?.mentionedJid || [];
     } else {
       m.message.contextInfo = "";
     }
@@ -157,12 +131,12 @@ function smsg(conn, m, store) {
           text: m.quoted,
         };
       m.quoted.mtype = type;
-      m.quoted.id = m.msg.contextInfo.stanzaId;
-      m.quoted.chat = m.msg.contextInfo.remoteJid || m.chat;
+      m.quoted.id = m.msg?.contextInfo?.stanzaId;
+      m.quoted.chat = m.msg?.contextInfo?.remoteJid || m.chat;
       m.quoted.isBaileys = m.quoted.id
         ? m.quoted.id.startsWith('BAE5') && m.quoted.id.length === 16
         : false;
-      m.quoted.sender = conn.decodeJid(m.msg.contextInfo.participant);
+      m.quoted.sender = conn.decodeJid(m.msg?.contextInfo?.participant);
       m.quoted.fromMe = m.quoted.sender === conn.decodeJid(conn.user.id);
       m.quoted.text =
         m.quoted.text ||
@@ -172,7 +146,7 @@ function smsg(conn, m, store) {
         m.quoted.selectedDisplayText ||
         m.quoted.title ||
         '';
-      m.quoted.mentionedJid = m.msg.contextInfo ? m.msg.contextInfo.mentionedJid : [];
+      m.quoted.mentionedJid = m.msg?.contextInfo ? m.msg?.contextInfo?.mentionedJid : [];
       m.getQuotedObj = m.getQuotedMessage = async () => {
         if (!m.quoted.id) return false;
         let q = await store.loadMessage(m.chat, m.quoted.id, conn);
@@ -199,7 +173,9 @@ function smsg(conn, m, store) {
   }
 
   // Define a 'download' method if 'm.msg.url' exists
-  if (m.msg.url) m.download = () => conn.downloadMediaMessage(m.msg);
+  if (m.msg?.url) {
+    m.download = () => conn.downloadMediaMessage(m.msg);
+  } 
 
   // Define a 'reply' method
   m.reply = (text, chatId = m.chat, options = {}) => {
@@ -213,6 +189,8 @@ function smsg(conn, m, store) {
 
   return m; // Return the modified message object
 }
+
+
 
 async function startCore(inDebit) {
   // Load authentication state from a file
@@ -279,7 +257,7 @@ async function startCore(inDebit) {
 		/** width for link preview images */
 		linkPreviewImageThumbnailWidth: 192,
 		/** Should Baileys ask the phone for full history, will be received async */
-		syncFullHistory: true,
+		syncFullHistory: false,
 		/** Should baileys fire init queries automatically, default true */
 		fireInitQueries: true,
 		/**
@@ -420,24 +398,25 @@ async function startCore(inDebit) {
       if (!mek.isGroup && typeof m.body === 'string' && !itsMe && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
         // Convert the message text and keywords to lowercase to avoid case sensitivity issues
         const mensagemLowerCase = m.body.toLowerCase();
+        if (config.showLog === true) console.log(`Fazendo varredura em: ${mensagemLowerCase}.`);
 
         // Search for a CEP (zip code) in the message and respond if found
         if(config.enableAddrDetector === true) Utils.searchCEP(axios, client, m.body.toLowerCase(), m.sender);
 
-        if(config.enableKeywordDetector === true) {
+        if (config.enableKeywordDetector === true) {
           let foundKeyword = null; // Initialize as null
-
+          
           // Check if any menu keywords or their variants are present in the message
-          Object.keys(config.palavrasChave).some((keyword) => {
-            const variants = config.palavrasChave[keyword];
-            const foundVariant = variants.find((variant) => mensagemLowerCase.includes(variant.toLowerCase()));
+          config.palavrasChave.some((keyword) => {
+            const foundVariant = mensagemLowerCase.includes(keyword.toLowerCase());
             if (foundVariant) {
-              foundKeyword = keyword; // Store the found keyword
+              foundKeyword = keyword; // Corrigido para salvar a palavra encontrada
+              if (config.showLog === true) console.log(`Encontrei a palavra: ${foundKeyword}`);
               return true; // Exit the loop as soon as the first match is found
             }
             return false; // Continue searching
           });
-
+        
           if (foundKeyword) {
             // Send a response message informing about the dish found
             const cliente = sender.replace('@s.whatsapp.net', '');
@@ -445,7 +424,7 @@ async function startCore(inDebit) {
             await client.sendMessage(config.empresa.botNumber, { text: response });
             ignoreNumber = true;
           }
-        }
+        }        
       }
             
       // Require and execute the 'core' module with relevant parameters
@@ -647,8 +626,8 @@ async function startCore(inDebit) {
         startCore();
       }
     } else if (connection === 'open') {
-      console.log(`AutoAtende v.${config.botVersion} conectou ao servidor com sucesso.`);
-      console.log(`AutoAtende usando WA v${version.join('.')}, é a mais recente? ${isLatest ? "Sim" : "Não"}`);
+      console.log(`AutoAtende v.${config.botVersion} está ligado.`);
+      if (config.showLog === true) console.log(`AutoAtende usando WA v${version.join('.')}, é a mais recente? ${isLatest ? "Sim" : "Não"}`);
 
       await client.sendMessage(config.botAdmin, {
         text: `🤖 ${config.empresa.nomeDaLoja} está ligado.`,
@@ -767,7 +746,7 @@ async function startCore(inDebit) {
   return client;
 }
 
-const graphicsFolder = path.join(__dirname, 'img', 'charts');
+const graphicsFolder = path.join(__dirname, 'img', 'chart');
 const sessionFolder = path.join(__dirname, 'sessoes');
 const maxAgeForSessions = 24 * 60 * 60 * 1000;
 

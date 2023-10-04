@@ -6,8 +6,11 @@ const config = require('../conf/config');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const QuickChart = require('quickchart-js');
 const moment = require('moment-timezone');
+const Chart = require('./chart.js');
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
+
+const Graph = new Chart();
 
 const formatUptime = (uptimeInSeconds) => {
   const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
@@ -104,8 +107,13 @@ const isBlocked = (numero) => {
 }
 
 // Função para enviar uma mensagem de imagem
-const sendImageMessage = async (client, chatId, imageFile, caption) => {
-    const imageFilePath = path.join(__dirname, '..', 'img', imageFile);
+const sendImageMessage = async (client, chatId, imageFile, caption, fullpath) => {
+  let imageFilePath = null;
+    if (fullpath === false) {
+      imageFilePath = path.join(__dirname, '..', 'img', imageFile);
+    } else {
+      imageFilePath = imageFile;
+    }
     const imageBuffer = await util.promisify(fs.readFile)(imageFilePath);
     await client.sendImage(chatId, imageBuffer, caption);
 };
@@ -131,6 +139,7 @@ const sendInactiveMessage = async (client, m, DB) => {
   try {
     const currentDate = new Date();
     const daysAgo = new Date();
+    let count = 0;
     daysAgo.setDate(currentDate.getDate() - config.numOfDaysOff);
 
     const inactiveClients = await DB.Contacts.findAll({
@@ -155,9 +164,12 @@ const sendInactiveMessage = async (client, m, DB) => {
       m.reply('⚠️ Não há clientes inativos a mais de 30 dias.');
     } else {
       for (const { whatsappNumber } of inactiveClients) {
-        // Verifique se whatsappNumber é uma string válida antes de enviar a mensagem
-        if (typeof whatsappNumber === 'string' && whatsappNumber.length > 0) {
-          await client.sendMessage(whatsappNumber, { text: config.msgClientesInativos });
+        if (typeof whatsappNumber === 'string' && whatsappNumber.match(/^\d+@s.whatsapp.net$/)) {
+          // O número de telefone está no formato esperado, adicione @s.whatsapp.net se necessário
+          const formattedNumber = whatsappNumber.endsWith('@s.whatsapp.net') ? whatsappNumber : `${whatsappNumber}@s.whatsapp.net`;
+          count++;
+          await client.sendMessage(formattedNumber, { text: config.empresa.msgClientesInativos });
+      
 
           // Atualize o campo isInactive na tabela Contacts
           await DB.Contacts.update({ isInactive: true }, {
@@ -173,7 +185,7 @@ const sendInactiveMessage = async (client, m, DB) => {
           console.error(`Número de telefone inválido: ${whatsappNumber}`);
         }
       }
-      m.reply(`✅ Prontinho. Mensagem enviada aos clientes inativos.`);
+      m.reply(`✅ Prontinho. ${count} mensagen(s) enviada(s) aos clientes inativos.`);
     }
   } catch (error) {
     m.reply('⚠️ Ocorreu um erro ao enviar as mensagens:', error);
@@ -429,6 +441,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'stats':
           await client.sendMessage(sender, { delete: mek.key });
           if (config.enableStats === true) {
+            Graph.sql01(client, sender, DB);
             generateAnalyticsReport(client, sender, DB);
           } else {
             await client.sendMessage(config.empresa.botNumber, { text: `A função *stats* está desabilidata.`});
@@ -457,7 +470,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
         case 'cardapio':
           await client.sendMessage(sender, { delete: mek.key });
-          await sendImageMessage(client, sender, "cardapio.jpg", config.empresa.verCardapio01);
+          await sendImageMessage(client, sender, "cardapio.jpg", config.empresa.verCardapio01, false);
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem com o cardápio.`});
           break;
 
@@ -567,9 +580,10 @@ const generatePieChart = async (client, sender, labels, data, title) => {
   });
   
   try {
-      let graphFilePath = path.join(__dirname, '..', 'img', 'charts', `piechart.png`);
-      chart.toFile(graphFilePath);
-      await client.sendImage(sender, graphFilePath);
+      let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+      const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
+      const chartImage = await chart.toFile(fN);
+      await client.sendImage(sender, fN, `Sem titulo`);
   } catch (error) {
       console.error('Erro ao gerar gráfico de pizza:', error);
   }
@@ -691,35 +705,6 @@ async function generateAnalyticsReport(client, sender, DB) {
     } else {
       console.error('Nenhum dado retornado pela consulta de atendimentos mensais.');
     }
-
-    // Consulta para calcular a taxa de conversão
-    const orderCount = await DB.Message.count({
-      where: {
-        body: '5' // Mensagens com body igual a 5 representam pedidos
-      }
-    });
-
-    // Consulta para contar o número de números de telefone únicos na tabela `contacts` que têm pedidos
-    const uniqueNumbersWithOrdersCount = await DB.Contacts.count({
-      where: {
-        whatsappNumber: {
-          [Sequelize.Op.in]: Sequelize.literal(`(SELECT DISTINCT sender FROM messages WHERE body = '5')`) // Subconsulta para obter os números únicos que fizeram pedidos
-        }
-      }
-    });
-
-    // Calcular a taxa de conversão
-    const conversionRate = (uniqueNumbersWithOrdersCount / orderCount) * 100;
-
-    // Arredondar a taxa de conversão para duas casas decimais
-    const roundedConversionRate = conversionRate.toFixed(2);
-
-    // Criar um gráfico de pizza para mostrar a taxa de conversão
-    const title5 = `Taxa de Conversão de Pedidos: ${roundedConversionRate}% - AutoAtende`;
-    const labels4 = ['Menu 5: Fazer Pedido', 'Pedidos Feitos'];
-    const data4 = [orderCount, uniqueNumbersWithOrdersCount];
-    const pieColors2 = ['#3498db', '#27ae60']; // Cores para os setores do gráfico de pizza
-    await generatePieChartWithCheck(labels4, data4, title5, pieColors2);
   } catch (error) {
     console.error('Erro ao gerar relatório de análise:', error);
   }
@@ -733,14 +718,14 @@ module.exports = {
   sendImageMessage,
   sendImageMkt,
   sendLocationMessage,
-  generatePieChart,
   sendInactiveMessage,
   sendMKT,
   sendDevInfo,
   getServerStatus,
   parseCmd,
-  generateAnalyticsReport,
   searchCEP,
   cleanOldFiles,
-  delDir
+  delDir,
+  generateAnalyticsReport,
+  generatePieChart,
 };
