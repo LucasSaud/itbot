@@ -1,6 +1,8 @@
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const Utils = require('./utils.js');
 const config = require('../conf/config.js');
+const fs = require('fs');
+const tar = require('tar');
 
 class Database {
   constructor() {
@@ -196,6 +198,46 @@ class Database {
       console.error('[ ERRO ] Erro ao salvar contato no banco de dados:', error);
     }
   }
+  async backup() {
+    try {
+      // Nome do arquivo de backup com timestamp
+      const timestamp = new Date().toISOString().replace(/:/g, '-');
+      const backupFileName = `backup-${timestamp}.tar.gz`;
+      const backupFilePath = `../bkp/${backupFileName}`;
+
+      // Consulta para obter todas as tabelas do banco de dados
+      const tableNames = await this.sequelize.getQueryInterface().showAllTables();
+
+      // Crie um objeto para armazenar os dados de todas as tabelas
+      const backupData = {};
+
+      // Exporte os dados de cada tabela
+      for (const tableName of tableNames) {
+        const table = this.sequelize.models[tableName];
+        const tableData = await table.findAll();
+        backupData[tableName] = tableData;
+      }
+
+      // Use a biblioteca tar para criar o arquivo tar.gz com os dados de todas as tabelas
+      await tar.c(
+        {
+          gzip: true,
+          file: backupFilePath,
+        },
+        Object.keys(backupData).map((tableName) => ({
+          name: `${tableName}.json`,
+          create: true,
+          body: JSON.stringify(backupData[tableName]),
+        }))
+      );
+
+      if (config.showLog === true) console.log(`Backup do banco de dados criado em ${backupFilePath}`);
+      return backupFileName;
+    } catch (error) {
+      console.error('Erro ao criar o backup do banco de dados:', error);
+      return false;
+    }
+  }  
 }
 
 module.exports = Database;

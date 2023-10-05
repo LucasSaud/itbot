@@ -402,6 +402,11 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi notificado do uso do robô.`});
           break;
 
+        case 'backup':
+          const backupFile = await DB.backup();
+          await client.sendMessage(config.empresa.botNumber, { text: `✅ Backup do banco de dados salvo com sucesso.\nArquivo: ${backupFile}`});
+          break;
+          
         case 'bloqueia':
           if (!isBlocked(senderNumber)) {
             await client.sendMessage(sender, { delete: mek.key });
