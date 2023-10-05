@@ -72,6 +72,8 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
       return;
     }
 
+    if (m.isGroup) return;
+
     if(body.startsWith('!')) {
       return;
     }

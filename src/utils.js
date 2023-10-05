@@ -7,6 +7,10 @@ const { Sequelize, DataTypes, Op } = require('sequelize');
 const QuickChart = require('quickchart-js');
 const moment = require('moment-timezone');
 const Chart = require('./chart.js');
+<<<<<<< Updated upstream
+=======
+const Database = require('./db');
+>>>>>>> Stashed changes
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
@@ -357,6 +361,7 @@ const getServerStatus = async (client, sender, DB, devInfo) => {
 const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
   const senderNumber = sender.replace('@s.whatsapp.net', '');
+  let isCommand = false;
 
   const msgBoasVindas = config.msgBV;
   const msgEndCardapio = config.msgBV2.replace('{{enderecoCardapio}}', config.empresa.enderecoCardapio);
@@ -371,8 +376,35 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
     if (config.atalhos.includes(command)) {
       // Ação a ser executada se o comando for válido
       if (config.showLog === true ) console.log(`Comando válido: ${command}`);
+      isCommand = true;
       
       switch (command) {
+        case 'ajuda':
+          await client.sendMessage(sender, { delete: mek.key });
+          const ajudaMessage = `
+        ℹ️ *Comando de Ajuda* ℹ️
+
+        Você pode usar os seguintes comandos:
+        - *!entrega*: Notifica que o pedido saiu para entrega.
+        - *!retirada*: Notifica que o pedido está pronto para retirada.
+        - *!bloqueia*: Adiciona o número à lista de exclusão.
+        - *!desbloqueia*: Remove o número da lista de exclusão.
+        - *!bot*: Notifica o uso do robô.
+        - *!status*: Verifica o status do servidor.
+        - *!stats*: Obtém estatísticas e relatórios.
+        - *!oi*: Recebe uma saudação do bot.
+        - *!bv*: Recebe mensagens de boas-vindas.
+        - *!cardapio*: Mostra o cardápio.
+        - *!endereco*: Mostra o endereço da loja.
+        - *!backup*: Realiza um backup do banco de dados.
+        - *!ajuda*: Mostra esta mensagem de ajuda.
+
+        Espero que isso tenha ajudado! 😊
+          `;
+          await client.sendMessage(sender, { text: ajudaMessage });
+          await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} solicitou ajuda.`});
+          break;
+
         case 'entrega':
           await client.sendMessage(sender, { delete: mek.key });
           DB.updateContact(sender, 1, 0);         
@@ -403,17 +435,24 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           break;
 
         case 'backup':
+<<<<<<< Updated upstream
           const backupFile = await DB.backup();
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Backup do banco de dados salvo com sucesso.\nArquivo: ${backupFile}`});
+=======
+          await client.sendMessage(sender, { delete: mek.key });
+          if (config.showLog === true) console.log('Rotina de backup iniciada.');
+          const backupFile = await DB.backup();
+          if (backupFile != false) {
+            await client.sendMessage(config.empresa.botNumber, { text: `✅ Backup do banco de dados salvo com sucesso.\nArquivo: ${backupFile}`});
+          } else {
+            await client.sendMessage(config.empresa.botNumber, { text: `⛔ Não foi possivél realizar o backup do banco de dados.`});
+          }
+>>>>>>> Stashed changes
           break;
           
         case 'bloqueia':
           if (!isBlocked(senderNumber)) {
             await client.sendMessage(sender, { delete: mek.key });
-            doNotHandleNumbers.push(senderNumber);
-            await DB.saveLogs(`[ REGISTRO ] O número ${senderNumber} foi adicionado à lista de exclusão do atendimento.`);
-            await client.sendMessage(config.empresa.botNumber, { text: `📵 O número ${senderNumber} foi adicionado à lista de exclusão do atendimento.`});
-
           }
           else {
             await client.sendMessage(sender, { delete: mek.key });
@@ -424,7 +463,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
         case 'desbloqueia':
           await client.sendMessage(sender, { delete: mek.key });
-          const isInDoNotHandleNumbers =  doNotHandleNumbers.indexOf(senderNumber);
+          isInDoNotHandleNumbers =  doNotHandleNumbers.indexOf(senderNumber);
           if (isInDoNotHandleNumbers !== -1) {
             doNotHandleNumbers.splice(isInDoNotHandleNumbers, 1);
             await DB.saveLogs(`[ REGISTRO ] O número ${senderNumber} foi removido da lista de exclusão.`);
@@ -461,11 +500,22 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
         case 'bv':
           await client.sendMessage(sender, { delete: mek.key });
+          const isInDoNotHandleNumbers =  doNotHandleNumbers.indexOf(senderNumber);
+          if (isInDoNotHandleNumbers !== -1) {
+            doNotHandleNumbers.splice(isInDoNotHandleNumbers, 1);
+            await DB.saveLogs(`[ REGISTRO ] O número ${senderNumber} foi removido da lista de exclusão.`);
+            await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi removido da lista de exclusão.`});
+          }
           await client.sendMessage(sender, { text: msgBoasVindas });
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(sender, { text: config.msgBV1 });
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(sender, { text: msgEndCardapio });    
+<<<<<<< Updated upstream
           
+=======
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
+>>>>>>> Stashed changes
           if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
             await client.sendMessage(sender, { text: config.msgAvisoSegundas });
           }
@@ -476,16 +526,31 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'cardapio':
           await client.sendMessage(sender, { delete: mek.key });
           await sendImageMessage(client, sender, "cardapio.jpg", config.empresa.verCardapio01, false);
+<<<<<<< Updated upstream
+=======
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
+>>>>>>> Stashed changes
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem com o cardápio.`});
           break;
+
+        case 'endereco':
+          await client.sendMessage(sender, { delete: mek.key });
+          await sendLocationMessage(client, sender, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
+          await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem com o endereço.`});
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
+          await client.sendMessage(sender, { text: config.empresa.nossaLocalizacao });
+          break;          
 
         default:
           await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Comando náo reconhecido. Comandos aceitaveis são:\n!entrega\n!retirada\n!bloqueia\n!desbloqueia\n!oi\n!bv`});
         
       }
+      return isCommand;
     } else {
       // Ação a ser executada se o comando não for válido
       if (config.showLog === true ) console.log(`Comando inválido: ${command}`);
+      return isCommand;
     }
   }
 };
@@ -576,7 +641,7 @@ const generatePieChart = async (client, sender, labels, data, title) => {
       datalabels: {
         anchor: 'center',
         align: 'center',
-        color: '#000',
+        color: '#fff',
         font: {
           weight: 'bold',
         },

@@ -49,7 +49,11 @@ let client;
 let lastClientMessageTime = 0;
 let receivedMsgTime = {};
 
+<<<<<<< Updated upstream
 /*function smsg(conn, m, store) {
+=======
+function smsg(conn, m, store) {
+>>>>>>> Stashed changes
   // Check if 'm' exists and has a 'message' property
   if (!m || !m.message) return m;
 
@@ -432,81 +436,68 @@ async function startCore(inDebit) {
   // Event handler for incoming messages
   client.ev.on('messages.upsert', async (chatUpdate) => {
     try {
-      let ignoreNumber = false;
-      const sender = chatUpdate.messages[0]?.key.remoteJid;
-
-      // Save the sender as a contact if it's not a group or a broadcast
-      if (sender && !sender.endsWith('@g.us') && !sender.endsWith('@broadcast') && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
-        const contact = { whatsappNumber: sender };
-        await DB.saveContact(contact);
-      }
-
-      const currentTime = new Date().getTime();
-
-      // Check if the time between messages is less than the configured delay
-      if (currentTime - lastClientMessageTime < config.tempoEntreMensagens) return;
 
       mek = chatUpdate.messages[0];
+      const sender = chatUpdate.messages[0]?.key.remoteJid;
+      const userNumber = client.user.id.replace(':58', '');
       if (!mek.message) return;
-      if (mek.isGroup) return;
+      if (mek.isGroup || sender.endsWith('@g.us') ) return;
 
-      // Extract the message content
-      mek.message =
-        Object.keys(mek.message)[0] === 'ephemeralMessage'
-          ? mek.message.ephemeralMessage.message
-          : mek.message;
+      let ignoreNumber = false;
 
-      if (mek.key && mek.key.remoteJid === 'status@broadcast') return;
-
-      const itsMe = sender.replace('@s.whatsapp.net', '') == config.empresa.botNumber.replace('@s.whatsapp.net', '') ? true : false;
-
-      const phoneNumber = PhoneNumber(mek.key.remoteJid.replace('@s.whatsapp.net', '')).getNumber('international');
-
-      if (!client.public && !mek.key.fromMe && chatUpdate.type === 'notify') return;
-      if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return;
-
-      m = smsg(client, mek, store);
-
-      if (!mek.isGroup && typeof m.body === 'string') {
-        // Check if the message body contains a command
-        await Utils.parseCmd(client, m.pushName, m.body, mek, DB, m.chat);
-      }
-
-      if (!mek.isGroup) receivedMsgTime[m.sender] = new Date();
-      if (m.mtype === 'videoMessage' && m.body) return;
-
-      if (config.enableEmogiReact === true && mek.message && mek.message.documentMessage && !itsMe) {
-        const documentMessage = mek.message.documentMessage;
-        if (documentMessage.mimetype === 'application/pdf') {
-          // React to a PDF document with a money emoji
-          const reactionMoneyMessage = {
-            react: {
-              text: `💸`,  // Use the corresponding emoji
-              key: mek.key,
-            },
-          };
-          await client.sendMessage(sender, reactionMoneyMessage);
+        // Save the sender as a contact if it's not a group or a broadcast
+        if (sender && !sender.endsWith('@g.us') && !sender.endsWith('@broadcast') && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
+          const contact = { whatsappNumber: sender };
+          await DB.saveContact(contact);
         }
-      }
 
-      // Check if 'm.body' is a number between 1 and 8
-      if(config.enableEmogiReact === true && !mek.isGroup && m.body && m.body.length === 1) {
-        const number = parseInt(m.body);
-        if (!mek.isGroup && (number >= 1 && number <= 8) && !itsMe) {
-          // Check if there is a corresponding emoji in the mapping
-          if (config.emojiMap[number]) {
-            // Send the emoji as a reaction to the message
-            const reactionMessage = {
+        const currentTime = new Date().getTime();
+
+        // Check if the time between messages is less than the configured delay
+        if (currentTime - lastClientMessageTime < config.tempoEntreMensagens) return;
+
+        // Extract the message content
+        mek.message =
+          Object.keys(mek.message)[0] === 'ephemeralMessage'
+            ? mek.message.ephemeralMessage.message
+            : mek.message;
+
+        if (mek.key && mek.key.remoteJid === 'status@broadcast') return;
+
+        const itsMe = sender.replace('@s.whatsapp.net', '') == config.empresa.botNumber.replace('@s.whatsapp.net', '') ? true : false;
+
+        const phoneNumber = PhoneNumber(mek.key.remoteJid.replace('@s.whatsapp.net', '')).getNumber('international');
+
+        if (!client.public && !mek.key.fromMe && chatUpdate.type === 'notify') return;
+        if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return;
+
+        m = smsg(client, mek, store);
+
+        let isCommand = false;
+
+        if (!mek.isGroup && typeof m.body === 'string') {
+          // Check if the message body contains a command
+          isCommand = await Utils.parseCmd(client, m.pushName, m.body, mek, DB, m.chat);
+        }
+
+        if (!mek.isGroup) receivedMsgTime[m.sender] = new Date();
+        if (m.mtype === 'videoMessage' && m.body) return;
+
+        if (config.enableEmogiReact === true && mek.message && mek.message.documentMessage && !itsMe) {
+          const documentMessage = mek.message.documentMessage;
+          if (documentMessage.mimetype === 'application/pdf') {
+            // React to a PDF document with a money emoji
+            const reactionMoneyMessage = {
               react: {
-                text: config.emojiMap[number],  // Use the corresponding emoji
+                text: `💸`,  // Use the corresponding emoji
                 key: mek.key,
               },
             };
-            await client.sendMessage(sender, reactionMessage);
+            await client.sendMessage(sender, reactionMoneyMessage);
           }
         }
-      }
 
+<<<<<<< Updated upstream
       if (!mek.isGroup && typeof m.body === 'string' && !itsMe && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
         // Convert the message text and keywords to lowercase to avoid case sensitivity issues
         const mensagemLowerCase = m.body.toLowerCase();
@@ -538,6 +529,71 @@ async function startCore(inDebit) {
           }
         }        
       }
+=======
+        // Check if 'm.body' is a number between 1 and 8
+        if(config.enableEmogiReact === true && !mek.isGroup && m.body && m.body.length === 1) {
+          const number = parseInt(m.body);
+          if (!mek.isGroup && (number >= 1 && number <= 8) && !itsMe) {
+            // Check if there is a corresponding emoji in the mapping
+            if (config.emojiMap[number]) {
+              // Send the emoji as a reaction to the message
+              const reactionMessage = {
+                react: {
+                  text: config.emojiMap[number],  // Use the corresponding emoji
+                  key: mek.key,
+                },
+              };
+              await client.sendMessage(sender, reactionMessage);
+            }
+          }
+        }
+
+        if (!mek.isGroup && typeof m.body === 'string' && !itsMe && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
+          // Convert the message text and keywords to lowercase to avoid case sensitivity issues
+          const mensagemLowerCase = m.body.toLowerCase();
+          if (!mensagemLowerCase.startsWith('!')) {
+            if (config.showLog === true) console.log(`Fazendo varredura em: ${mensagemLowerCase}.`);
+
+            // Search for a CEP (zip code) in the message and respond if found
+            if(config.enableAddrDetector === true) Utils.searchCEP(axios, client, m.body.toLowerCase(), m.sender);
+  
+            if (config.enableKeywordDetector === true) {
+              let foundKeyword = null; // Initialize as null
+              
+              // Check if any menu keywords or their variants are present in the message
+              config.palavrasChave.some((keyword) => {
+                const foundVariant = mensagemLowerCase.includes(keyword.toLowerCase());
+                if (foundVariant) {
+                  foundKeyword = keyword; // Corrigido para salvar a palavra encontrada
+                  if (config.showLog === true) console.log(`Encontrei a palavra: ${foundKeyword}`);
+                  return true; // Exit the loop as soon as the first match is found
+                }
+                return false; // Continue searching
+              });
+            
+              if (foundKeyword) {
+                // Send a response message informing about the dish found
+                const cliente = sender.replace('@s.whatsapp.net', '');
+                const response = `⚠️⚠️⚠️ *O número ${cliente} quer fazer um pedido. Palavra-chave encontrada: ${foundKeyword}. Olhar a conversa.* ⚠️⚠️⚠️`;
+                await client.sendMessage(config.empresa.botNumber, { text: response });
+                ignoreNumber = true;
+              }
+            }  
+          }   
+        }
+
+        // Bloqueia o bot se o número do bot enviar uma mensagem ao usuário
+        if (config.autoTurnOff === true && userNumber === config.empresa.botNumber && !isCommand) {
+          if (!Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
+            if (config.showLog === true) console.log(`Bot bloqueado automaticamente no número: ${sender}`);
+            ignoreNumber = true;
+            await DB.saveLogs(`[ REGISTRO ] O número ${sender} foi adicionado à lista de exclusão do atendimento. AutoBlock ON`);
+            await client.sendMessage(config.empresa.botNumber, { text: `📵 O número ${sender} foi adicionado à lista de exclusão do atendimento. AutoBlock ON` });
+            Utils.doNotHandleNumbers.push(sender.replace('@s.whatsapp.net', ''));
+            console.log(`Ignorando o número: ${sender}`);
+          }
+        }
+>>>>>>> Stashed changes
             
       // Require and execute the 'core' module with relevant parameters
       require('./core')(client, m, chatUpdate, ignoreNumber);

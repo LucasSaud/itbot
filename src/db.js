@@ -1,8 +1,15 @@
+const JSZip = require('jszip');
+const fs = require('fs').promises;
+const path = require('path');
+const mysqldump = require('mysqldump');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const Utils = require('./utils.js');
 const config = require('../conf/config.js');
+<<<<<<< Updated upstream
 const fs = require('fs');
 const tar = require('tar');
+=======
+>>>>>>> Stashed changes
 
 class Database {
   constructor() {
@@ -18,6 +25,26 @@ class Database {
       timezone: '-03:00'  // Set timezone
     });
 
+    // Define all models
+    this.defineModels();
+
+    // Initialize the database connection
+    this.init();
+  }
+
+  async init() {
+    try {
+      // Authenticate the database connection
+      await this.sequelize.authenticate();
+      
+      // Synchronize models with the database, altering if needed
+      await this.sequelize.sync({});
+    } catch (error) {
+      console.error('Erro ao conectar:', error);
+    }
+  }
+
+  async defineModels() {
     // Define a model for log messages
     this.Logs = this.sequelize.define('Logs', {
       id: {
@@ -102,21 +129,6 @@ class Database {
     }, {
       timestamps: false  // Disable default timestamps
     });
-
-    // Initialize the database connection
-    this.init();
-  }
-
-  async init() {
-    try {
-      // Authenticate the database connection
-      await this.sequelize.authenticate();
-      
-      // Synchronize models with the database, altering if needed
-      await this.sequelize.sync({});
-    } catch (error) {
-      console.error('Erro ao conectar:', error);
-    }
   }
 
   async saveLogs(logMessage) {
@@ -198,6 +210,7 @@ class Database {
       console.error('[ ERRO ] Erro ao salvar contato no banco de dados:', error);
     }
   }
+<<<<<<< Updated upstream
   async backup() {
     try {
       // Nome do arquivo de backup com timestamp
@@ -233,11 +246,63 @@ class Database {
 
       if (config.showLog === true) console.log(`Backup do banco de dados criado em ${backupFilePath}`);
       return backupFileName;
+=======
+
+  async backup() {
+    try {
+      // Chame o método defineModels para garantir que as tabelas estejam definidas corretamente
+      this.defineModels();
+
+      // Synchronize models with the database
+      await this.sequelize.sync();
+
+      // Nome do arquivo de backup com timestamp
+      const timestamp = new Date().toISOString().replace(/:/g, '-');
+      const sqlBackupFileName = `backup-${timestamp}.sql`;
+      const sqlBackupFilePath = path.join(__dirname, '..', config.bkpDir, sqlBackupFileName);
+
+      // Dump the database to a SQL file
+      await mysqldump({
+        connection: {
+          host: 'localhost',
+          user: 'italinbot',
+          password: 'Brx2045rb@',
+          database: 'italin_db',
+        },
+        dumpToFile: sqlBackupFilePath,
+      });
+
+      // Crie um arquivo ZIP e adicione o arquivo SQL a ele
+      const zip = new JSZip();
+      const sqlData = await fs.readFile(sqlBackupFilePath);
+      zip.file(sqlBackupFileName, sqlData);
+
+      // Nome do arquivo ZIP de backup
+      const zipBackupFileName = `backup-${timestamp}.zip`;
+      const zipBackupFilePath = path.join(__dirname, '..', config.bkpDir, zipBackupFileName);
+
+      // Crie o arquivo ZIP
+      const zipData = await zip.generateAsync({
+        type: 'nodebuffer',
+        compression: 'DEFLATE'
+      });
+      await fs.writeFile(zipBackupFilePath, zipData);
+
+      // Exclua o arquivo SQL não compactado
+      await fs.unlink(sqlBackupFilePath);
+
+    if (config.showLog === true) console.log(`Backup do banco de dados criado em ${zipBackupFilePath}`);
+      return zipBackupFileName;
+>>>>>>> Stashed changes
     } catch (error) {
       console.error('Erro ao criar o backup do banco de dados:', error);
       return false;
     }
+<<<<<<< Updated upstream
   }  
+=======
+  }
+>>>>>>> Stashed changes
 }
 
 module.exports = Database;

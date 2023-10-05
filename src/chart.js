@@ -8,7 +8,11 @@ const utils = require('./utils');
 
 class Chart {
     constructor () {
+<<<<<<< Updated upstream
       this.version = '0.0.2';  
+=======
+      this.version = '0.0.5';  
+>>>>>>> Stashed changes
     }
 
     async sql01 (client, from, DB) {
@@ -132,6 +136,7 @@ class Chart {
     }
   }
   
+<<<<<<< Updated upstream
   
     async barGraph () {
         let chart = new QuickChart();
@@ -205,6 +210,79 @@ class Chart {
             "Julho"
             ],
             "datasets": [
+=======
+  async barGraph () {
+    let chart = new QuickChart();
+    let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+
+    chart.setWidth(500);
+    chart.setHeight(300);
+    chart.setVersion('2');
+        
+    chart.setConfig({
+      type: 'bar',
+        data: {
+          labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+          datasets: [
+            {
+              label: 'Atendimentos',
+              data: [50, 60, 70, 180],
+              backgroundColor: 'rgba(54, 162, 235, 0.5)',
+              borderColor: 'rgb(54, 162, 235)',
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            datalabels: {
+              anchor: 'end',
+              align: 'top',
+              color: '#fff',
+              backgroundColor: 'rgba(34, 139, 34, 0.6)',
+              borderColor: 'rgba(34, 139, 34, 1.0)',
+              borderWidth: 1,
+              borderRadius: 5,
+              formatter: (value) => {
+                return value + 'k';
+              },
+            },
+          },
+        },
+      });
+
+      try {
+        const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
+        const chartImage = await chart.toFile(fN); // Gera a imagem do gráfico
+        console.log('Gráfico gerados com sucesso: ' + fN);
+        return fN;
+      } catch (error) {
+        console.error('Erro ao criar o gráfico:', error);
+      }
+  }
+
+  async aBarGraph () {
+    let chart2 = new QuickChart();
+    let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+
+    chart2.setWidth(500);
+    chart2.setHeight(300);
+    chart2.setVersion('2');
+
+    chart2.setConfig({
+      "type": "horizontalBar",
+      "data": {
+          "labels": [
+          "Janeiro",
+          "Fevereiro",
+          "Março",
+          "Abril",
+          "Maio",
+          "Junho",
+          "Julho"
+        ],
+      "datasets": [
+>>>>>>> Stashed changes
             {
                 "label": "Dataset 1",
                 "backgroundColor": "rgba(255, 99, 132, 0.5)",
