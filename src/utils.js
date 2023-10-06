@@ -7,10 +7,7 @@ const { Sequelize, DataTypes, Op } = require('sequelize');
 const QuickChart = require('quickchart-js');
 const moment = require('moment-timezone');
 const Chart = require('./chart.js');
-<<<<<<< Updated upstream
-=======
 const Database = require('./db');
->>>>>>> Stashed changes
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
@@ -435,10 +432,6 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           break;
 
         case 'backup':
-<<<<<<< Updated upstream
-          const backupFile = await DB.backup();
-          await client.sendMessage(config.empresa.botNumber, { text: `✅ Backup do banco de dados salvo com sucesso.\nArquivo: ${backupFile}`});
-=======
           await client.sendMessage(sender, { delete: mek.key });
           if (config.showLog === true) console.log('Rotina de backup iniciada.');
           const backupFile = await DB.backup();
@@ -447,12 +440,13 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           } else {
             await client.sendMessage(config.empresa.botNumber, { text: `⛔ Não foi possivél realizar o backup do banco de dados.`});
           }
->>>>>>> Stashed changes
           break;
           
         case 'bloqueia':
           if (!isBlocked(senderNumber)) {
             await client.sendMessage(sender, { delete: mek.key });
+            doNotHandleNumbers.push(senderNumber);
+            await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi inserido na lista de exclusão.`});
           }
           else {
             await client.sendMessage(sender, { delete: mek.key });
@@ -511,11 +505,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           await client.sendMessage(sender, { text: config.msgBV1 });
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(sender, { text: msgEndCardapio });    
-<<<<<<< Updated upstream
-          
-=======
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
->>>>>>> Stashed changes
           if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
             await client.sendMessage(sender, { text: config.msgAvisoSegundas });
           }
@@ -526,10 +516,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'cardapio':
           await client.sendMessage(sender, { delete: mek.key });
           await sendImageMessage(client, sender, "cardapio.jpg", config.empresa.verCardapio01, false);
-<<<<<<< Updated upstream
-=======
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
->>>>>>> Stashed changes
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem com o cardápio.`});
           break;
 

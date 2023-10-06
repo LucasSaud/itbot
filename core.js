@@ -120,12 +120,28 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
           else if (config.enableStatus === true && args.length === 2 && args[1].startsWith('4')) {
             await Utils.getServerStatus(client, sender, DB, mek);
           }
-          else if (args.length === 3 && phoneNumber.startsWith(config.botCountryCode)) {      
+          else if (args.length === 2 && args[1].startsWith('9')) {
+            // Coloque o número na lista de exclusão
+            let phoneNumber = args[1];
+            let phonePrefix = `${config.botCountryCode}${config.botDDDCode}`;
+            if (phoneNumber.length === 9) phoneNumber = `${phonePrefix}${phoneNumber}`;
+            const modifiedPhoneNumber = phoneNumber + '@s.whatsapp.net';
+        
+            if (!Utils.isBlocked(modifiedPhoneNumber)) {
+              Utils.doNotHandleNumbers.push(modifiedPhoneNumber);
+              await m.reply(`✅ Prontinho. O número ${phoneNumber} foi inserido na lista de exclusão.`);
+            } else {
+              await m.reply(`📵 O número ${phoneNumber} já está na lista de exclusão do atendimento.`);
+            }
+          }
+          else if (args.length === 3 && phoneNumber.startsWith(config.botCountryCode)) {   
+            if (config.showLog === true) console.log(`comandos escritos com o numero do cliente`); 
             const codOp = parseInt(args[2]);
             if (codOp === 1) {
               DB.updateContact(modifiedPhoneNumber, 0, 1); 
               await client.sendMessage(modifiedPhoneNumber, { text: config.empresa.pedidoProntoRetirada });
               await m.reply(`✅ Prontinho. O número ${phoneNumber} foi avisado para vir buscar o pedido.`);
+              if (config.showLog === true) console.log(`comandos escritos com o numero do cliente RETIRADA`); 
               if (!Utils.isBlocked(phoneNumber)) {
                 Utils.doNotHandleNumbers.push(phoneNumber);
               }
@@ -133,13 +149,16 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               DB.updateContact(modifiedPhoneNumber, 1, 0); 
               await client.sendMessage(modifiedPhoneNumber, { text: config.empresa.pedidoSaiuParaEntrega });
               await m.reply(`✅ Prontinho. O número ${phoneNumber} foi avisado que o pedido saiu para entrega.`);
+              if (config.showLog === true) console.log(`comandos escritos com o numero do cliente ENTREGA`); 
               if (!Utils.isBlocked(phoneNumber)) {
                 Utils.doNotHandleNumbers.push(phoneNumber);
               }
             } else if (codOp === 3) {
                 await client.sendMessage(modifiedPhoneNumber, { text: config.msgAvisoBot });
                 await m.reply(`✅ Prontinho. O número ${phoneNumber} foi notificado do uso do robô.`);
+                if (config.showLog === true) console.log(`comandos escritos com o numero do cliente BOT`); 
             } else if (codOp === 4) {
+              if (config.showLog === true) console.log(`comandos escritos com o numero do cliente DESBLOQUEIA`); 
                 const isInDoNotHandleNumbers =  Utils.doNotHandleNumbers.indexOf(phoneNumber);
                 if (isInDoNotHandleNumbers !== -1) {
                   Utils.doNotHandleNumbers.splice(isInDoNotHandleNumbers, 1);

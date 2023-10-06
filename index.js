@@ -49,11 +49,7 @@ let client;
 let lastClientMessageTime = 0;
 let receivedMsgTime = {};
 
-<<<<<<< Updated upstream
-/*function smsg(conn, m, store) {
-=======
 function smsg(conn, m, store) {
->>>>>>> Stashed changes
   // Check if 'm' exists and has a 'message' property
   if (!m || !m.message) return m;
 
@@ -192,121 +188,7 @@ function smsg(conn, m, store) {
   m.copy = () => exports.smsg(conn, M.fromObject(M.toObject(m)));
 
   return m; // Return the modified message object
-}*/
-
-function smsg(conn, m, store) {
-  // Check if 'm' exists and has a 'message' property
-  if (!m || !m.message) return m;
-
-  // Define 'M' as 'proto.WebMessageInfo'
-  const M = proto.WebMessageInfo;
-
-  // Initialize 'quoted' as null
-  let quoted = null;
-
-  // Extract information from 'm.key'
-  if (m.key) {
-    const { id, remoteJid, fromMe, participant } = m.key;
-    m.id = id;
-    m.isBaileys = id.startsWith('BAE5') && id.length === 16;
-    m.chat = remoteJid;
-    m.fromMe = fromMe;
-    m.isGroup = m.chat.endsWith('@g.us');
-    m.sender = conn.decodeJid((fromMe && conn.user.id) || participant || '');
-    if (m.isGroup) m.participant = conn.decodeJid(participant) || '';
-  } else {
-    if (config.showLog === true) console.log('Recebida mensagem sem objeto de chave:', m); // Log an error message
-    return m; // Return 'm'
-  }
-
-  // Process message content
-  if (m.message) {
-    const message = m.message.ephemeralMessage?.message || m.message;
-    m.mtype = getContentType(message);
-    m.msg = message[m.mtype];
-    m.body = message.conversation || m.msg?.caption || m.msg?.text || m.text;
-
-    // Extract quoted message information
-    if (message.contextInfo?.quotedMessage) {
-      quoted = message.contextInfo.quotedMessage;
-      m.mentionedJid = message.contextInfo.mentionedJid || [];
-    } else {
-      message.contextInfo = "";
-    }
-
-    // Process quoted message if it exists
-    if (m.quoted) {
-      let type = getContentType(quoted);
-      m.quoted = quoted[type];
-      if (['productMessage'].includes(type)) {
-        type = getContentType(m.quoted);
-        m.quoted = m.quoted[type];
-      }
-      if (typeof m.quoted === 'string') {
-        m.quoted = { text: m.quoted };
-      }
-      m.quoted.mtype = type;
-      m.quoted.id = m.msg?.contextInfo?.stanzaId;
-      m.quoted.chat = m.msg?.contextInfo?.remoteJid || m.chat;
-      m.quoted.isBaileys = m.quoted.id
-        ? m.quoted.id.startsWith('BAE5') && m.quoted.id.length === 16
-        : false;
-      m.quoted.sender = conn.decodeJid(m.msg?.contextInfo?.participant);
-      m.quoted.fromMe = m.quoted.sender === conn.decodeJid(conn.user.id);
-      m.quoted.text =
-        m.quoted.text ||
-        m.quoted.caption ||
-        m.quoted.conversation ||
-        m.quoted.contentText ||
-        m.quoted.selectedDisplayText ||
-        m.quoted.title ||
-        '';
-      m.quoted.mentionedJid = m.msg?.contextInfo ? m.msg?.contextInfo?.mentionedJid : [];
-      m.getQuotedObj = async () => {
-        if (!m.quoted.id) return false;
-        let q = await store.loadMessage(m.chat, m.quoted.id, conn);
-        return smsg(conn, q, store);
-      };
-
-      // Create a fake message object for the quoted message
-      let vM = (m.quoted.fakeObj = M.fromObject({
-        key: {
-          remoteJid: m.quoted.chat,
-          fromMe: m.quoted.fromMe,
-          id: m.quoted.id,
-        },
-        message: quoted,
-        ...(m.isGroup ? { participant: m.quoted.sender } : {}),
-      }));
-
-      // Define methods for the quoted message
-      m.quoted.delete = () => conn.sendMessage(m.quoted.chat, { delete: vM.key });
-      m.quoted.copyNForward = (jid, forceForward = false, options = {}) =>
-        conn.copyNForward(jid, vM, forceForward, options);
-      m.quoted.download = () => conn.downloadMediaMessage(m.quoted);
-    }
-  }
-
-  // Define a 'download' method if 'm.msg.url' exists
-  if (m.msg?.url) {
-    m.download = () => conn.downloadMediaMessage(m.msg);
-  }
-
-  // Define a 'reply' method
-  m.reply = (text, chatId = m.chat, options = {}) => {
-    return Buffer.isBuffer(text)
-      ? conn.sendMedia(chatId, text, 'file', '', m, { ...options })
-      : conn.sendText(chatId, text, m, { ...options });
-  };
-
-  // Define a 'copy' method
-  m.copy = () => smsg(conn, M.fromObject(M.toObject(m)));
-
-  return m; // Return the modified message object
 }
-
-
-
 
 async function startCore(inDebit) {
   // Load authentication state from a file
@@ -497,39 +379,6 @@ async function startCore(inDebit) {
           }
         }
 
-<<<<<<< Updated upstream
-      if (!mek.isGroup && typeof m.body === 'string' && !itsMe && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
-        // Convert the message text and keywords to lowercase to avoid case sensitivity issues
-        const mensagemLowerCase = m.body.toLowerCase();
-        if (config.showLog === true) console.log(`Fazendo varredura em: ${mensagemLowerCase}.`);
-
-        // Search for a CEP (zip code) in the message and respond if found
-        if(config.enableAddrDetector === true) Utils.searchCEP(axios, client, m.body.toLowerCase(), m.sender);
-
-        if (config.enableKeywordDetector === true) {
-          let foundKeyword = null; // Initialize as null
-          
-          // Check if any menu keywords or their variants are present in the message
-          config.palavrasChave.some((keyword) => {
-            const foundVariant = mensagemLowerCase.includes(keyword.toLowerCase());
-            if (foundVariant) {
-              foundKeyword = keyword; // Corrigido para salvar a palavra encontrada
-              if (config.showLog === true) console.log(`Encontrei a palavra: ${foundKeyword}`);
-              return true; // Exit the loop as soon as the first match is found
-            }
-            return false; // Continue searching
-          });
-        
-          if (foundKeyword) {
-            // Send a response message informing about the dish found
-            const cliente = sender.replace('@s.whatsapp.net', '');
-            const response = `⚠️⚠️⚠️ *O número ${cliente} quer fazer um pedido. Palavra-chave encontrada: ${foundKeyword}. Olhar a conversa.* ⚠️⚠️⚠️`;
-            await client.sendMessage(config.empresa.botNumber, { text: response });
-            ignoreNumber = true;
-          }
-        }        
-      }
-=======
         // Check if 'm.body' is a number between 1 and 8
         if(config.enableEmogiReact === true && !mek.isGroup && m.body && m.body.length === 1) {
           const number = parseInt(m.body);
@@ -593,7 +442,6 @@ async function startCore(inDebit) {
             console.log(`Ignorando o número: ${sender}`);
           }
         }
->>>>>>> Stashed changes
             
       // Require and execute the 'core' module with relevant parameters
       require('./core')(client, m, chatUpdate, ignoreNumber);

@@ -20,19 +20,11 @@ function updateVersionAndAddNewConfig() {
     console.log(`A versão em config é maior (${config.botVersion}) do que em configLoja01 (${configLoja01.botVersion}). Atualizando...`);
     configLoja01.botVersion = config.botVersion;
   } else {
-<<<<<<< Updated upstream
-    console.log('Nenhuma atualização necessária de versao.');
-    doNothing = true;
-  }
-
-  if(doNothing != true) {
-=======
     console.log('Nenhuma atualização necessária de versão.');
     doNothing = true;
   }
 
   if (doNothing !== true) {
->>>>>>> Stashed changes
     // Verificar e adicionar novas configurações
     for (const key in config) {
       if (!(key in configLoja01)) {
@@ -48,15 +40,6 @@ function updateVersionAndAddNewConfig() {
         delete configLoja01[key];
       }
     }
-<<<<<<< Updated upstream
-    const backupFileName = path.join(__dirname, '..', 'conf', 'bkp', 'config.loja01.backup.js');
-    const configLoja01File = path.join(__dirname, '..', 'conf', 'config.loja01.js');
-    fs.copyFileSync(configLoja01File, backupFileName);
-    console.log(`Backup criado: ${backupFileName}`);
-  
-    const updatedConfig = JSON.stringify(configLoja01, null, 2);
-    fs.writeFileSync(configLoja01File, `module.exports = ${updatedConfig};`, 'utf-8');
-=======
 
     const backupFileName = path.join(__dirname, '..', 'conf', 'bkp', 'config.loja01.backup.js');
     const configLoja01File = path.join(__dirname, '..', 'conf', 'config.loja01.js');
@@ -69,15 +52,11 @@ function updateVersionAndAddNewConfig() {
     console.log(`Backup criado: ${backupFileName}`);
 
     fs.writeFileSync(configLoja01File, updatedConfig, 'utf-8');
->>>>>>> Stashed changes
     console.log('Versão atualizada.');
   }
 }
 
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 function menu() {
   console.log('Selecione uma opção:');
   console.log('1) Nova Instalação');

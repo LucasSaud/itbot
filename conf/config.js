@@ -1,13 +1,4 @@
 module.exports = {
-<<<<<<< Updated upstream
-  botVersion: "2.1.5",
-  botAdmin: "5516993636362@s.whatsapp.net",
-  botCountryCode: "55",
-  botDDDCode: "16",
-  doNotHandleNumbers: [ '5516993710273','5516994184493','5516981303311','5516991131877',
-                        '13109418333','5516994579554','5517996235872','5516992895991',
-                        '553197137788','5516994622366','5517981436608','5511950825321',
-=======
   botVersion: "2.1.6",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
@@ -16,7 +7,6 @@ module.exports = {
   doNotHandleNumbers: [ '553197137788','5516993710273','5516994184493','5516981303311','5516991131877',
                         '13109418333','5516994579554','5517996235872','5516992895991',
                         '5516994622366','5517981436608','5511950825321',
->>>>>>> Stashed changes
                         '5516993259097','5519999088888','5511972522364','5516999803888', 
                         '5516992877187','5516997980088','5516996180725','5516992552268',
                         '5516992243371','5516992734181','5516992974914','5516988310481', 
@@ -54,12 +44,9 @@ module.exports = {
     'oi',
     'bv',
     'cardapio',
-<<<<<<< Updated upstream
-=======
     'endereco',
     'backup',
     'ajuda',
->>>>>>> Stashed changes
   ],
   palavrasChave: [
     'queijo', 'mussarela', 'quatro queijos', '4 queijos', '4 queijo',
@@ -116,11 +103,7 @@ module.exports = {
   msgAvisoSegundas: "☝🏼 *Aviso:* As segundas-feiras a Loja01 da Ital'in House Franca funciona em outra localização. 📁\n\nRua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP",
   empresa: {
     nomeDaLoja: "Ital'in House Franca Loja 02",
-<<<<<<< Updated upstream
-    enderecoDaLoja: "Rua Alváro Abranches, 1057, Cidade Nova, Franca-SP",
-=======
     enderecoDaLoja: "Rua Alváro Abranches, 1057, Cidade Nova, Franca-SP, CEP 14401-094",
->>>>>>> Stashed changes
     enderecoCardapio: "https://rebrand.ly/italin_franca02",
     botNumber: "5516997888800@s.whatsapp.net",
     latitude: "-20.524254149322978",
@@ -128,11 +111,7 @@ module.exports = {
     horariosFuncionamento: "⏰ Nossos horários de funcionamento são:\n\n*Domingo* das 11:00h às 23:00h.\n\n*Segunda* das 11:00h às 23:00h.\n\n*Terça* das 11:00h às 14:00h e das 18:00h às 23:00h.\n\n*Quarta* das 11:00 às 14:00 e das 18:00h às 23:00h.\n\n*Quinta* das 11:00 às 14:00 e das 18:00h às 23:00h.\n\n*Sexta* das 11:00 às 23:00h.\n\n*Sábado* das 11:00 às 23:00h",
     verCardapio: "☝🏼 Nosso cardápio.\nNem consigo te recomendar um prato, porque eu amo todos! 😍\n\nLembrando que nossos box vem 800g de um delicioso macarrão gourmet e 650g de um maravilhoso risoto.\n\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02\n\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝",
     verCardapio01: "☝🏼 Nosso cardápio.\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02\n\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝",
-<<<<<<< Updated upstream
-    nossaLocalizacao: "📍 Um momento, vou te encaminhar nosso *endereço* e *telefone*... 📁\n\nRua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP\n\nSe preferir, você também pode ver pelo Maps! 🗺️👇\nhttps://goo.gl/maps/2B9tKHBARb2qsVS37\n\n*Contato*\n📱 (16) 99788-8800",
-=======
     nossaLocalizacao: "📍 Um momento, vou te encaminhar nosso *endereço* e *telefone*... 📁\n\nRua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP, CEP: 14401-094.\n\nSe preferir, você também pode ver pelo Maps! 🗺️👇\nhttps://goo.gl/maps/2B9tKHBARb2qsVS37\n\n*Contato*\n📱 (16) 99788-8800",
->>>>>>> Stashed changes
     tempoParaEntregar: "⏱️ O nosso tempo de *retirada* é de 10 à 25 minutos, já o nosso tempo de *entrega* é de 15 à 30 minutos.",
     fazerPedido: "🍽️ O cardápio está no link abaixo, o que escolher chega na hora pra mim! 👇\n\nhttps://rebrand.ly/italin_franca02",
     opcoesPagamento: "💲 Opções de pagamento:\n\n💰 Dinheiro\n\n💳 Cartões Débito ou Crédito\n✔️ Visa\n✔️ Elo\n✔️ Mastercard\n\n💳 Cartões Vale Refeição\n\n📲 Pagamento por Pix\n🔑 Chave Celular: 1699788-8800\nM.W. Foods LTDA.",
@@ -158,17 +137,10 @@ module.exports = {
   ],
   cmdArray: ['0','1','2','3','4','5','6','7','8'],
   timeZone: "America/Sao_Paulo",
-<<<<<<< Updated upstream
-  showLog: false,
-  sendDevLog: true,
-  sendServerStatusDevMsg: true,
-  devNumber: `5516993636362@s.whatsapp.net`,
-=======
   showLog: true,
   sendDevLog: true,
   sendServerStatusDevMsg: true,
   devNumber: `5516996509803@s.whatsapp.net`,
->>>>>>> Stashed changes
   errorMsgs: {
     startCore: "Ocorreu um erro ao iniciar a instrução startCore()",
   },
@@ -179,9 +151,6 @@ module.exports = {
   enableEmogiReact: true,
   enableDB: true,
   chartDir: "chart",
-<<<<<<< Updated upstream
-=======
   bkpDir: "bkp",
   autoTurnOff: false,
->>>>>>> Stashed changes
 };
