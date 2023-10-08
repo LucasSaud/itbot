@@ -1,7 +1,7 @@
 // Import necessary modules and components from Sequelize
 const { Sequelize, DataTypes, Op } = require("sequelize");
 const Utils = require('./utils.js');
-const config = require('../config.js');
+const config = require('../conf/config.js');
 
 // Define a class named 'DBS' for database operations
 class DBS {

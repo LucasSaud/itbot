@@ -7,7 +7,7 @@ const path = require('path'); // Node.js path module
 const axios = require('axios'); // Axios HTTP client
 const NodeCache = require('node-cache'); // NodeCache library for caching
 const PhoneNumber = require('awesome-phonenumber'); // Library for handling phone numbers
-const config = require('./config'); // Custom configuration file
+const config = require('./conf/config'); // Custom configuration file
 const Database = require('./src/db'); // Custom Database module
 const DBS = require('./src/dbs'); // Custom DBS module
 const Utils = require('./src/utils'); // Custom Utils module
@@ -48,11 +48,10 @@ const msgRetryCounterCache = new NodeCache();
 let client;
 let lastClientMessageTime = 0;
 let receivedMsgTime = {};
-let r;
 
 function smsg(conn, m, store) {
-  // Check if 'm' exists, if not, return it
-  if (!m) return m;
+  // Check if 'm' exists and has a 'message' property
+  if (!m || !m.message) return m;
 
   // Define 'M' as 'proto.WebMessageInfo'
   let M = proto.WebMessageInfo;
@@ -95,6 +94,7 @@ function smsg(conn, m, store) {
       m.mtype = getContentType(m.message);
       m.msg = m.message[m.mtype];
     }
+
     m.msg =
       m.mtype == 'viewOnceMessage'
         ? m.message[m.mtype].message[getContentType(m.message[m.mtype].message)]
@@ -107,12 +107,12 @@ function smsg(conn, m, store) {
       m.text;
 
     // Extract quoted message information
-    if (m.msg.contextInfo && m.msg.contextInfo.quotedMessage) {
-      quoted = m.msg.contextInfo.quotedMessage;
+    if (m.msg?.contextInfo && m.msg?.contextInfo?.quotedMessage) {
+      quoted = m.msg?.contextInfo?.quotedMessage;
     }
-    if (m.message.contextInfo && m.message.contextInfo.quotedMessage) {
-      quoted = m.message.contextInfo.quotedMessage;
-      m.mentionedJid = m.message.contextInfo.mentionedJid || [];
+    if (m.message?.contextInfo && m.message?.contextInfo?.quotedMessage) {
+      quoted = m.message?.contextInfo?.quotedMessage;
+      m.mentionedJid = m.message?.contextInfo?.mentionedJid || [];
     } else {
       m.message.contextInfo = "";
     }
@@ -131,12 +131,12 @@ function smsg(conn, m, store) {
           text: m.quoted,
         };
       m.quoted.mtype = type;
-      m.quoted.id = m.msg.contextInfo.stanzaId;
-      m.quoted.chat = m.msg.contextInfo.remoteJid || m.chat;
+      m.quoted.id = m.msg?.contextInfo?.stanzaId;
+      m.quoted.chat = m.msg?.contextInfo?.remoteJid || m.chat;
       m.quoted.isBaileys = m.quoted.id
         ? m.quoted.id.startsWith('BAE5') && m.quoted.id.length === 16
         : false;
-      m.quoted.sender = conn.decodeJid(m.msg.contextInfo.participant);
+      m.quoted.sender = conn.decodeJid(m.msg?.contextInfo?.participant);
       m.quoted.fromMe = m.quoted.sender === conn.decodeJid(conn.user.id);
       m.quoted.text =
         m.quoted.text ||
@@ -146,7 +146,7 @@ function smsg(conn, m, store) {
         m.quoted.selectedDisplayText ||
         m.quoted.title ||
         '';
-      m.quoted.mentionedJid = m.msg.contextInfo ? m.msg.contextInfo.mentionedJid : [];
+      m.quoted.mentionedJid = m.msg?.contextInfo ? m.msg?.contextInfo?.mentionedJid : [];
       m.getQuotedObj = m.getQuotedMessage = async () => {
         if (!m.quoted.id) return false;
         let q = await store.loadMessage(m.chat, m.quoted.id, conn);
@@ -173,7 +173,9 @@ function smsg(conn, m, store) {
   }
 
   // Define a 'download' method if 'm.msg.url' exists
-  if (m.msg.url) m.download = () => conn.downloadMediaMessage(m.msg);
+  if (m.msg?.url) {
+    m.download = () => conn.downloadMediaMessage(m.msg);
+  } 
 
   // Define a 'reply' method
   m.reply = (text, chatId = m.chat, options = {}) => {
@@ -201,17 +203,114 @@ async function startCore(inDebit) {
 
   // Initialize the WhatsApp client
   client = coreConnect({
-    logger,
-    printQRInTerminal: true,
-    auth: {
-      creds: state.creds,
-      keys: makeCacheableSignalKeyStore(state.keys, logger),
-    },
-    browser: Browsers.macOS('Desktop'),
-    msgRetryCounterCache,
-    generateHighQualityLinkPreview: true,
-    shouldIgnoreJid: jid => isJidBroadcast(jid),
-  });
+		/** the WS url to connect to WA */
+		//waWebSocketUrl: config.WA_URL,
+		/** Fails the connection if the socket times out in this interval */
+		connectTimeoutMs: 60000,
+		/** Default timeout for queries, undefined for no timeout */
+		defaultQueryTimeoutMs: undefined,
+		/** ping-pong interval for WS connection */
+		keepAliveIntervalMs: 5000,
+		/** proxy agent */
+		agent: undefined,
+		/** pino logger */
+		logger: pino({ level: 'error' }),
+		/** version to connect with */
+		version: version || undefined,
+		/** override browser config */
+		browser: Browsers.macOS('Desktop'),
+		/** agent used for fetch requests -- uploading/downloading media */
+		fetchAgent: undefined,
+		/** should the QR be printed in the terminal */
+		printQRInTerminal: true,
+		/** should events be emitted for actions done by this socket connection */
+		emitOwnEvents: false,
+		/** provide a cache to store media, so does not have to be re-uploaded */
+		//mediaCache: NodeCache,
+		/** custom upload hosts to upload media to */
+		//customUploadHosts: MediaConnInfo['hosts'],
+		/** time to wait between sending new retry requests */
+		retryRequestDelayMs: 5000,
+		/** time to wait for the generation of the next QR in ms */
+		qrTimeout: 15000,
+		/** provide an auth state object to maintain the auth state */
+		//auth: state,
+		auth: {
+			creds: state.creds,
+				//caching makes the store faster to send/recv messages
+				keys: makeCacheableSignalKeyStore(state.keys, logger),
+		},
+		/** manage history processing with this control; by default will sync up everything */
+		//shouldSyncHistoryMessage: boolean,
+		/** transaction capability options for SignalKeyStore */
+		//transactionOpts: TransactionCapabilityOptions,
+		/** provide a cache to store a user's device list */
+		//userDevicesCache: NodeCache,
+		/** marks the client as online whenever the socket successfully connects */
+		//markOnlineOnConnect: setOnline,
+		/**
+		* map to store the retry counts for failed messages;
+		* used to determine whether to retry a message or not */
+		msgRetryCounterCache: msgRetryCounterCache,
+		/** width for link preview images */
+		linkPreviewImageThumbnailWidth: 192,
+		/** Should Baileys ask the phone for full history, will be received async */
+		syncFullHistory: false,
+		/** Should baileys fire init queries automatically, default true */
+		fireInitQueries: true,
+		/**
+		* generate a high quality link preview,
+		* entails uploading the jpegThumbnail to WA
+		* */
+		generateHighQualityLinkPreview: true,
+		/** options for axios */
+		//options: AxiosRequestConfig || undefined,
+		// ignore all broadcast messages -- to receive the same
+		// comment the line below out
+		shouldIgnoreJid: jid => isJidBroadcast(jid),
+		/** By default true, should history messages be downloaded and processed */
+		downloadHistory: true,
+		/**
+		* fetch a message from your store
+		* implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
+		* */
+		// implement to handle retries
+		getMessage: async (key) => {
+			if (store) {
+				const msg = await store?.loadMessage(key?.remoteJid, key?.id);
+				return msg?.message || undefined;
+			}
+			//
+			// only if store is present
+			return {
+				conversation: 'hello'
+			}
+		},
+		// For fix button, template list message
+		patchMessageBeforeSending: (message) => {
+			const requiresPatch = !!(
+							message.buttonsMessage ||
+							message.templateMessage ||
+							message.listMessage
+			);
+			if (requiresPatch) {
+				message = {
+								viewOnceMessage: {
+									message: {
+										messageContextInfo: {
+											deviceListMetadataVersion: 2,
+											deviceListMetadata: {},
+										},
+										...message,
+									},
+								},
+				}
+			}
+			//
+			return message;
+			}
+		});
+
 
   // Bind the client to the store
   store.bind(client.ev);
@@ -219,111 +318,130 @@ async function startCore(inDebit) {
   // Event handler for incoming messages
   client.ev.on('messages.upsert', async (chatUpdate) => {
     try {
-      let ignoreNumber = false;
-      const sender = chatUpdate.messages[0]?.key.remoteJid;
-
-      // Save the sender as a contact if it's not a group or a broadcast
-      if (sender && !sender.endsWith('@g.us') && !sender.endsWith('@broadcast') && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
-        const contact = { whatsappNumber: sender };
-        await DB.saveContact(contact);
-      }
-
-      const currentTime = new Date().getTime();
-
-      // Check if the time between messages is less than the configured delay
-      if (currentTime - lastClientMessageTime < config.tempoEntreMensagens) return;
 
       mek = chatUpdate.messages[0];
+      const sender = chatUpdate.messages[0]?.key.remoteJid;
+      const userNumber = client.user.id.replace(':58', '');
       if (!mek.message) return;
-      if (mek.isGroup) return;
+      if (mek.isGroup || sender.endsWith('@g.us') ) return;
 
-      // Extract the message content
-      mek.message =
-        Object.keys(mek.message)[0] === 'ephemeralMessage'
-          ? mek.message.ephemeralMessage.message
-          : mek.message;
+      let ignoreNumber = false;
 
-      if (mek.key && mek.key.remoteJid === 'status@broadcast') return;
-
-      const itsMe = sender.replace('@s.whatsapp.net', '') == config.empresa.botNumber.replace('@s.whatsapp.net', '') ? true : false;
-
-      const phoneNumber = PhoneNumber(mek.key.remoteJid.replace('@s.whatsapp.net', '')).getNumber('international');
-
-      if (!client.public && !mek.key.fromMe && chatUpdate.type === 'notify') return;
-      if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return;
-
-      m = smsg(client, mek, store);
-
-      if (!mek.isGroup && typeof m.body === 'string') {
-        // Check if the message body contains a command
-        await Utils.parseCmd(client, m.pushName, m.body, mek, DB, m.chat);
-      }
-
-      if (!mek.isGroup) receivedMsgTime[m.sender] = new Date();
-      if (m.mtype === 'videoMessage' && m.body) return;
-
-      if (config.enableEmogiReact === true && mek.message && mek.message.documentMessage && !itsMe) {
-        const documentMessage = mek.message.documentMessage;
-        if (documentMessage.mimetype === 'application/pdf') {
-          // React to a PDF document with a money emoji
-          const reactionMoneyMessage = {
-            react: {
-              text: `💸`,  // Use the corresponding emoji
-              key: mek.key,
-            },
-          };
-          await client.sendMessage(sender, reactionMoneyMessage);
+        // Save the sender as a contact if it's not a group or a broadcast
+        if (sender && !sender.endsWith('@g.us') && !sender.endsWith('@broadcast') && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
+          const contact = { whatsappNumber: sender };
+          await DB.saveContact(contact);
         }
-      }
 
-      // Check if 'm.body' is a number between 1 and 8
-      if(config.enableEmogiReact === true && !mek.isGroup && m.body && m.body.length === 1) {
-        const number = parseInt(m.body);
-        if (!mek.isGroup && (number >= 1 && number <= 8) && !itsMe) {
-          // Check if there is a corresponding emoji in the mapping
-          if (config.emojiMap[number]) {
-            // Send the emoji as a reaction to the message
-            const reactionMessage = {
+        const currentTime = new Date().getTime();
+
+        // Check if the time between messages is less than the configured delay
+        if (currentTime - lastClientMessageTime < config.tempoEntreMensagens) return;
+
+        // Extract the message content
+        mek.message =
+          Object.keys(mek.message)[0] === 'ephemeralMessage'
+            ? mek.message.ephemeralMessage.message
+            : mek.message;
+
+        if (mek.key && mek.key.remoteJid === 'status@broadcast') return;
+
+        const itsMe = sender.replace('@s.whatsapp.net', '') == config.empresa.botNumber.replace('@s.whatsapp.net', '') ? true : false;
+
+        const phoneNumber = PhoneNumber(mek.key.remoteJid.replace('@s.whatsapp.net', '')).getNumber('international');
+
+        if (!client.public && !mek.key.fromMe && chatUpdate.type === 'notify') return;
+        if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return;
+
+        m = smsg(client, mek, store);
+
+        let isCommand = false;
+
+        if (!mek.isGroup && typeof m.body === 'string') {
+          // Check if the message body contains a command
+          isCommand = await Utils.parseCmd(client, m.pushName, m.body, mek, DB, m.chat);
+        }
+
+        if (!mek.isGroup) receivedMsgTime[m.sender] = new Date();
+        if (m.mtype === 'videoMessage' && m.body) return;
+
+        if (config.enableEmogiReact === true && mek.message && mek.message.documentMessage && !itsMe) {
+          const documentMessage = mek.message.documentMessage;
+          if (documentMessage.mimetype === 'application/pdf') {
+            // React to a PDF document with a money emoji
+            const reactionMoneyMessage = {
               react: {
-                text: config.emojiMap[number],  // Use the corresponding emoji
+                text: `💸`,  // Use the corresponding emoji
                 key: mek.key,
               },
             };
-            await client.sendMessage(sender, reactionMessage);
+            await client.sendMessage(sender, reactionMoneyMessage);
           }
         }
-      }
 
-      if (!mek.isGroup && typeof m.body === 'string' && !itsMe && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
-        // Convert the message text and keywords to lowercase to avoid case sensitivity issues
-        const mensagemLowerCase = m.body.toLowerCase();
-
-        // Search for a CEP (zip code) in the message and respond if found
-        if(config.enableAddrDetector === true) Utils.searchCEP(axios, client, m.body.toLowerCase(), m.sender);
-
-        if(config.enableKeywordDetector === true) {
-          let foundKeyword = null; // Initialize as null
-
-          // Check if any menu keywords or their variants are present in the message
-          Object.keys(config.palavrasChave).some((keyword) => {
-            const variants = config.palavrasChave[keyword];
-            const foundVariant = variants.find((variant) => mensagemLowerCase.includes(variant.toLowerCase()));
-            if (foundVariant) {
-              foundKeyword = keyword; // Store the found keyword
-              return true; // Exit the loop as soon as the first match is found
+        // Check if 'm.body' is a number between 1 and 8
+        if(config.enableEmogiReact === true && !mek.isGroup && m.body && m.body.length === 1) {
+          const number = parseInt(m.body);
+          if (!mek.isGroup && (number >= 1 && number <= 8) && !itsMe) {
+            // Check if there is a corresponding emoji in the mapping
+            if (config.emojiMap[number]) {
+              // Send the emoji as a reaction to the message
+              const reactionMessage = {
+                react: {
+                  text: config.emojiMap[number],  // Use the corresponding emoji
+                  key: mek.key,
+                },
+              };
+              await client.sendMessage(sender, reactionMessage);
             }
-            return false; // Continue searching
-          });
-
-          if (foundKeyword) {
-            // Send a response message informing about the dish found
-            const cliente = sender.replace('@s.whatsapp.net', '');
-            const response = `⚠️⚠️⚠️ *O número ${cliente} quer fazer um pedido. Palavra-chave encontrada: ${foundKeyword}. Olhar a conversa.* ⚠️⚠️⚠️`;
-            await client.sendMessage(config.empresa.botNumber, { text: response });
-            ignoreNumber = true;
           }
         }
-      }
+
+        if (!mek.isGroup && typeof m.body === 'string' && !itsMe && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
+          // Convert the message text and keywords to lowercase to avoid case sensitivity issues
+          const mensagemLowerCase = m.body.toLowerCase();
+          if (!mensagemLowerCase.startsWith('!')) {
+            if (config.showLog === true) console.log(`Fazendo varredura em: ${mensagemLowerCase}.`);
+
+            // Search for a CEP (zip code) in the message and respond if found
+            if(config.enableAddrDetector === true) Utils.searchCEP(axios, client, m.body.toLowerCase(), m.sender);
+  
+            if (config.enableKeywordDetector === true) {
+              let foundKeyword = null; // Initialize as null
+              
+              // Check if any menu keywords or their variants are present in the message
+              config.palavrasChave.some((keyword) => {
+                const foundVariant = mensagemLowerCase.includes(keyword.toLowerCase());
+                if (foundVariant) {
+                  foundKeyword = keyword; // Corrigido para salvar a palavra encontrada
+                  if (config.showLog === true) console.log(`Encontrei a palavra: ${foundKeyword}`);
+                  return true; // Exit the loop as soon as the first match is found
+                }
+                return false; // Continue searching
+              });
+            
+              if (foundKeyword) {
+                // Send a response message informing about the dish found
+                const cliente = sender.replace('@s.whatsapp.net', '');
+                const response = `⚠️⚠️⚠️ *O número ${cliente} quer fazer um pedido. Palavra-chave encontrada: ${foundKeyword}. Olhar a conversa.* ⚠️⚠️⚠️`;
+                await client.sendMessage(config.empresa.botNumber, { text: response });
+                ignoreNumber = true;
+              }
+            }  
+          }   
+        }
+
+        // Bloqueia o bot se o número do bot enviar uma mensagem ao usuário
+        if (config.autoTurnOff === true && userNumber === config.empresa.botNumber && !isCommand) {
+          if (!Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
+            if (config.showLog === true) console.log(`Bot bloqueado automaticamente no número: ${sender}`);
+            ignoreNumber = true;
+            await DB.saveLogs(`[ REGISTRO ] O número ${sender} foi adicionado à lista de exclusão do atendimento. AutoBlock ON`);
+            await client.sendMessage(config.empresa.botNumber, { text: `📵 O número ${sender} foi adicionado à lista de exclusão do atendimento. AutoBlock ON` });
+            Utils.doNotHandleNumbers.push(sender.replace('@s.whatsapp.net', ''));
+            console.log(`Ignorando o número: ${sender}`);
+          }
+        }
             
       // Require and execute the 'core' module with relevant parameters
       require('./core')(client, m, chatUpdate, ignoreNumber);
@@ -347,7 +465,7 @@ async function startCore(inDebit) {
       lastClientMessageTime = currentTime;
 
     } catch (err) {
-      if (config.sendDevLog === true) Utils.sendDevInfo(client, m.sender, DB, config.errorMsgs.startCore);
+      //if (config.sendDevLog === true) Utils.sendDevInfo(client, m.sender, DB, config.errorMsgs.startCore);
       if (config.showLog === true) console.log(err);
     }
   });
@@ -511,7 +629,7 @@ async function startCore(inDebit) {
         if (config.showLog === true) console.log('Dispositivo desconectado, por favor, exclua a pasta da sessão e escaneie novamente.');
         const directoryPath = path.join(__dirname, 'sessoes');
         Util.delDirs(directoryPath);
-        client.logout()
+        client.logout();
         process.exit();
       } else if (reason === DisconnectReason.restartRequired) {
         if (config.showLog === true) console.log('Reinício necessário, reiniciando...');
@@ -524,8 +642,8 @@ async function startCore(inDebit) {
         startCore();
       }
     } else if (connection === 'open') {
-      console.log(`AutoAtende v.${config.botVersion} conectou ao servidor com sucesso.`);
-      console.log(`AutoAtende usando WA v${version.join('.')}, é a mais recente? ${isLatest ? "Sim" : "Não"}`);
+      console.log(`AutoAtende v.${config.botVersion} está ligado.`);
+      if (config.showLog === true) console.log(`AutoAtende usando WA v${version.join('.')}, é a mais recente? ${isLatest ? "Sim" : "Não"}`);
 
       await client.sendMessage(config.botAdmin, {
         text: `🤖 ${config.empresa.nomeDaLoja} está ligado.`,
@@ -644,7 +762,7 @@ async function startCore(inDebit) {
   return client;
 }
 
-const graphicsFolder = path.join(__dirname, 'img', 'charts');
+const graphicsFolder = path.join(__dirname, 'img', 'chart');
 const sessionFolder = path.join(__dirname, 'sessoes');
 const maxAgeForSessions = 24 * 60 * 60 * 1000;
 
@@ -659,7 +777,7 @@ setInterval(() => {
 }, maxAgeForSessions);
 
 // Check if the bot's number (without '@s.whatsapp.net') is paid in the DBSX
-if (DBSX.isPaid(config.empresa.botNumber.replace('@s.whatsapp.net', ''))) {
+if (config.enableDB === true && DBSX.isPaid(config.empresa.botNumber.replace('@s.whatsapp.net', ''))) {
   // If the bot's number is paid, start the 'startCore' function with 'false' parameter
   startCore(false);
 } else {

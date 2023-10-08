@@ -3,14 +3,16 @@ const util = require('util');
 const path = require('path');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const moment = require('moment-timezone');
-const config = require('./config');
+const config = require('./conf/config');
 const Database = require('./src/db');
 const Utils = require('./src/utils');
+const Chart = require('./src/chart.js');
 
 module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
   try {
 
     const DB = new Database();
+    const Graphs = new Chart();
     const cmdArray = config.cmdArray;
     const currentTime = moment.tz(config.timeZone);
     const timestamp = currentTime.format('YYYY-MM-DD HH:mm:ss');
@@ -70,6 +72,8 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
       return;
     }
 
+    if (m.isGroup) return;
+
     if(body.startsWith('!')) {
       return;
     }
@@ -110,17 +114,34 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             await Utils.sendInactiveMessage(client, m, DB); 
           }
           else if (config.enableStats === true && args.length === 2 && args[1].startsWith('3')) {
-            Utils.generateAnalyticsReport(client, sender, DB);
+            Utils.generateAnalyticsReport(client, sender, DB, mek);
+            Graphs.sql01(client, from, DB, mek);
           }
           else if (config.enableStatus === true && args.length === 2 && args[1].startsWith('4')) {
-            await Utils.getServerStatus(client, sender, DB);
+            await Utils.getServerStatus(client, sender, DB, mek);
           }
-          else if (args.length === 3 && phoneNumber.startsWith(config.botCountryCode)) {      
+          else if (args.length === 2 && args[1].startsWith('9')) {
+            // Coloque o número na lista de exclusão
+            let phoneNumber = args[1];
+            let phonePrefix = `${config.botCountryCode}${config.botDDDCode}`;
+            if (phoneNumber.length === 9) phoneNumber = `${phonePrefix}${phoneNumber}`;
+            const modifiedPhoneNumber = phoneNumber + '@s.whatsapp.net';
+        
+            if (!Utils.isBlocked(modifiedPhoneNumber)) {
+              Utils.doNotHandleNumbers.push(modifiedPhoneNumber);
+              await m.reply(`✅ Prontinho. O número ${phoneNumber} foi inserido na lista de exclusão.`);
+            } else {
+              await m.reply(`📵 O número ${phoneNumber} já está na lista de exclusão do atendimento.`);
+            }
+          }
+          else if (args.length === 3 && phoneNumber.startsWith(config.botCountryCode)) {   
+            if (config.showLog === true) console.log(`comandos escritos com o numero do cliente`); 
             const codOp = parseInt(args[2]);
             if (codOp === 1) {
               DB.updateContact(modifiedPhoneNumber, 0, 1); 
               await client.sendMessage(modifiedPhoneNumber, { text: config.empresa.pedidoProntoRetirada });
               await m.reply(`✅ Prontinho. O número ${phoneNumber} foi avisado para vir buscar o pedido.`);
+              if (config.showLog === true) console.log(`comandos escritos com o numero do cliente RETIRADA`); 
               if (!Utils.isBlocked(phoneNumber)) {
                 Utils.doNotHandleNumbers.push(phoneNumber);
               }
@@ -128,13 +149,16 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               DB.updateContact(modifiedPhoneNumber, 1, 0); 
               await client.sendMessage(modifiedPhoneNumber, { text: config.empresa.pedidoSaiuParaEntrega });
               await m.reply(`✅ Prontinho. O número ${phoneNumber} foi avisado que o pedido saiu para entrega.`);
+              if (config.showLog === true) console.log(`comandos escritos com o numero do cliente ENTREGA`); 
               if (!Utils.isBlocked(phoneNumber)) {
                 Utils.doNotHandleNumbers.push(phoneNumber);
               }
             } else if (codOp === 3) {
                 await client.sendMessage(modifiedPhoneNumber, { text: config.msgAvisoBot });
                 await m.reply(`✅ Prontinho. O número ${phoneNumber} foi notificado do uso do robô.`);
+                if (config.showLog === true) console.log(`comandos escritos com o numero do cliente BOT`); 
             } else if (codOp === 4) {
+              if (config.showLog === true) console.log(`comandos escritos com o numero do cliente DESBLOQUEIA`); 
                 const isInDoNotHandleNumbers =  Utils.doNotHandleNumbers.indexOf(phoneNumber);
                 if (isInDoNotHandleNumbers !== -1) {
                   Utils.doNotHandleNumbers.splice(isInDoNotHandleNumbers, 1);
@@ -184,7 +208,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
 
             case '2':
               try {
-                await Utils.sendImageMessage(client, from, "cardapio.jpg", config.empresa.verCardapio);
+                await Utils.sendImageMessage(client, from, "cardapio.jpg", config.empresa.verCardapio, false);
               } catch (error) {
                 await DB.saveLogs(`[ ERRO ] Erro ao enviar imagem do cardápio. Motivo: ${error}`);
               }
@@ -193,6 +217,11 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             case '3':
               await Utils.sendLocationMessage(client, from, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
               await new Promise(resolve => setTimeout(resolve, 2000));
+              if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
+                await m.reply(
+                  config.msgAvisoSegundas
+                );
+              }
               await m.reply(
                 config.empresa.nossaLocalizacao
               );
@@ -211,7 +240,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               break;
 
             case '6':
-              await Utils.sendImageMessage(client, from, "pagamentos.jpeg", config.empresa.legendaPagamentos);
+              await Utils.sendImageMessage(client, from, "pagamentos.jpeg", config.empresa.legendaPagamentos, false);
               await new Promise(resolve => setTimeout(resolve, 2000));
               await m.reply(
                 config.empresa.opcoesPagamento
@@ -252,12 +281,18 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               msgEndCardapio
               );
 
+              if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
+                await m.reply(
+                  config.msgAvisoSegundas
+                );
+              }
+
               if(config.mostrarMsgEntregaReduzida) {
                 await m.reply(
                   config.msgEntregaReduzida
                 );
               } else if (config.mostrarRestSuper) {
-                await Utils.sendImageMessage(client, from, "restsuper.jpeg", config.legendaRestSuper);
+                await Utils.sendImageMessage(client, from, "restsuper.jpeg", config.legendaRestSuper, false);
               }
 
               if (isCmd2 && budy.toLowerCase() != undefined) {

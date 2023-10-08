@@ -2,20 +2,17 @@ const os = require('os');
 const fs = require('fs');
 const util = require('util');
 const path = require('path');
-const config = require('../config');
+const config = require('../conf/config');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const QuickChart = require('quickchart-js');
 const moment = require('moment-timezone');
+const Chart = require('./chart.js');
+const Database = require('./db');
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
-const randomNum = () => {
-    const min = 1000; // O menor número de 4 dígitos (1000)
-    const max = 9999; // O maior número de 4 dígitos (9999)
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+const Graph = new Chart();
 
-// Função para formatar o tempo de atividade em horas, minutos e segundos
 const formatUptime = (uptimeInSeconds) => {
   const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
   const hours = Math.floor(uptimeInSecondsRounded / 3600);
@@ -24,7 +21,6 @@ const formatUptime = (uptimeInSeconds) => {
   return `${hours} horas, ${minutes} minutos e ${seconds} segundos`;
 }
 
-// Função para formatar bytes em uma representação legível
 const formatBytes = (bytes, decimals = 2) => {
   if (!+bytes) return '0 Bytes';
   const k = 1024;
@@ -34,7 +30,6 @@ const formatBytes = (bytes, decimals = 2) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-// Function to delete directory and all it content
 const delDir = (directoryPath) => {
   if (fs.existsSync(directoryPath)) {
     const files = fs.readdirSync(directoryPath);
@@ -50,7 +45,6 @@ const delDir = (directoryPath) => {
   }
 }
 
-// Function to check and delete files older than 1 hour
 const cleanOldFiles = (folder, ageOfFile) => {
   const now = new Date().getTime(); // Get the current time in milliseconds
 
@@ -68,11 +62,7 @@ const cleanOldFiles = (folder, ageOfFile) => {
           console.error(`Error getting file information for ${file}:`, err);
           return;
         }
-
-        // Calculate the time difference between the current time and the file's creation time
         const timeDifference = now - stats.ctime.getTime();
-
-        // If the file is older than 1 hour, delete it
         if (timeDifference > ageOfFile) {
           fs.unlink(filePath, (err) => {
             if (err) {
@@ -87,7 +77,6 @@ const cleanOldFiles = (folder, ageOfFile) => {
   });
 }
 
-// Verificação de horário de funcionamento
 const isOpen = () => {
   const d = new Date();
   const hora = d.getHours();
@@ -103,6 +92,12 @@ const isOpen = () => {
     return false;
   }
 }
+
+const isMonday = () => {
+  const currentDate = new Date();
+  const dayOfWeek = currentDate.getDay();
+  return dayOfWeek === 1;
+};
  
 const isBlocked = (numero) => {
   if(doNotHandleNumbers.includes(numero)) {
@@ -113,8 +108,13 @@ const isBlocked = (numero) => {
 }
 
 // Função para enviar uma mensagem de imagem
-const sendImageMessage = async (client, chatId, imageFile, caption) => {
-    const imageFilePath = path.join(__dirname, '..', 'img', imageFile);
+const sendImageMessage = async (client, chatId, imageFile, caption, fullpath) => {
+  let imageFilePath = null;
+    if (fullpath === false) {
+      imageFilePath = path.join(__dirname, '..', 'img', imageFile);
+    } else {
+      imageFilePath = imageFile;
+    }
     const imageBuffer = await util.promisify(fs.readFile)(imageFilePath);
     await client.sendImage(chatId, imageBuffer, caption);
 };
@@ -140,6 +140,7 @@ const sendInactiveMessage = async (client, m, DB) => {
   try {
     const currentDate = new Date();
     const daysAgo = new Date();
+    let count = 0;
     daysAgo.setDate(currentDate.getDate() - config.numOfDaysOff);
 
     const inactiveClients = await DB.Contacts.findAll({
@@ -164,9 +165,12 @@ const sendInactiveMessage = async (client, m, DB) => {
       m.reply('⚠️ Não há clientes inativos a mais de 30 dias.');
     } else {
       for (const { whatsappNumber } of inactiveClients) {
-        // Verifique se whatsappNumber é uma string válida antes de enviar a mensagem
-        if (typeof whatsappNumber === 'string' && whatsappNumber.length > 0) {
-          await client.sendMessage(whatsappNumber, { text: config.msgClientesInativos });
+        if (typeof whatsappNumber === 'string' && whatsappNumber.match(/^\d+@s.whatsapp.net$/)) {
+          // O número de telefone está no formato esperado, adicione @s.whatsapp.net se necessário
+          const formattedNumber = whatsappNumber.endsWith('@s.whatsapp.net') ? whatsappNumber : `${whatsappNumber}@s.whatsapp.net`;
+          count++;
+          await client.sendMessage(formattedNumber, { text: config.empresa.msgClientesInativos });
+      
 
           // Atualize o campo isInactive na tabela Contacts
           await DB.Contacts.update({ isInactive: true }, {
@@ -182,7 +186,7 @@ const sendInactiveMessage = async (client, m, DB) => {
           console.error(`Número de telefone inválido: ${whatsappNumber}`);
         }
       }
-      m.reply(`✅ Prontinho. Mensagem enviada aos clientes inativos.`);
+      m.reply(`✅ Prontinho. ${count} mensagen(s) enviada(s) aos clientes inativos.`);
     }
   } catch (error) {
     m.reply('⚠️ Ocorreu um erro ao enviar as mensagens:', error);
@@ -354,6 +358,7 @@ const getServerStatus = async (client, sender, DB, devInfo) => {
 const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
   const senderNumber = sender.replace('@s.whatsapp.net', '');
+  let isCommand = false;
 
   const msgBoasVindas = config.msgBV;
   const msgEndCardapio = config.msgBV2.replace('{{enderecoCardapio}}', config.empresa.enderecoCardapio);
@@ -368,8 +373,35 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
     if (config.atalhos.includes(command)) {
       // Ação a ser executada se o comando for válido
       if (config.showLog === true ) console.log(`Comando válido: ${command}`);
+      isCommand = true;
       
       switch (command) {
+        case 'ajuda':
+          await client.sendMessage(sender, { delete: mek.key });
+          const ajudaMessage = `
+        ℹ️ *Comando de Ajuda* ℹ️
+
+        Você pode usar os seguintes comandos:
+        - *!entrega*: Notifica que o pedido saiu para entrega.
+        - *!retirada*: Notifica que o pedido está pronto para retirada.
+        - *!bloqueia*: Adiciona o número à lista de exclusão.
+        - *!desbloqueia*: Remove o número da lista de exclusão.
+        - *!bot*: Notifica o uso do robô.
+        - *!status*: Verifica o status do servidor.
+        - *!stats*: Obtém estatísticas e relatórios.
+        - *!oi*: Recebe uma saudação do bot.
+        - *!bv*: Recebe mensagens de boas-vindas.
+        - *!cardapio*: Mostra o cardápio.
+        - *!endereco*: Mostra o endereço da loja.
+        - *!backup*: Realiza um backup do banco de dados.
+        - *!ajuda*: Mostra esta mensagem de ajuda.
+
+        Espero que isso tenha ajudado! 😊
+          `;
+          await client.sendMessage(sender, { text: ajudaMessage });
+          await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} solicitou ajuda.`});
+          break;
+
         case 'entrega':
           await client.sendMessage(sender, { delete: mek.key });
           DB.updateContact(sender, 1, 0);         
@@ -382,7 +414,13 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'retirada':
           await client.sendMessage(sender, { delete: mek.key });
           DB.updateContact(senderNumber, 0, 1); 
-          await client.sendMessage(sender, { text: config.empresa.pedidoProntoRetirada });
+          
+          if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
+            await client.sendMessage(sender, { text: config.msgAvisoSegundas });
+          } else {
+            await client.sendMessage(sender, { text: config.empresa.pedidoProntoRetirada });
+          }
+          
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi avisado para vir buscar o pedido.`});
           if (!isBlocked(senderNumber)) doNotHandleNumbers.push(senderNumber);
           break;
@@ -393,13 +431,22 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi notificado do uso do robô.`});
           break;
 
+        case 'backup':
+          await client.sendMessage(sender, { delete: mek.key });
+          if (config.showLog === true) console.log('Rotina de backup iniciada.');
+          const backupFile = await DB.backup();
+          if (backupFile != false) {
+            await client.sendMessage(config.empresa.botNumber, { text: `✅ Backup do banco de dados salvo com sucesso.\nArquivo: ${backupFile}`});
+          } else {
+            await client.sendMessage(config.empresa.botNumber, { text: `⛔ Não foi possivél realizar o backup do banco de dados.`});
+          }
+          break;
+          
         case 'bloqueia':
           if (!isBlocked(senderNumber)) {
             await client.sendMessage(sender, { delete: mek.key });
             doNotHandleNumbers.push(senderNumber);
-            await DB.saveLogs(`[ REGISTRO ] O número ${senderNumber} foi adicionado à lista de exclusão do atendimento.`);
-            await client.sendMessage(config.empresa.botNumber, { text: `📵 O número ${senderNumber} foi adicionado à lista de exclusão do atendimento.`});
-
+            await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi inserido na lista de exclusão.`});
           }
           else {
             await client.sendMessage(sender, { delete: mek.key });
@@ -410,7 +457,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
         case 'desbloqueia':
           await client.sendMessage(sender, { delete: mek.key });
-          const isInDoNotHandleNumbers =  doNotHandleNumbers.indexOf(senderNumber);
+          isInDoNotHandleNumbers =  doNotHandleNumbers.indexOf(senderNumber);
           if (isInDoNotHandleNumbers !== -1) {
             doNotHandleNumbers.splice(isInDoNotHandleNumbers, 1);
             await DB.saveLogs(`[ REGISTRO ] O número ${senderNumber} foi removido da lista de exclusão.`);
@@ -432,6 +479,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'stats':
           await client.sendMessage(sender, { delete: mek.key });
           if (config.enableStats === true) {
+            Graph.sql01(client, sender, DB);
             generateAnalyticsReport(client, sender, DB);
           } else {
             await client.sendMessage(config.empresa.botNumber, { text: `A função *stats* está desabilidata.`});
@@ -446,26 +494,50 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
         case 'bv':
           await client.sendMessage(sender, { delete: mek.key });
+          const isInDoNotHandleNumbers =  doNotHandleNumbers.indexOf(senderNumber);
+          if (isInDoNotHandleNumbers !== -1) {
+            doNotHandleNumbers.splice(isInDoNotHandleNumbers, 1);
+            await DB.saveLogs(`[ REGISTRO ] O número ${senderNumber} foi removido da lista de exclusão.`);
+            await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi removido da lista de exclusão.`});
+          }
           await client.sendMessage(sender, { text: msgBoasVindas });
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(sender, { text: config.msgBV1 });
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
-          await client.sendMessage(sender, { text: msgEndCardapio });              
+          await client.sendMessage(sender, { text: msgEndCardapio });    
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
+          if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
+            await client.sendMessage(sender, { text: config.msgAvisoSegundas });
+          }
+
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem de boas vindas.`});
           break;
 
         case 'cardapio':
           await client.sendMessage(sender, { delete: mek.key });
-          await sendImageMessage(client, sender, "cardapio.jpg", config.empresa.verCardapio01);
+          await sendImageMessage(client, sender, "cardapio.jpg", config.empresa.verCardapio01, false);
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem com o cardápio.`});
           break;
+
+        case 'endereco':
+          await client.sendMessage(sender, { delete: mek.key });
+          await sendLocationMessage(client, sender, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
+          await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem com o endereço.`});
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
+          await client.sendMessage(sender, { text: config.empresa.nossaLocalizacao });
+          break;          
 
         default:
           await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Comando náo reconhecido. Comandos aceitaveis são:\n!entrega\n!retirada\n!bloqueia\n!desbloqueia\n!oi\n!bv`});
         
       }
+      return isCommand;
     } else {
       // Ação a ser executada se o comando não for válido
       if (config.showLog === true ) console.log(`Comando inválido: ${command}`);
+      return isCommand;
     }
   }
 };
@@ -556,7 +628,7 @@ const generatePieChart = async (client, sender, labels, data, title) => {
       datalabels: {
         anchor: 'center',
         align: 'center',
-        color: '#000',
+        color: '#fff',
         font: {
           weight: 'bold',
         },
@@ -565,9 +637,10 @@ const generatePieChart = async (client, sender, labels, data, title) => {
   });
   
   try {
-      let graphFilePath = path.join(__dirname, '..', 'img', 'charts', `piechart.png`);
-      chart.toFile(graphFilePath);
-      await client.sendImage(sender, graphFilePath);
+      let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+      const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
+      const chartImage = await chart.toFile(fN);
+      await client.sendImage(sender, fN, `Sem titulo`);
   } catch (error) {
       console.error('Erro ao gerar gráfico de pizza:', error);
   }
@@ -689,35 +762,6 @@ async function generateAnalyticsReport(client, sender, DB) {
     } else {
       console.error('Nenhum dado retornado pela consulta de atendimentos mensais.');
     }
-
-    // Consulta para calcular a taxa de conversão
-    const orderCount = await DB.Message.count({
-      where: {
-        body: '5' // Mensagens com body igual a 5 representam pedidos
-      }
-    });
-
-    // Consulta para contar o número de números de telefone únicos na tabela `contacts` que têm pedidos
-    const uniqueNumbersWithOrdersCount = await DB.Contacts.count({
-      where: {
-        whatsappNumber: {
-          [Sequelize.Op.in]: Sequelize.literal(`(SELECT DISTINCT sender FROM messages WHERE body = '5')`) // Subconsulta para obter os números únicos que fizeram pedidos
-        }
-      }
-    });
-
-    // Calcular a taxa de conversão
-    const conversionRate = (uniqueNumbersWithOrdersCount / orderCount) * 100;
-
-    // Arredondar a taxa de conversão para duas casas decimais
-    const roundedConversionRate = conversionRate.toFixed(2);
-
-    // Criar um gráfico de pizza para mostrar a taxa de conversão
-    const title5 = `Taxa de Conversão de Pedidos: ${roundedConversionRate}% - AutoAtende`;
-    const labels4 = ['Menu 5: Fazer Pedido', 'Pedidos Feitos'];
-    const data4 = [orderCount, uniqueNumbersWithOrdersCount];
-    const pieColors2 = ['#3498db', '#27ae60']; // Cores para os setores do gráfico de pizza
-    await generatePieChartWithCheck(labels4, data4, title5, pieColors2);
   } catch (error) {
     console.error('Erro ao gerar relatório de análise:', error);
   }
@@ -727,17 +771,18 @@ module.exports = {
   doNotHandleNumbers,
   isOpen,
   isBlocked,
+  isMonday,
   sendImageMessage,
   sendImageMkt,
   sendLocationMessage,
-  generatePieChart,
   sendInactiveMessage,
   sendMKT,
   sendDevInfo,
   getServerStatus,
   parseCmd,
-  generateAnalyticsReport,
   searchCEP,
   cleanOldFiles,
   delDir,
+  generateAnalyticsReport,
+  generatePieChart,
 };
