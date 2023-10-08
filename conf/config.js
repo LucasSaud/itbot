@@ -1,9 +1,8 @@
 module.exports = {
-  botVersion: "2.1.6",
+  botVersion: "2.1.7",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
-  // 
   doNotHandleNumbers: [ '553197137788','5516993710273','5516994184493','5516981303311','5516991131877',
                         '13109418333','5516994579554','5517996235872','5516992895991',
                         '5516994622366','5517981436608','5511950825321',
@@ -91,13 +90,13 @@ module.exports = {
   msgMkt: `🍝🍝 *Combo Queridinho* 🥤🎉\n\nApresentando o Combo Queridinho da Ital'in House por apenas R$74,90 + taxa de entrega! 😋\n\n*Este combo incrível inclui:*\n2 Boxes de Macarrão com 800 gramas. 🍝🍝\n1 Guaraná de 1 Litro 🥤\nPerfeito para uma refeição deliciosa e prática em casa. Peça agora e deixe-nos cuidar do almoço! 🚀🏠\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n#ComidaDeliciosa #ComboQueridinho #EntregaRápida #Ital'inHouse`,
   msgBV: `🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳`,
   msgBV0: `🤩 Olá, {{pushname}} 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳`,
-  msgBV1: `Digite a opção desejada:\n1️⃣ - Ver horários de funcionamento 🕗\n2️⃣ - Ver Cárdapio 👀\n3️⃣ - Nossa localização 🗺\n4️⃣ - Tempo para entregar ⌛\n5️⃣ - Fazer um pedido 😋\n6️⃣ - Ver opções de pagamento 💲\n7️⃣ - Opções de consumo/entrega 🛎\n8️⃣ - Falar com um atendente 🙋‍♂️`,
-  msgBV2: `Para realizar um pedido basta clicar no link abaixo: 👇\n{{enderecoCardapio}}\n\nSe precisar *MESMO* da ajuda de um atendente, envie "*8*" e aguarde, ok?`,
+  msgBV1: `Digite a opção desejada:\n1️⃣ - Ver horários de funcionamento 🕗\n2️⃣ - Ver Cárdapio 👀\n3️⃣ - Nossa localização 🗺\n4️⃣ - Tempo para entregar ⌛\n5️⃣ - Fazer um pedido 😋\n6️⃣ - Ver opções de pagamento 💲\n7️⃣ - Opções de consumo/entrega 🛎\n8️⃣ - Falar com um atendente 🙋‍♂️\n\n⚠️ *Se tiver alguma dúvida referente ao menu, digite ajuda.*`,
+  msgBV2: `Para realizar um pedido basta clicar no link abaixo: 👇\n{{enderecoCardapio}}\n\nSe precisar *MESMO* da ajuda de um atendente, envie 8 e aguarde, ok?`,
   msgLojaFechada: "Boas vindas à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳\n\n*Nossa loja está fechada.*\n",
-  msgAvisoBot: "⚠️ Nós usamos um robô para atendimento de WhatsApp. quando você recebe a mensagem acima, com os números de 1 a 8, caso não queira ser atendido pelo robô, por gentileza informe *8* para falar com um atendente.",
+  msgAvisoBot: "⚠️ Nós usamos um robô para atendimento de WhatsApp. quando você recebe a mensagem acima, com os números de 1 a 8, caso não queira ser atendido pelo robô, por gentileza informe 8 para falar com um atendente.",
   msgAtendente: "⚠️ Você já solicitou atendimento. Por favor, aguarde um momento. Obrigado!",
   msgAvisoAtendente: "🙋‍♂️ Um atendente logo estará disponível para te ajudar. Aguarde um momento. Obrigado!",
-  msgReforcoCliente: `👋 Olá, novamente! Parece que você está explorando nosso atendimento virtual. Se precisar de ajuda com nosso cardápio delicioso ou quiser fazer um pedido, é só me chamar! Estou aqui para tornar sua experiência na Ital'in House incrível. 😊🍝🥂\n\nSe você tiver qualquer dúvida, envie "8" e aguarde, ok?`,
+  msgReforcoCliente: `👋 Olá, novamente! Parece que você está explorando nosso atendimento virtual. Se precisar de ajuda com nosso cardápio delicioso ou quiser fazer um pedido, é só me chamar! Estou aqui para tornar sua experiência na Ital'in House incrível. 😊🍝🥂\n\nSe você tiver qualquer dúvida, envie 8 e aguarde, ok?`,
   msgEntregaReduzida: `🍝🏙️ Descubra a Ital'In House no bairro Cidade Nova! Nossos deliciosos pratos de macarrão estão a poucos passos de você. E tem mais: se você mora nos bairros da zona NORTE, NORDESTE ou NOROESTE, aproveite nossas taxas de entrega reduzidas. 🛵🤑`,
   msgMotoEntrega: `🤩 Olá 👋! Passando pra dizer que seu pedido já esta pronto.\nSe tiver qualquer problema, pode me enviar aqui mesmo, ou nos ligar no telefone (16) 99788-8800 para resolvermos imediatamente.\n\nE se tiver gostado, a sua avaliação nos ajuda MUITO a crescer, e se destacar entre tantos.\n\nEstamos participando de uma competição, e se nos der 5 estrelas, nos deixará mais próximo de vencer ! ✨\n\nO SEU FEEDBACK SERÁ SEMPRE MUITO IMPORTANTE PARA NÓS.\n\nMil vezes obrigado!\nItal'in House! 💚🤍❤️🍝🧑🏼‍🍳\n\nAhh, outra coisa… Se puder, nos marque como “favoritos”, assim você receberá promoções exclusivas 😍🍝`,
   msgAvisoSegundas: "☝🏼 *Aviso:* As segundas-feiras a Loja01 da Ital'in House Franca funciona em outra localização. 📁\n\nRua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP",
@@ -144,6 +143,18 @@ module.exports = {
   errorMsgs: {
     startCore: "Ocorreu um erro ao iniciar a instrução startCore()",
   },
+  ajuda: [
+    "🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳.\nPara tornar sua experiência mais fácil e conveniente, oferecemos um menu com oito opções.\nPor favor, escolha a opção desejada digitando o número correspondente. Aqui estão as opções disponíveis e para quem serve cada opção:",
+    "1️⃣ *- Ver horários de funcionamento 🕗:*\nOlá! Você pode verificar nossos horários de funcionamento digitando o número 1",
+    "2️⃣ *- Ver Cardápio 👀:*\nQue tal explorar nosso cardápio? Basta digitar o número 2. Tenho informações detalhadas sobre nossas deliciosas opções!",
+    "3️⃣ *- Nossa localização 🗺:*\nQuer saber onde estamos localizados? É fácil! Digite o número 3. Estou pronto para compartilhar nossos detalhes.",
+    "4️⃣ *- Tempo para entregar ⌛:*\nCurioso sobre o tempo de entrega? Basta digitar o número 4 ou me perguntar sobre o tempo estimado para receber seu pedido.",
+    "5️⃣ *- Fazer um pedido 😋:*\nPronto para fazer um pedido delicioso? É só digitar o numero 5. Vou ajudar você a fazer o pedido rapidamente!",
+    "6️⃣ *- Ver opções de pagamento 💲:*\nPara conferir nossas opções de pagamento, digite o número 6. Estou aqui para esclarecer suas dúvidas.",
+    "7️⃣ *- Opções de consumo/entrega 🛎:*\nSe deseja saber mais sobre nossas opções de consumo ou métodos de entrega, digite o número 7. Estou à disposição!",
+    "8️⃣ *- Falar com um atendente 🙋‍♂️:*\nSe você preferir falar diretamente com um atendente, você está no lugar certo! Digite o número 8 e você será conectado com nossa equipe.",
+    "Se você continuar com dúvidas, digite 8 e um atendente irá lhe ajudar. Queremos tornar sua experiência conosco a melhor possível.\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝",
+  ],
   enableKeywordDetector: true,
   enableAddrDetector: false,
   enableStats: true,
@@ -153,4 +164,5 @@ module.exports = {
   chartDir: "chart",
   bkpDir: "bkp",
   autoTurnOff: false,
+  showMondayInfo: false
 };

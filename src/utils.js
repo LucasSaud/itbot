@@ -359,6 +359,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
   const senderNumber = sender.replace('@s.whatsapp.net', '');
   let isCommand = false;
+  let isInDoNotHandleNumbers = null;
 
   const msgBoasVindas = config.msgBV;
   const msgEndCardapio = config.msgBV2.replace('{{enderecoCardapio}}', config.empresa.enderecoCardapio);
@@ -494,7 +495,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
         case 'bv':
           await client.sendMessage(sender, { delete: mek.key });
-          const isInDoNotHandleNumbers =  doNotHandleNumbers.indexOf(senderNumber);
+          isInDoNotHandleNumbers =  doNotHandleNumbers.indexOf(senderNumber);
           if (isInDoNotHandleNumbers !== -1) {
             doNotHandleNumbers.splice(isInDoNotHandleNumbers, 1);
             await DB.saveLogs(`[ REGISTRO ] O número ${senderNumber} foi removido da lista de exclusão.`);

@@ -439,7 +439,7 @@ async function startCore(inDebit) {
             await DB.saveLogs(`[ REGISTRO ] O número ${sender} foi adicionado à lista de exclusão do atendimento. AutoBlock ON`);
             await client.sendMessage(config.empresa.botNumber, { text: `📵 O número ${sender} foi adicionado à lista de exclusão do atendimento. AutoBlock ON` });
             Utils.doNotHandleNumbers.push(sender.replace('@s.whatsapp.net', ''));
-            console.log(`Ignorando o número: ${sender}`);
+            if (config.showLog === true) console.log(`Ignorando o número: ${sender}`);
           }
         }
             
@@ -465,7 +465,7 @@ async function startCore(inDebit) {
       lastClientMessageTime = currentTime;
 
     } catch (err) {
-      //if (config.sendDevLog === true) Utils.sendDevInfo(client, m.sender, DB, config.errorMsgs.startCore);
+      if (config.sendDevLog === true) Utils.sendDevInfo(client, m.sender, DB, config.errorMsgs.startCore);
       if (config.showLog === true) console.log(err);
     }
   });

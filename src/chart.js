@@ -175,7 +175,7 @@ class Chart {
       try {
         const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
         const chartImage = await chart.toFile(fN); // Gera a imagem do gráfico
-        console.log('Gráfico gerados com sucesso: ' + fN);
+        if (config.showLog === true) console.log('Gráfico gerados com sucesso: ' + fN);
         return fN;
       } catch (error) {
         console.error('Erro ao criar o gráfico:', error);
@@ -254,7 +254,7 @@ class Chart {
         try {
             const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
             const chartImage = await chart2.toFile(fN); // Gera a imagem do gráfico
-            console.log('Gráfico gerados com sucesso: ' + fN);
+            if (config.showLog === true) console.log('Gráfico gerados com sucesso: ' + fN);
             return fN;
         } catch (error) {
           console.error('Erro ao criar o gráfico:', error);
@@ -364,6 +364,7 @@ class Chart {
             const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
             const chartImage01 = await chart01.toFile(fN);
             await client.sendImage(from, fN, `Taxa de Conversão de Clientes: ${num}%`);
+            if (config.showLog === true) console.log(`Taxa de Conversão de Clientes: ${num}`);
         } catch (error) {
           console.error('Erro ao criar o gráfico:', error);
         }

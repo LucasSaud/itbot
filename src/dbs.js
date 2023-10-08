@@ -94,8 +94,10 @@ class DBS {
 
       if (cliente) {
         if (config.showLog === true) {
-          console.log(`Cliente: ${cliente.nomeDaLoja}`);
-          console.log("Sistema liberado.");
+          if (config.showLog === true) {
+              console.log(`Cliente: ${cliente.nomeDaLoja}`);
+              console.log("Sistema liberado.");
+          }
         }
         return true;
       }

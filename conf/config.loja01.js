@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.1.6",
+  botVersion: "2.1.7",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -36,7 +36,7 @@ module.exports = {
     "cardapio",
     "backup",
     "endereco",
-    "ajuda",
+    "ajuda"
   ],
   palavrasChave: [
     "queijo",
@@ -286,5 +286,6 @@ module.exports = {
     "5517992133812",
     "5516991252590"
   ],
-  autoTurnOff: false
+  autoTurnOff: false,
+  showMondayInfo: false
 };

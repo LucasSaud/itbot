@@ -78,6 +78,14 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
       return;
     }
 
+    if (body.toLowerCase() === 'ajuda') {
+      for (let i = 0; i < config.ajuda.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await m.reply(config.ajuda[i]);
+      }
+      return;
+    }
+
     if (Utils.isBlocked(senderNumber)) {
       return;
     }
@@ -217,10 +225,12 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             case '3':
               await Utils.sendLocationMessage(client, from, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
               await new Promise(resolve => setTimeout(resolve, 2000));
-              if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
-                await m.reply(
-                  config.msgAvisoSegundas
-                );
+              if (config.showMondayInfo === true) {
+                if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
+                  await m.reply(
+                    config.msgAvisoSegundas
+                  );
+                }
               }
               await m.reply(
                 config.empresa.nossaLocalizacao
