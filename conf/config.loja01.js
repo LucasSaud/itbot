@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.1.7",
+  botVersion: "2.2.0",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -287,5 +287,17 @@ module.exports = {
     "5516991252590"
   ],
   autoTurnOff: false,
-  showMondayInfo: false
+  showMondayInfo: false,
+  ajuda: [
+    "🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳.\nPara tornar sua experiência mais fácil e conveniente, oferecemos um menu com oito opções.\nPor favor, escolha a opção desejada digitando o número correspondente. Aqui estão as opções disponíveis e para quem serve cada opção:",
+    "1️⃣ *- Ver horários de funcionamento 🕗:*\nOlá! Você pode verificar nossos horários de funcionamento digitando o número 1 ou escrevendo horarios.",
+    "2️⃣ *- Ver Cardápio 👀:*\nQue tal explorar nosso cardápio? Basta digitar o número 2 ou escrever cardapio. Tenho informações detalhadas sobre nossas deliciosas opções!",
+    "3️⃣ *- Nossa localização 🗺:*\nQuer saber onde estamos localizados? É fácil! Digite o número 3 ou escreva endereço. Estou pronto para compartilhar nossos detalhes.",
+    "4️⃣ *- Tempo para entregar ⌛:*\nCurioso sobre o tempo de entrega? Basta digitar o número 4 ou escrever tempo para saber o tempo estimado para receber seu pedido.",
+    "5️⃣ *- Fazer um pedido 😋:*\nPronto para fazer um pedido delicioso? É só digitar o numero 5 ou escrever pedido. Vou ajudar você a fazer o pedido rapidamente!",
+    "6️⃣ *- Ver opções de pagamento 💲:*\nPara conferir nossas opções de pagamento, digite o número 6 ou escreva pagamento. Estou aqui para esclarecer suas dúvidas.",
+    "7️⃣ *- Opções de consumo/entrega 🛎:*\nSe deseja saber mais sobre nossas opções de consumo ou métodos de entrega, digite o número 7 ou escreva entrega. Estou à disposição!",
+    "8️⃣ *- Falar com um atendente 🙋‍♂️:*\nSe você preferir falar diretamente com um atendente, você está no lugar certo! Digite o número 8 ou escreva atendente e você será conectado com nossa equipe.",
+    "Se você continuar com dúvidas, digite 8 e um atendente irá lhe ajudar. Queremos tornar sua experiência conosco a melhor possível.\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝"
+  ]
 };

@@ -1,6 +1,6 @@
 {
   "name": "autoatende",
-  "version": "2.1.7",
+  "version": "2.2.0",
   "description": "AutoAtende WhatsApp Bot",
   "main": "index.js",
   "bin": "index.js",
