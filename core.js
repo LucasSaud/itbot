@@ -413,7 +413,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
       return;
     }
 
-    if (body.toLowerCase() === 'ajuda') {
+    if (!itsAdm && !itsMe && body.toLowerCase() === 'ajuda') {
       for (let i = 0; i < config.ajuda.length; i++) {
         await new Promise(resolve => setTimeout(resolve, 2000));
         await m.reply(config.ajuda[i]);
@@ -464,7 +464,6 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             await Utils.getServerStatus(client, sender, DB, mek);
           }
           else if (args.length === 2 && args[1].startsWith('9')) {
-            // Coloque o número na lista de exclusão
             let phoneNumber = args[1];
             let phonePrefix = `${config.botCountryCode}${config.botDDDCode}`;
             if (phoneNumber.length === 9) phoneNumber = `${phonePrefix}${phoneNumber}`;
@@ -535,29 +534,29 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
         ) {
 
           switch (command) {
-            case '0':
+            case '0': case 'sobre':{
               if(config.enableStatus === true) {
                 await Utils.getServerStatus(client, sender, DB);    
               } else {
                 await m.reply("A função *status* está desabilitada.");
               }    
               break;
-
-            case '1':
+            }
+            case '1': case 'horarios':{
               await m.reply(
                 config.empresa.horariosFuncionamento
               );
               break;
-
-            case '2':
+            }
+            case '2': case 'cardapio':{
               try {
                 await Utils.sendImageMessage(client, from, "cardapio.jpg", config.empresa.verCardapio, false);
               } catch (error) {
                 await DB.saveLogs(`[ ERRO ] Erro ao enviar imagem do cardápio. Motivo: ${error}`);
               }
               break;
-
-            case '3':
+            }
+            case '3': case 'endereço':{
               await Utils.sendLocationMessage(client, from, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
               await new Promise(resolve => setTimeout(resolve, 2000));
               if (config.showMondayInfo === true) {
@@ -571,34 +570,34 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
                 config.empresa.nossaLocalizacao
               );
               break;
-
-            case '4':
+            }
+            case '4': case 'tempo':{
               await m.reply(
                 config.empresa.tempoParaEntregar
               );
               break;
-
-            case '5':
+            }
+            case '5': case 'pedido':{
               await m.reply(
                 config.empresa.fazerPedido
               );
               break;
-
-            case '6':
+              }
+            case '6': case 'pagamento':{
               await Utils.sendImageMessage(client, from, "pagamentos.jpeg", config.empresa.legendaPagamentos, false);
               await new Promise(resolve => setTimeout(resolve, 2000));
               await m.reply(
                 config.empresa.opcoesPagamento
               );
               break;
-
-            case '7':
+            }
+            case '7': case 'entrega':{
               await m.reply(
                 config.empresa.opcoesRetirada
               );
               break;
-
-            case '8':
+            }
+            case '8': case 'atendente':{
               if (Utils.isBlocked(senderNumber)) {
                 await m.reply(config.msgAtendente);
               } else {
@@ -608,7 +607,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
                 );
               }
               break;
-
+            }
             default: {
               await m.reply(
                 msgBoasVindas

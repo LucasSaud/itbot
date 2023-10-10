@@ -330,6 +330,10 @@ async function startCore(inDebit) {
 
         // Save the sender as a contact if it's not a group or a broadcast
         if (sender && !sender.endsWith('@g.us') && !sender.endsWith('@broadcast') && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
+          // Verifica se o sender não inclui @s.whatsapp.net e adiciona, se necessário.
+          if (!sender.includes('@s.whatsapp.net')) {
+            sender = sender + '@s.whatsapp.net';
+          }
           const contact = { whatsappNumber: sender };
           await DB.saveContact(contact);
         }
@@ -767,12 +771,10 @@ const graphicsFolder = path.join(__dirname, 'img', 'chart');
 const sessionFolder = path.join(__dirname, 'sessoes');
 const maxAgeForSessions = 24 * 60 * 60 * 1000;
 
-// Set an interval to run the 'cleanOldFiles' function every 3600000 milliseconds (1 hour) in img folder
 setInterval(() => {
   Utils.cleanOldFiles(graphicsFolder, 3600000);
 }, 3600000);
 
-// Set an interval to run the 'cleanOldFiles' function every 3600000 milliseconds (1 hour) in sessoes folder
 setInterval(() => {
   Utils.cleanOldFiles(sessionFolder, maxAgeForSessions);
 }, maxAgeForSessions);
