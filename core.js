@@ -78,7 +78,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
       return;
     }
 
-    if (body.toLowerCase() === 'ajuda') {
+    if (!itsAdm && !itsMe && body.toLowerCase() === 'ajuda') {
       for (let i = 0; i < config.ajuda.length; i++) {
         await new Promise(resolve => setTimeout(resolve, 2000));
         await m.reply(config.ajuda[i]);

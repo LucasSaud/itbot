@@ -64,310 +64,222 @@ class Chart {
           return this.cBarGraph(client, from, conversionRate.toFixed(2));
   }
 
-  async createBarChart (client, from, data) {
-    // Organize os dados da consulta em um formato adequado para o gráfico
-    const labels = data.map((entry) => entry.month); // Meses
-    const counts = data.map((entry) => entry.count); // Número de atendimentos
-    
-    // Crie um gráfico de barras
-    const chart = new QuickChart();
-  
-    chart.setWidth(500);
-    chart.setHeight(300);
-    chart.setVersion('2');
-  
-    chart.setConfig({
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Atendimentos',
-            data: counts,
-            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-            borderColor: 'rgb(54, 162, 235)',
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Mês',
-            },
-          },
-          y: {
-            title: {
-              display: true,
-              text: 'Número de Atendimentos',
-            },
-          },
-        },
-        plugins: {
-          datalabels: {
-            anchor: 'end',
-            align: 'top',
-            color: '#fff',
-            backgroundColor: 'rgba(34, 139, 34, 0.6)',
-            borderColor: 'rgba(34, 139, 34, 1.0)',
-            borderWidth: 1,
-            borderRadius: 5,
-            formatter: (value) => {
-              return value + 'k';
-            },
-          },
-        },
-      },
-    });
-  
+  // Função para contar mensagens recebidas por dia nos últimos sete dias
+  async sql02(client, from, DB) {
     try {
-      const fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-      const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
-      const chartImage = await chart.toFile(fN);
-      await client.sendImage(from, fN, `Atendimentos por mês`);
+      // Data de hoje
+      const today = new Date();
+
+      // Data de sete dias atrás
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(today.getDate() - 6); // Subtrai 6 dias para obter os últimos 7 dias
+
+      // Consulta para contar mensagens recebidas por dia nos últimos sete dias
+      const result = await DB.Message.findAll({
+        attributes: [
+          [DB.sequelize.fn('date', DB.sequelize.col('timestamp')), 'date'], // Extrai a data da coluna timestamp
+          [DB.sequelize.fn('count', DB.sequelize.col('*')), 'messageCount'], // Conta o número de mensagens
+        ],
+        where: {
+          timestamp: {
+            [Op.between]: [sevenDaysAgo, today], // Filtra por datas nos últimos sete dias
+          },
+        },
+        group: ['date'], // Agrupa por data
+        order: [['date', 'ASC']], // Ordena por data
+      });
+
+      // Resultado será um array de objetos com 'date' e 'messageCount'
+
+      // Mapeie os nomes dos dias
+      const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+
+      // Formate o resultado com o nome do dia
+      const formattedResult = result.map((row) => ({
+        dayName: daysOfWeek[new Date(row.getDataValue('date')).getDay()], // Nome do dia
+        messageCount: row.getDataValue('messageCount'), // Contagem de mensagens
+      }));
+
+      this.doughnutGraph(client, from, formattedResult);
     } catch (error) {
-      console.error('Erro ao criar o gráfico:', error);
+      console.error('Erro ao contar mensagens recebidas por dia:', error);
     }
   }
-  
-  async barGraph () {
-    let chart = new QuickChart();
+
+  async doughnutGraph(client, from, data) {
+
     let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
-    chart.setWidth(500);
-    chart.setHeight(300);
-    chart.setVersion('2');
-        
-    chart.setConfig({
-      type: 'bar',
+    // Separe os nomes dos dias e as contagens de mensagens em arrays separados
+    const labels = data.map((item) => item.dayName);
+    const messageCounts = data.map((item) => item.messageCount);
+  
+    // Calcula o total de mensagens
+    const totalMessages = messageCounts.reduce((acc, count) => acc + count, 0);
+  
+    // Configure o gráfico de rosquinha personalizado
+    const chart = new QuickChart();
+  
+    chart
+      .setConfig({
+        type: 'doughnut', // Tipo de gráfico: "doughnut"
         data: {
-          labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+          labels: labels,
           datasets: [
             {
-              label: 'Atendimentos',
-              data: [50, 60, 70, 180],
-              backgroundColor: 'rgba(54, 162, 235, 0.5)',
-              borderColor: 'rgb(54, 162, 235)',
-              borderWidth: 1,
+              data: messageCounts,
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(255, 206, 86, 0.7)',
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(153, 102, 255, 0.7)',
+                'rgba(255, 159, 64, 0.7)',
+                'rgba(0, 128, 0, 0.7)',
+              ],
             },
           ],
         },
         options: {
           plugins: {
-            datalabels: {
-              anchor: 'end',
-              align: 'top',
-              color: '#fff',
-              backgroundColor: 'rgba(34, 139, 34, 0.6)',
-              borderColor: 'rgba(34, 139, 34, 1.0)',
-              borderWidth: 1,
-              borderRadius: 5,
-              formatter: (value) => {
-                return value + 'k';
+            doughnutlabel: {
+              labels: [{ text: `${totalMessages}`, font: { size: 20, weight: 'bold' } }, { text: 'total' }],
+            },
+          },
+          legend: {
+            display: true,
+            position: 'bottom', // Posição da legenda
+          },
+          title: {
+            display: true,
+            text: `Mensagens processadas por dia`, // Texto do título
+            font: {
+              size: 22,
+              weight: 'bold'
+            },
+            position: 'top', // Posição do título
+          },
+        },
+      })
+      .setWidth(600)
+      .setHeight(400);
+
+    try {
+      const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
+      const chartImage = await chart.toFile(fN);
+      await client.sendImage(from, fN, `Mensagens processadas por dia: ${totalMessages}.`);
+      if (config.showLog === true) console.log(`Mensagens processadas por dia: ${totalMessages}.`);
+    } catch (error) {
+      console.error('Erro ao criar o gráfico:', error);
+    }
+  }
+
+  async cBarGraph (client, from, num) {
+    let chart01 = new QuickChart();
+
+    let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+
+    chart01.setWidth(500);
+    chart01.setHeight(150);
+    chart01.setVersion('3');
+        
+    chart01.setConfig({
+      type: 'bar',
+        data: {
+          labels: ['Q1'],
+          datasets: [{
+            label: 'Conversão',
+            data: [100],
+            backgroundColor: QuickChart.getGradientFillHelper('horizontal', [
+              'green',
+              'yellow',
+              'orange',
+              'red',
+            ]),
+          },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+          layout: {
+            padding: 40,
+          },
+          scales: {
+            x: {
+              display: false,
+            },
+            y: {
+              display: false,
+            },
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+            annotation: {
+              clip: false,
+              common: {
+                drawTime: 'afterDraw',
+              },
+              annotations: {
+                low: {
+                  type: 'label',
+                  xValue: 4,
+                  content: ['Baixa'],
+                  font: {
+                    size: 18,
+                    weight: 'bold',
+                  },
+                },
+                medium: {
+                  type: 'label',
+                  xValue: 50,
+                  content: ['Média'],
+                  font: {
+                    size: 18,
+                    weight: 'bold',
+                  },
+                },
+                high: {
+                  type: 'label',
+                  xValue: 95,
+                  content: ['Alta'],
+                  font: {
+                    size: 18,
+                    weight: 'bold',
+                  },
+                },
+                arrow: {
+                  type: 'point',
+                  pointStyle: 'triangle',
+                  backgroundColor: '#000',
+                  radius: 15,
+                  xValue: num,
+                  yAdjust: 65,
+                },
+                label1: {
+                  type: 'label',
+                  xValue: num,
+                  yAdjust: 95,
+                  content: ['Conversão:', `${num}%`],
+                  font: {
+                    size: 18,
+                    weight: 'bold',
+                  },
+                },
               },
             },
           },
         },
       });
-
       try {
         const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
-        const chartImage = await chart.toFile(fN); // Gera a imagem do gráfico
-        if (config.showLog === true) console.log('Gráfico gerados com sucesso: ' + fN);
-        return fN;
+        const chartImage01 = await chart01.toFile(fN);
+        await client.sendImage(from, fN, `Taxa de Conversão de Clientes: ${num}%`);
+        if (config.showLog === true) console.log(`Taxa de Conversão de Clientes: ${num}`);
       } catch (error) {
         console.error('Erro ao criar o gráfico:', error);
       }
-  }
-
-  async aBarGraph () {
-    let chart2 = new QuickChart();
-    let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-
-    chart2.setWidth(500);
-    chart2.setHeight(300);
-    chart2.setVersion('2');
-
-    chart2.setConfig({
-      "type": "horizontalBar",
-      "data": {
-          "labels": [
-          "Janeiro",
-          "Fevereiro",
-          "Março",
-          "Abril",
-          "Maio",
-          "Junho",
-          "Julho"
-        ],
-      "datasets": [
-            {
-                "label": "Dataset 1",
-                "backgroundColor": "rgba(255, 99, 132, 0.5)",
-                "borderColor": "rgb(255, 99, 132)",
-                "borderWidth": 1,
-                "data": [
-                -32,
-                62,
-                64,
-                41,
-                -31,
-                -32,
-                87
-                ]
-            },
-            {
-                "label": "Dataset 2",
-                "backgroundColor": "rgba(54, 162, 235, 0.5)",
-                "borderColor": "rgb(54, 162, 235)",
-                "data": [
-                9,
-                -100,
-                -13,
-                64,
-                -57,
-                26,
-                20
-                ]
-            }
-            ]
-        },
-        "options": {
-            "elements": {
-            "rectangle": {
-                "borderWidth": 2
-            }
-            },
-            "responsive": true,
-            "legend": {
-            "position": "right"
-            },
-            "title": {
-            "display": true,
-            "text": "Chart.js Horizontal Bar Chart"
-            }
-        }
-        });
-
-        try {
-            const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
-            const chartImage = await chart2.toFile(fN); // Gera a imagem do gráfico
-            if (config.showLog === true) console.log('Gráfico gerados com sucesso: ' + fN);
-            return fN;
-        } catch (error) {
-          console.error('Erro ao criar o gráfico:', error);
-        }
-    }
-
-    async cBarGraph (client, from, num) {
-        let chart01 = new QuickChart();
-
-        let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-
-        chart01.setWidth(500);
-        chart01.setHeight(150);
-        chart01.setVersion('3');
-        
-        chart01.setConfig({
-          type: 'bar',
-          data: {
-            labels: ['Q1'],
-            datasets: [
-              {
-                label: 'Conversão',
-                data: [100],
-                backgroundColor: QuickChart.getGradientFillHelper('horizontal', [
-                  'green',
-                  'yellow',
-                  'orange',
-                  'red',
-                ]),
-              },
-            ],
-          },
-          options: {
-            indexAxis: 'y',
-            layout: {
-              padding: 40,
-            },
-            scales: {
-              x: {
-                display: false,
-              },
-              y: {
-                display: false,
-              },
-            },
-            plugins: {
-              legend: {
-                display: false,
-              },
-              annotation: {
-                clip: false,
-                common: {
-                  drawTime: 'afterDraw',
-                },
-                annotations: {
-                  low: {
-                    type: 'label',
-                    xValue: 4,
-                    content: ['Baixa'],
-                    font: {
-                      size: 18,
-                      weight: 'bold',
-                    },
-                  },
-                  medium: {
-                    type: 'label',
-                    xValue: 50,
-                    content: ['Média'],
-                    font: {
-                      size: 18,
-                      weight: 'bold',
-                    },
-                  },
-                  high: {
-                    type: 'label',
-                    xValue: 95,
-                    content: ['Alta'],
-                    font: {
-                      size: 18,
-                      weight: 'bold',
-                    },
-                  },
-                  arrow: {
-                    type: 'point',
-                    pointStyle: 'triangle',
-                    backgroundColor: '#000',
-                    radius: 15,
-                    xValue: num,
-                    yAdjust: 65,
-                  },
-                  label1: {
-                    type: 'label',
-                    xValue: num,
-                    yAdjust: 95,
-                    content: ['Conversão:', `${num}%`],
-                    font: {
-                      size: 18,
-                      weight: 'bold',
-                    },
-                  },
-                },
-              },
-            },
-          },
-        });
-        try {
-            const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
-            const chartImage01 = await chart01.toFile(fN);
-            await client.sendImage(from, fN, `Taxa de Conversão de Clientes: ${num}%`);
-            if (config.showLog === true) console.log(`Taxa de Conversão de Clientes: ${num}`);
-        } catch (error) {
-          console.error('Erro ao criar o gráfico:', error);
-        }
     }
 }
 

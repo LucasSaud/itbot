@@ -481,6 +481,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           await client.sendMessage(sender, { delete: mek.key });
           if (config.enableStats === true) {
             Graph.sql01(client, sender, DB);
+            Graph.sql02(client, sender, DB);
             generateAnalyticsReport(client, sender, DB);
           } else {
             await client.sendMessage(config.empresa.botNumber, { text: `A função *stats* está desabilidata.`});
