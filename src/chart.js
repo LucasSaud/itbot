@@ -95,9 +95,10 @@ class Chart {
       const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 
       // Formate o resultado com o nome do dia
+      let row = null;
       const formattedResult = result.map((row) => ({
-        name: daysOfWeek[new Date(row.getDataValue('date')).getDay()], // Nome do dia
-        count: row.getDataValue('messageCount'), // Contagem de mensagens
+        name: daysOfWeek[new Date(row.date).getDay()], // Nome do dia
+        count: row.messageCount, // Contagem de mensagens
       }));
 
       this.dGraph(client, from, formattedResult, 'Mensagens processadas por dia');
@@ -106,7 +107,7 @@ class Chart {
     }
   }
 
-  async sql03(client, from, db) { 
+  async sql03(client, from, DB) { 
     // Data de hoje
     const today = new Date();
 
@@ -132,14 +133,15 @@ class Chart {
     const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 
     // Formate o resultado com o nome do dia
+    let row = null;
     const formattedResult = result.map((row) => ({
-      name: daysOfWeek[new Date(row.getDataValue('date')).getDay()], // Nome do dia
-      count: row.getDataValue('count'), // Contagem de mensagens
+      name: daysOfWeek[new Date(row.date).getDay()], // Nome do dia
+      count: row.count, // Contagem de mensagens
     }));
     this.dGraph(client, from, formattedResult, 'Atendimentos por dia');
   }
 
-  async sql04(client, from, db) { 
+  async sql04(client, from, DB) { 
     // Obter dados de utilização de comandos
     const result = await DB.Message.findAll({
       attributes: [
@@ -166,15 +168,17 @@ class Chart {
       8: 'Falar com um Atendente',
     };
     
+    let row = null; // inicia a variavel com valor nullo
+
     // Formate o resultado com o nome do dia
     const formattedResult = result.map((row) => ({
-      name: commandMapping[row.getDataValue('date')], // Nome do comando
-      count: row.getDataValue('count'), // Contagem de mensagens
+      name: commandMapping[row.body], // Nome do comando
+      count: row.count, // Contagem de mensagens
     }));
     this.dGraph(client, from, formattedResult, 'Utilização dos comandos');
   }
 
-  async sql05(client, from, db) { 
+  async sql05(client, from, DB) { 
     const result = await DB.Message.findAll({
       attributes: [
         [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%Y-%m'), 'month'],
@@ -186,8 +190,8 @@ class Chart {
     if (result.length > 0) {
       // Formate o resultado com o nome do dia
       const formattedResult = result.map((row) => ({
-        name: month, // Nome do comando
-        count: row.getDataValue('count'), // Contagem de mensagens
+        name: row.month, // Nome do comando
+        count: row.count, // Contagem de mensagens
       }));
       this.dGraph(client, from, formattedResult, 'Atendimentos por Mês');
     } else {
@@ -256,7 +260,7 @@ class Chart {
     try {
       const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
       const chartImage = await chart.toFile(fN);
-      await client.sendImage(from, fN, `${title}: ${totals}.`);
+      await client.sendImage(from, fN, `${title}: ${total}.`);
       if (config.showLog === true) console.log(`${title}: ${total}.`);
     } catch (error) {
       console.error('Erro ao criar o gráfico:', error);
