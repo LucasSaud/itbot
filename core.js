@@ -122,8 +122,11 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             await Utils.sendInactiveMessage(client, m, DB); 
           }
           else if (config.enableStats === true && args.length === 2 && args[1].startsWith('3')) {
-            Utils.generateAnalyticsReport(client, sender, DB, mek);
-            Graphs.sql01(client, from, DB, mek);
+            Graphs.sql01(client, from, DB);
+            Graphs.sql02(client, from, DB);
+            Graphs.sql03(client, from, DB);
+            Graphs.sql04(client, from, DB);
+            Graphs.sql05(client, from, DB);
           }
           else if (config.enableStatus === true && args.length === 2 && args[1].startsWith('4')) {
             await Utils.getServerStatus(client, sender, DB, mek);

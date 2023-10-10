@@ -96,8 +96,8 @@ class Chart {
 
       // Formate o resultado com o nome do dia
       const formattedResult = result.map((row) => ({
-        dayName: daysOfWeek[new Date(row.getDataValue('date')).getDay()], // Nome do dia
-        messageCount: row.getDataValue('messageCount'), // Contagem de mensagens
+        name: daysOfWeek[new Date(row.getDataValue('date')).getDay()], // Nome do dia
+        count: row.getDataValue('messageCount'), // Contagem de mensagens
       }));
 
       this.dGraph(client, from, formattedResult, 'Mensagens processadas por dia');
@@ -107,19 +107,92 @@ class Chart {
   }
 
   async sql03(client, from, db) { 
+    // Data de hoje
+    const today = new Date();
 
+    // Data de sete dias atrás
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 6); // Subtrai 6 dias para obter os últimos 7 dias
+
+    const result = await DB.Message.findAll({
+      attributes: [
+        [DB.sequelize.fn('DATE', DB.sequelize.col('timestamp')), 'date'],
+        [DB.sequelize.fn('COUNT', DB.sequelize.fn('DISTINCT', DB.sequelize.col('sender'))), 'count']
+      ],
+      where: {
+        timestamp: {
+          [Sequelize.Op.between]: [sevenDaysAgo, today],
+        },
+      },
+      group: [DB.sequelize.fn('DATE', DB.sequelize.col('timestamp'))],
+      raw: true,
+    });
+
+    // Mapeie os nomes dos dias
+    const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+
+    // Formate o resultado com o nome do dia
+    const formattedResult = result.map((row) => ({
+      name: daysOfWeek[new Date(row.getDataValue('date')).getDay()], // Nome do dia
+      count: row.getDataValue('count'), // Contagem de mensagens
+    }));
+    this.dGraph(client, from, formattedResult, 'Atendimentos por dia');
   }
 
   async sql04(client, from, db) { 
+    // Obter dados de utilização de comandos
+    const result = await DB.Message.findAll({
+      attributes: [
+        'body',
+        [DB.sequelize.fn('COUNT', DB.sequelize.col('body')), 'count'],
+      ],
+      where: {
+        body: {
+          [Op.regexp]: '^[1-8]$',
+        },
+      },
+      group: 'body',
+      raw: true
+    });
+
+    const commandMapping = {
+      1: 'Horários de Funcionamento',
+      2: 'Cardápio',
+      3: 'Nossa Localização',
+      4: 'Tempo para Entregar',
+      5: 'Fazer um Pedido',
+      6: 'Opções de Pagamento',
+      7: 'Opções de Consumo/Entrega',
+      8: 'Falar com um Atendente',
+    };
     
+    // Formate o resultado com o nome do dia
+    const formattedResult = result.map((row) => ({
+      name: commandMapping[row.getDataValue('date')], // Nome do comando
+      count: row.getDataValue('count'), // Contagem de mensagens
+    }));
+    this.dGraph(client, from, formattedResult, 'Utilização dos comandos');
   }
 
   async sql05(client, from, db) { 
-    
-  }
-
-  async sql06(client, from, db) { 
-    
+    const result = await DB.Message.findAll({
+      attributes: [
+        [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%Y-%m'), 'month'],
+        [DB.sequelize.fn('COUNT', DB.sequelize.fn('DISTINCT', DB.sequelize.col('sender'))), 'count']
+      ],
+      group: [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%Y-%m')],
+      raw: true,
+    });
+    if (result.length > 0) {
+      // Formate o resultado com o nome do dia
+      const formattedResult = result.map((row) => ({
+        name: month, // Nome do comando
+        count: row.getDataValue('count'), // Contagem de mensagens
+      }));
+      this.dGraph(client, from, formattedResult, 'Atendimentos por Mês');
+    } else {
+      console.error('Nenhum dado retornado pela consulta de atendimentos mensais.');
+    }
   }
 
   async dGraph(client, from, data, title) {
@@ -127,11 +200,11 @@ class Chart {
     let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
     // Separe os nomes dos dias e as contagens de mensagens em arrays separados
-    const labels = data.map((item) => item.dayName);
-    const messageCounts = data.map((item) => item.messageCount);
+    const labels = data.map((item) => item.name);
+    const counts = data.map((item) => item.count);
   
     // Calcula o total de mensagens
-    const totalMessages = messageCounts.reduce((acc, count) => acc + count, 0);
+    const total = counts.reduce((acc, count) => acc + count, 0);
   
     // Configure o gráfico de rosquinha personalizado
     const chart = new QuickChart();
@@ -143,7 +216,7 @@ class Chart {
           labels: labels,
           datasets: [
             {
-              data: messageCounts,
+              data: counts,
               backgroundColor: [
                 'rgba(255, 99, 132, 0.7)',
                 'rgba(54, 162, 235, 0.7)',
@@ -159,7 +232,7 @@ class Chart {
         options: {
           plugins: {
             doughnutlabel: {
-              labels: [{ text: `${totalMessages}`, font: { size: 20, weight: 'bold' } }, { text: 'total' }],
+              labels: [{ text: `${total}`, font: { size: 20, weight: 'bold' } }, { text: 'total' }],
             },
           },
           legend: {
@@ -183,8 +256,8 @@ class Chart {
     try {
       const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
       const chartImage = await chart.toFile(fN);
-      await client.sendImage(from, fN, `${title}: ${totalMessages}.`);
-      if (config.showLog === true) console.log(`${title}: ${totalMessages}.`);
+      await client.sendImage(from, fN, `${title}: ${totals}.`);
+      if (config.showLog === true) console.log(`${title}: ${total}.`);
     } catch (error) {
       console.error('Erro ao criar o gráfico:', error);
     }

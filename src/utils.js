@@ -482,7 +482,9 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           if (config.enableStats === true) {
             Graph.sql01(client, sender, DB);
             Graph.sql02(client, sender, DB);
-            generateAnalyticsReport(client, sender, DB);
+            Graph.sql03(client, sender, DB);
+            Graph.sql04(client, sender, DB);
+            Graph.sql05(client, sender, DB);
           } else {
             await client.sendMessage(config.empresa.botNumber, { text: `A função *stats* está desabilidata.`});
           }
@@ -601,174 +603,6 @@ const searchCEP = async (axios, client, mensagem, sender) => {
   return false;
 }
 
-// Função para gerar gráfico de pizza com chartjs-node-canvas
-const generatePieChart = async (client, sender, labels, data, title) => {
-
-  let chart = new QuickChart();
-  chart.setWidth(500)
-  chart.setHeight(300);
-  chart.setVersion('2.9.4');
-  
-  chart.setConfig({
-    type: 'pie',
-    data: {
-      labels: labels,
-      datasets: [{ data: data }],
-    },
-    options: {
-      backgroundColor: 'white',
-      backgroundColour: 'white',
-      legend: {
-        position: 'left',
-      },
-      title: {
-        display: true,
-        text: `${title}`,
-      },
-    },
-    plugins: {
-      datalabels: {
-        anchor: 'center',
-        align: 'center',
-        color: '#fff',
-        font: {
-          weight: 'bold',
-        },
-      }
-    },
-  });
-  
-  try {
-      let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-      const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
-      const chartImage = await chart.toFile(fN);
-      await client.sendImage(sender, fN, `Sem titulo`);
-  } catch (error) {
-      console.error('Erro ao gerar gráfico de pizza:', error);
-  }
-};
-
-async function generateAnalyticsReport(client, sender, DB) {
-  try {
-    const today = new Date();
-    const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(today.getDate() - 7);
-
-    // Função para obter dados de acesso
-    async function getAccessData() {
-      return await DB.Message.findAll({
-        attributes: [
-          [DB.sequelize.fn('DATE', DB.sequelize.col('timestamp')), 'date'],
-          [DB.sequelize.fn('COUNT', DB.sequelize.fn('DISTINCT', DB.sequelize.col('sender'))), 'count']
-        ],
-        where: {
-          timestamp: {
-            [Sequelize.Op.between]: [sevenDaysAgo, today],
-          },
-        },
-        group: [DB.sequelize.fn('DATE', DB.sequelize.col('timestamp'))],
-        raw: true,
-      });
-    }
-
-    // Função para gerar gráfico de pizza
-    async function generatePieChartWithCheck(labels, data, title) {
-      if (data.length === 0) {
-        await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Não há dados suficientes para gerar o gráfico.`});
-      } else {
-        await generatePieChart(client, sender, labels, data, title);
-      }
-    }
-
-    // Obter dados de acesso
-    const accessData = await getAccessData();
-
-    // Gerar gráfico de atendimentos por dia
-    const labels = accessData.map(entry => {
-      const date = new Date(entry.date);
-      return `${date.getDate()}/${date.getMonth() + 1}`;
-    });
-    const data = accessData.map(entry => entry.count);
-    const title = 'Atendimentos por Dia - AutoAtende';
-    const barColors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'];
-
-    // Verifique se há dados suficientes para gerar o gráfico de barras
-    if (labels.length > 0) {
-      // Agora, chame a função para gerar o gráfico de barras
-      await generatePieChartWithCheck(labels, data, title);
-    } else {
-      await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Não há dados suficientes para gerar o gráfico de atendimentos por dia.`});
-    }
-
-    // Obter dados de utilização de comandos
-    const messageCounts = await DB.Message.findAll({
-      attributes: [
-        'body',
-        [DB.sequelize.fn('COUNT', DB.sequelize.col('body')), 'quantidade'],
-      ],
-      where: {
-        body: {
-          [Op.regexp]: '^[1-8]$',
-        },
-      },
-      group: 'body',
-      raw: true
-    });
-    const commandMapping = {
-      1: 'Horários de Funcionamento',
-      2: 'Cardápio',
-      3: 'Nossa Localização',
-      4: 'Tempo para Entregar',
-      5: 'Fazer um Pedido',
-      6: 'Opções de Pagamento',
-      7: 'Opções de Consumo/Entrega',
-      8: 'Falar com um Atendente',
-    };
-    const labels2 = [];
-    const data2 = [];
-    messageCounts.forEach(result => {
-      labels2.push(commandMapping[result.body]);
-      data2.push(result.quantidade);
-    });
-    const title2 = 'Utilização dos Comandos - AutoAtende';
-    await generatePieChartWithCheck(labels2, data2, title2);
-
-        // Consulta para obter a contagem de atendimentos por mês, considerando contatos únicos
-    const monthlyCounts = await DB.Message.findAll({
-      attributes: [
-        [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%Y-%m'), 'month'],
-        [DB.sequelize.fn('COUNT', DB.sequelize.fn('DISTINCT', DB.sequelize.col('sender'))), 'count']
-      ],
-      group: [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%Y-%m')],
-      raw: true,
-    });
-
-    if (monthlyCounts.length > 0) {
-      // Mapear os resultados para extrair os dados necessários
-      const months = []; // Para armazenar os meses em português
-      const counts = []; // Para armazenar a contagem de atendimentos
-
-      // Mapear os resultados e converter o formato da data para o mês em português
-      monthlyCounts.forEach((item) => {
-        const dateParts = item.month.split('-');
-        const monthNumber = parseInt(dateParts[1]);
-        const monthName = moment().locale('pt-BR').month(monthNumber - 1).format('MMMM'); // Converter o número do mês para o nome do mês em português
-        const formattedMonth = `${monthName}`;
-
-        months.push(formattedMonth);
-        counts.push(item.count);
-      });
-
-      const title4 = 'Atendimentos por Mês - AutoAtende';
-      await generatePieChartWithCheck(months, counts, title4);
-    } else {
-      console.error('Nenhum dado retornado pela consulta de atendimentos mensais.');
-    }
-  } catch (error) {
-    console.error('Erro ao gerar relatório de análise:', error);
-  }
-};
-
 module.exports = {
   doNotHandleNumbers,
   isOpen,
@@ -785,6 +619,4 @@ module.exports = {
   searchCEP,
   cleanOldFiles,
   delDir,
-  generateAnalyticsReport,
-  generatePieChart
 };
