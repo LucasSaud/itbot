@@ -100,13 +100,13 @@ class Chart {
         messageCount: row.getDataValue('messageCount'), // Contagem de mensagens
       }));
 
-      this.doughnutGraph(client, from, formattedResult);
+      this.doughnutGraph(client, from, formattedResult, 'Mensagens processadas por dia');
     } catch (error) {
       console.error('Erro ao contar mensagens recebidas por dia:', error);
     }
   }
 
-  async doughnutGraph(client, from, data) {
+  async doughnutGraph(client, from, data, title) {
 
     let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
@@ -152,7 +152,7 @@ class Chart {
           },
           title: {
             display: true,
-            text: `Mensagens processadas por dia`, // Texto do título
+            text: title, // Texto do título
             font: {
               size: 22,
               weight: 'bold'
@@ -167,8 +167,8 @@ class Chart {
     try {
       const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
       const chartImage = await chart.toFile(fN);
-      await client.sendImage(from, fN, `Mensagens processadas por dia: ${totalMessages}.`);
-      if (config.showLog === true) console.log(`Mensagens processadas por dia: ${totalMessages}.`);
+      await client.sendImage(from, fN, `${title}: ${totalMessages}.`);
+      if (config.showLog === true) console.log(`${title}: ${totalMessages}.`);
     } catch (error) {
       console.error('Erro ao criar o gráfico:', error);
     }
