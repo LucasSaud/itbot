@@ -8,7 +8,7 @@ const utils = require('./utils');
 
 class Chart {
     constructor () {
-      this.version = '0.0.5';  
+      this.version = '0.1.0';  
     }
 
     async sql01 (client, from, DB) {
@@ -29,7 +29,7 @@ class Chart {
             });
             // Calcular a taxa de conversão
             const conversionRate = (uniqueNumbersWithOrdersCount / orderCount) * 100;
-            return this.cBarGraph(client, from, conversionRate.toFixed(2));
+            return this.cGraph(client, from, conversionRate.toFixed(2));
     }
 
     async sql01a (client, from, DB) {
@@ -61,7 +61,7 @@ class Chart {
   
           // Calcular a taxa de conversão
           const conversionRate = (uniqueNumbersWithOrdersCount / orderCount) * 100;
-          return this.cBarGraph(client, from, conversionRate.toFixed(2));
+          return this.cGraph(client, from, conversionRate.toFixed(2));
   }
 
   // Função para contar mensagens recebidas por dia nos últimos sete dias
@@ -100,13 +100,29 @@ class Chart {
         messageCount: row.getDataValue('messageCount'), // Contagem de mensagens
       }));
 
-      this.doughnutGraph(client, from, formattedResult, 'Mensagens processadas por dia');
+      this.dGraph(client, from, formattedResult, 'Mensagens processadas por dia');
     } catch (error) {
       console.error('Erro ao contar mensagens recebidas por dia:', error);
     }
   }
 
-  async doughnutGraph(client, from, data, title) {
+  async sql03(client, from, db) { 
+
+  }
+
+  async sql04(client, from, db) { 
+    
+  }
+
+  async sql05(client, from, db) { 
+    
+  }
+
+  async sql06(client, from, db) { 
+    
+  }
+
+  async dGraph(client, from, data, title) {
 
     let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
@@ -174,7 +190,7 @@ class Chart {
     }
   }
 
-  async cBarGraph (client, from, num) {
+  async cGraph (client, from, num) {
     let chart01 = new QuickChart();
 
     let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
