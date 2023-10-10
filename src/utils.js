@@ -379,27 +379,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
       switch (command) {
         case 'ajuda':
           await client.sendMessage(sender, { delete: mek.key });
-          const ajudaMessage = `
-        ℹ️ *Comando de Ajuda* ℹ️
-
-        Você pode usar os seguintes comandos:
-        - *!entrega*: Notifica que o pedido saiu para entrega.
-        - *!retirada*: Notifica que o pedido está pronto para retirada.
-        - *!bloqueia*: Adiciona o número à lista de exclusão.
-        - *!desbloqueia*: Remove o número da lista de exclusão.
-        - *!bot*: Notifica o uso do robô.
-        - *!status*: Verifica o status do servidor.
-        - *!stats*: Obtém estatísticas e relatórios.
-        - *!oi*: Recebe uma saudação do bot.
-        - *!bv*: Recebe mensagens de boas-vindas.
-        - *!cardapio*: Mostra o cardápio.
-        - *!endereco*: Mostra o endereço da loja.
-        - *!backup*: Realiza um backup do banco de dados.
-        - *!ajuda*: Mostra esta mensagem de ajuda.
-
-        Espero que isso tenha ajudado! 😊
-          `;
-          await client.sendMessage(sender, { text: ajudaMessage });
+          await client.sendMessage(sender, { text: config.ajudaOp });
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} solicitou ajuda.`});
           break;
 
