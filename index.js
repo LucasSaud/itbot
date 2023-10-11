@@ -9,7 +9,6 @@ const NodeCache = require('node-cache'); // NodeCache library for caching
 const PhoneNumber = require('awesome-phonenumber'); // Library for handling phone numbers
 const config = require('./conf/config'); // Custom configuration file
 const Database = require('./src/db'); // Custom Database module
-const DBS = require('./src/dbs'); // Custom DBS module
 const Utils = require('./src/utils'); // Custom Utils module
 
 // Define a session name
@@ -36,7 +35,6 @@ const logger = pino({ level: 'silent' });
 
 // Create instances of custom Database and DBS classes
 const DB = new Database();
-const DBSX = new DBS();
 
 // Create an in-memory store using Baileys
 const store = makeInMemoryStore({ logger });
@@ -754,11 +752,21 @@ setInterval(() => {
   Utils.cleanOldFiles(sessionFolder, maxAgeForSessions);
 }, maxAgeForSessions);
 
-// Check if the bot's number (without '@s.whatsapp.net') is paid in the DBSX
-if (config.enableDB === true && DBSX.isPaid(config.empresa.botNumber.replace('@s.whatsapp.net', ''))) {
-  // If the bot's number is paid, start the 'startCore' function with 'false' parameter
-  startCore(false);
-} else {
-  // If the bot's number is not paid, start the 'startCore' function with 'true' parameter
-  startCore(true);
+// Crie uma função assíncrona para envolver o código
+async function main() {
+  const run = await Utils.isPaid(config.empresa.botNumber.replace('@s.whatsapp.net', ''));
+
+  if (run === true) {
+    // Se o bot estiver pago, inicie a função 'startCore' com o parâmetro 'false'
+    console.log(`${config.empresa.nomeDaLoja} está sendo iniciado.`);
+    startCore(false);
+  } else {
+    // Se o bot não estiver pago, inicie a função 'startCore' com o parâmetro 'true'
+    console.log(`${config.empresa.nomeDaLoja} >> Sua chave de utilização expirou.`);
+    console.log(`Favor entrar em contato com o desenvolvedor.`);
+    process.exit();
+  }
 }
+
+// Chame a função principal assíncrona
+main();

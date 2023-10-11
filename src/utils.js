@@ -13,6 +13,78 @@ const Graph = new Chart();
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
+// Defina a função que realiza a consulta do cliente
+async function isPaid(numeroDoBot) {
+  try {
+    // Crie uma instância do Sequelize com detalhes de conexão
+    const sequelize = new Sequelize(
+      "u276801829_clientes",
+      "u276801829_italinbot",
+      "?qOi6jM7r6",
+      {
+        host: "154.56.48.154",
+        dialect: "mysql",
+        logging: false,
+        timezone: "-03:00",
+      }
+    );
+
+    // Defina o modelo "Cliente"
+    const Cliente = sequelize.define(
+      "Cliente",
+      {
+        nomeDaLoja: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        cidadeDaLoja: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        responsavel: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        numeroDoBot: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
+        estapago: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
+      },
+      {
+        timestamps: false,
+      }
+    );
+
+    await sequelize.authenticate();
+    await sequelize.sync();
+
+    // Use o método findOne do modelo "Cliente" com as condições necessárias
+    const clienteEncontrado = await Cliente.findOne({
+      where: {
+        numeroDoBot: numeroDoBot,
+        estapago: 1,
+      },
+    });
+
+    // Verifique se um cliente foi encontrado
+    if (clienteEncontrado) {
+      // Se o cliente foi encontrado e estapago é igual a 1, retorne true
+      return true;
+    } else {
+      // Caso contrário, retorne false
+      return false;
+    }
+  } catch (error) {
+    // Trate erros de consulta
+    console.error("Erro ao consultar cliente:", error);
+    return false;
+  }
+}
+
 const formatUptime = (uptimeInSeconds) => {
   const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
   const hours = Math.floor(uptimeInSecondsRounded / 3600);
@@ -586,6 +658,7 @@ const searchCEP = async (axios, client, mensagem, sender) => {
 
 module.exports = {
   doNotHandleNumbers,
+  isPaid,
   isOpen,
   isBlocked,
   isMonday,
