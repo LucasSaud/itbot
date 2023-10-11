@@ -109,7 +109,7 @@ module.exports = {
     botNumber: "5516997888800@s.whatsapp.net",
     latitude: "-20.524254149322978",
     longitude: "-47.39218863060321",
-    horariosFuncionamento: "⏰ Nossos horários de funcionamento são:\n\n*Domingo* das 11:00h às 23:00h.\n\n*Segunda* das 11:00h às 23:00h.\n\n*Terça* das 11:00h às 14:00h e das 18:00h às 23:00h.\n\n*Quarta* das 11:00 às 14:00 e das 18:00h às 23:00h.\n\n*Quinta* das 11:00 às 14:00 e das 18:00h às 23:00h.\n\n*Sexta* das 11:00 às 23:00h.\n\n*Sábado* das 11:00 às 23:00h",
+    horariosFuncionamento: "⏰ Nossos horários de funcionamento são:\n\n*Domingo* das 11:00h às 23:00h.\n\n*Segunda* das 11:00h às 23:00h.\n\n*Terça* das 11:00h às 14:00h e das 18:00h às 23:00h.\n\n*Quarta* das 11:00 às 14:00 e das 18:00h às 23:00h.\n\n*Quinta* das 11:00 às 14:00 e das 18:00h às 23:00h.\n\n*Sexta* das 11:00 às 23:00h.\n\n*Sábado* das 11:00 às 23:00h.",
     verCardapio: "☝🏼 Nosso cardápio.\nNem consigo te recomendar um prato, porque eu amo todos! 😍\n\nLembrando que nossos box vem 800g de um delicioso macarrão gourmet e 650g de um maravilhoso risoto.\n\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02\n\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝",
     verCardapio01: "☝🏼 Nosso cardápio.\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02\n\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝",
     nossaLocalizacao: "📍 Um momento, vou te encaminhar nosso *endereço* e *telefone*... 📁\n\nRua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP, CEP: 14401-094.\n\nSe preferir, você também pode ver pelo Maps! 🗺️👇\nhttps://goo.gl/maps/2B9tKHBARb2qsVS37\n\n*Contato*\n📱 (16) 99788-8800",

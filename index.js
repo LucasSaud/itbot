@@ -758,7 +758,7 @@ async function main() {
 
   if (run === true) {
     // Se o bot estiver pago, inicie a função 'startCore' com o parâmetro 'false'
-    console.log(`${config.empresa.nomeDaLoja} está sendo iniciado.`);
+    if(config.showLog === true) console.log(`${config.empresa.nomeDaLoja} está sendo iniciado.`);
     startCore(false);
   } else {
     // Se o bot não estiver pago, inicie a função 'startCore' com o parâmetro 'true'
