@@ -7,8 +7,10 @@ const config = require('../conf/config.js');
 const utils = require('./utils');
 
 class Chart {
-  constructor () {
-    this.version = '0.1.0';  
+  constructor(client, from, DB) {
+    this.version = '0.2.0';
+    const sqlFunctions = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(name => name.startsWith('sql') && typeof this[name] === 'function');
+    sqlFunctions.forEach(funcName => this[funcName](client, from, DB));
   }
 
   async sql01 (client, from, DB) {
@@ -36,9 +38,10 @@ class Chart {
   async sql01a (client, from, DB) {
     // Obter a data de início e fim do mês atual (outubro)
     const currentDate = new Date();
-    const startOfMonth = new Date(currentDate.getFullYear(), 9, 1); // O mês de outubro é representado como 9 (0-indexed) em JavaScript
-    const endOfMonth = new Date(currentDate.getFullYear(), 10, 0);
+    const startOfMonth = new Date(currentDate.getFullYear(), Utils.startDate, 1); // O mês de outubro é representado como 9 (0-indexed) em JavaScript
+    const endOfMonth = new Date(currentDate.getFullYear(), Utils.endDate, 0);
   
+
     // Consulta para calcular a taxa de conversão
     const orderCount = await DB.Message.count({
       where: {
@@ -79,7 +82,7 @@ class Chart {
       const result = await DB.Message.findAll({
         attributes: [
           [DB.sequelize.fn('date', DB.sequelize.col('timestamp')), 'date'], // Extrai a data da coluna timestamp
-          [DB.sequelize.fn('count', DB.sequelize.col('*')), 'messageCount'], // Conta o número de mensagens
+          [DB.sequelize.fn('count', DB.sequelize.col('*')), 'count'], // Conta o número de mensagens
         ],
         where: {
           timestamp: {
@@ -96,14 +99,11 @@ class Chart {
 
       // Resultado será um array de objetos com 'date' e 'messageCount'
 
-      // Mapeie os nomes dos dias
-      const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-
       // Formate o resultado com o nome do dia
       let row = null;
       const formattedResult = result.map((row) => ({
-        name: daysOfWeek[new Date(row.date).getDay()], // Nome do dia
-        count: row.messageCount, // Contagem de mensagens
+        name: config.diasSemana[new Date(row.date).getDay()], // Nome do dia
+        count: row.count, // Contagem de mensagens
       }));
 
       this.dGraph(client, from, formattedResult, 'Mensagens processadas por dia');
@@ -134,13 +134,10 @@ class Chart {
       raw: true,
     });
 
-    // Mapeie os nomes dos dias
-    const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-
     // Formate o resultado com o nome do dia
     let row = null;
     const formattedResult = result.map((row) => ({
-      name: daysOfWeek[new Date(row.date).getDay()], // Nome do dia
+      name: config.diasSemana[new Date(row.date).getDay()], // Nome do dia
       count: row.count, // Contagem de mensagens
     }));
     this.dGraph(client, from, formattedResult, 'Atendimentos por dia');

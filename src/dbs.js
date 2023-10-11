@@ -2,10 +2,13 @@
 const { Sequelize, DataTypes, Op } = require("sequelize");
 const Utils = require('./utils.js');
 const config = require('../conf/config.js');
+const Cache = require('./cache.js');
 
 // Define a class named 'DBS' for database operations
 class DBS {
   constructor() {
+
+    this.version = '0.5.0';
     // Initialize Sequelize DataTypes and Op for convenience
     this.DataTypes = DataTypes;
     this.Op = Op;
@@ -84,7 +87,18 @@ class DBS {
   // Check if a client with the given 'numero' is paid
   async isPaid(numero) {
     try {
-      // Query the database to find a paid client with the specified 'numero'
+      const cachedData = Cache.loadFromCache();
+      if (cachedData) {
+        // Verifique se o número está no cache local
+        if (cachedData.includes(numero)) {
+          if (config.showLog === true) {
+            console.log('Sistema liberado a partir do cache local.');
+          }
+          return true;
+        }
+      }
+
+      // Se não estiver no cache local, faça a consulta ao banco de dados remoto
       const cliente = await this.Clientes.findOne({
         where: {
           numeroDoBot: numero,
@@ -93,16 +107,22 @@ class DBS {
       });
 
       if (cliente) {
+        // Atualize o cache local
+        if (!cachedData) {
+          Cache.saveToCache([numero]);
+        } else {
+          cachedData.push(numero);
+          Cache.saveToCache(cachedData);
+        }
+
         if (config.showLog === true) {
-          if (config.showLog === true) {
-              console.log(`Cliente: ${cliente.nomeDaLoja}`);
-              console.log("Sistema liberado.");
-          }
+          console.log(`Cliente: ${cliente.nomeDaLoja}`);
+          console.log('Sistema liberado.');
         }
         return true;
       }
     } catch (error) {
-      console.error("Erro ao verificar o sistema:", error);
+      console.error('Erro ao verificar o sistema:', error);
       return false;
     }
   }

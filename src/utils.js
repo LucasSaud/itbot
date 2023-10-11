@@ -11,8 +11,6 @@ const Database = require('./db');
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
-const Graph = new Chart();
-
 const formatUptime = (uptimeInSeconds) => {
   const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
   const hours = Math.floor(uptimeInSecondsRounded / 3600);
@@ -98,6 +96,18 @@ const isMonday = () => {
   const dayOfWeek = currentDate.getDay();
   return dayOfWeek === 1;
 };
+
+const currentMonth = () => {
+  const currentDate = new Date();
+  return currentDate.getMonth() + 1;
+}
+
+const nextMonth = () => {
+  return currentMonth() + 1;
+}
+
+const startDate = currentMonth();
+const endDate = nextMonth();
  
 const isBlocked = (numero) => {
   if(doNotHandleNumbers.includes(numero)) {
@@ -460,11 +470,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'stats':
           await client.sendMessage(sender, { delete: mek.key });
           if (config.enableStats === true) {
-            Graph.sql01(client, sender, DB);
-            Graph.sql02(client, sender, DB);
-            Graph.sql03(client, sender, DB);
-            Graph.sql04(client, sender, DB);
-            Graph.sql05(client, sender, DB);
+            await new Chart(client, from, DB);
           } else {
             await client.sendMessage(config.empresa.botNumber, { text: `A função *stats* está desabilidata.`});
           }
@@ -588,6 +594,7 @@ module.exports = {
   isOpen,
   isBlocked,
   isMonday,
+  currentMonth,
   sendImageMessage,
   sendImageMkt,
   sendLocationMessage,

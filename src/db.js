@@ -8,6 +8,8 @@ const config = require('../conf/config.js');
 
 class Database {
   constructor() {
+    this.version = '0.2.5';
+    
     // Import necessary modules
     this.DataTypes = DataTypes;
     this.Op = Op;
