@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.2.0",
+  botVersion: "2.2.1",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -299,5 +299,9 @@ module.exports = {
     "7️⃣ *- Opções de consumo/entrega 🛎:*\nSe deseja saber mais sobre nossas opções de consumo ou métodos de entrega, digite o número 7 ou escreva entrega. Estou à disposição!",
     "8️⃣ *- Falar com um atendente 🙋‍♂️:*\nSe você preferir falar diretamente com um atendente, você está no lugar certo! Digite o número 8 ou escreva atendente e você será conectado com nossa equipe.",
     "Se você continuar com dúvidas, digite 8 e um atendente irá lhe ajudar. Queremos tornar sua experiência conosco a melhor possível.\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝"
-  ]
+  ],
+  appName: "AutoAtende",
+  mostrarValeRefeicoes: true,
+  ajudaOp: "ℹ️ *Comando de Ajuda* ℹ️\n\nVocê pode usar os seguintes comandos:\n- *!entrega*: Notifica que o pedido saiu para entrega.\n- *!retirada*: Notifica que o pedido está pronto para retirada.\n- *!bloqueia*: Adiciona o número à lista de exclusão.\n- *!desbloqueia*: Remove o número da lista de exclusão.\n- *!bot*: Notifica o uso do robô.\n- *!status*: Verifica o status do servidor.\n- *!stats*: Obtém estatísticas e relatórios.\n- *!oi*: Recebe uma saudação do bot.\n- *!bv*: Recebe mensagens de boas-vindas.\n- *!cardapio*: Mostra o cardápio.\n- *!endereco*: Mostra o endereço da loja.\n- *!backup*: Realiza um backup do banco de dados.\n- *!ajuda*: Mostra esta mensagem de ajuda.\n\nEspero que isso tenha ajudado! 😊",
+  cacheDir: "cache"
 };

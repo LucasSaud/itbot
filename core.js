@@ -249,8 +249,9 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               break;
             }
             case '6': case 'pagamento':{
-              await Utils.sendImageMessage(client, from, "pagamentos.jpeg", config.empresa.legendaPagamentos, false);
+              if(config.mostrarValeRefeicoes === true) await Utils.sendImageMessage(client, from, "pagamentos.jpeg", config.empresa.legendaPagamentos, false);
               await new Promise(resolve => setTimeout(resolve, 2000));
+              
               await m.reply(
                 config.empresa.opcoesPagamento
               );

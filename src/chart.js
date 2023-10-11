@@ -6,11 +6,24 @@ const QuickChart = require('quickchart-js');
 const config = require('../conf/config.js');
 const utils = require('./utils');
 
+
+const currentMonth = () => {
+  const currentDate = new Date();
+  return currentDate.getMonth() + 1;
+}
+
+const nextMonth = () => {
+  return currentMonth() + 1;
+}
+
+const startDate = currentMonth();
+const endDate = nextMonth();
+
 class Chart {
-  constructor(client, from, DB) {
+  constructor() {
     this.version = '0.2.0';
-    const sqlFunctions = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(name => name.startsWith('sql') && typeof this[name] === 'function');
-    sqlFunctions.forEach(funcName => this[funcName](client, from, DB));
+    //const sqlFunctions = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(name => name.startsWith('sql') && typeof this[name] === 'function');
+    //sqlFunctions.forEach(funcName => this[funcName](client, from, DB));
   }
 
   async sql01 (client, from, DB) {
@@ -38,8 +51,8 @@ class Chart {
   async sql01a (client, from, DB) {
     // Obter a data de início e fim do mês atual (outubro)
     const currentDate = new Date();
-    const startOfMonth = new Date(currentDate.getFullYear(), Utils.startDate, 1); // O mês de outubro é representado como 9 (0-indexed) em JavaScript
-    const endOfMonth = new Date(currentDate.getFullYear(), Utils.endDate, 0);
+    const startOfMonth = new Date(currentDate.getFullYear(), startDate, 1); // O mês de outubro é representado como 9 (0-indexed) em JavaScript
+    const endOfMonth = new Date(currentDate.getFullYear(), endDate, 0);
   
 
     // Consulta para calcular a taxa de conversão
@@ -47,7 +60,7 @@ class Chart {
       where: {
         body: '5', // Mensagens com body igual a 5 representam pedidos
         timestamp: {
-          [Op.between]: [startOfMonth, endOfMonth] // Filtrar pelo mês de outubro
+          [Sequelize.Op.between]: [startOfMonth, endOfMonth] // Filtrar pelo mês de outubro
         }
       }
     });
@@ -68,16 +81,15 @@ class Chart {
     return this.cGraph(client, from, conversionRate.toFixed(2));
   }
 
-  // Função para contar mensagens recebidas por dia nos últimos sete dias
   async sql02(client, from, DB) {
     try {
       // Data de hoje
       const today = new Date();
-
+  
       // Data de sete dias atrás
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(today.getDate() - 6); // Subtrai 6 dias para obter os últimos 7 dias
-
+  
       // Consulta para contar mensagens recebidas por dia nos últimos sete dias
       const result = await DB.Message.findAll({
         attributes: [
@@ -86,31 +98,35 @@ class Chart {
         ],
         where: {
           timestamp: {
-            [Op.between]: [sevenDaysAgo, today], // Filtra por datas nos últimos sete dias
+            [Sequelize.Op.between]: [sevenDaysAgo, today], // Filtra por datas nos últimos sete dias
           },
         },
         group: ['date'], // Agrupa por data
         order: [['date', 'ASC']], // Ordena por data
       });
-
-      const is_result = util.inspect(result);
-
-      if (config.showLog === true) console.log(`Resultado da consulta em sql02: ${is_result}`);
-
-      // Resultado será um array de objetos com 'date' e 'messageCount'
-
-      // Formate o resultado com o nome do dia
-      let row = null;
-      const formattedResult = result.map((row) => ({
-        name: config.diasSemana[new Date(row.date).getDay()], // Nome do dia
-        count: row.count, // Contagem de mensagens
-      }));
-
-      this.dGraph(client, from, formattedResult, 'Mensagens processadas por dia');
+  
+      if (config.showLog === true) console.log('Resultado da consulta em sql02:', result);
+  
+      // Verifique se a consulta retornou resultados
+      if (result && result.length > 0) {
+        // Formate o resultado com o nome do dia
+        const formattedResult = result.map((row) => ({
+          name: config.diasSemana[new Date(row.dataValues.date).getDay()], // Nome do dia
+          count: parseInt(row.dataValues.count), // Contagem de mensagens (certifique-se de que seja um número)
+        }));
+  
+        // Agora, formattedResult deve conter os dados no formato correto
+  
+        // Chame a função para criar o gráfico
+        this.dGraph(client, from, formattedResult, 'Mensagens processadas por dia');
+      } else {
+        console.log('A consulta não retornou resultados.');
+      }
     } catch (error) {
       console.error('Erro ao contar mensagens recebidas por dia:', error);
     }
   }
+  
 
   async sql03(client, from, DB) { 
     // Data de hoje
@@ -152,7 +168,7 @@ class Chart {
         ],
         where: {
           body: {
-            [Op.regexp]: '^[1-8]$',
+            [Sequelize.Op.regexp]: '^[1-8]$',
           },
         },
         group: 'body',
@@ -183,16 +199,16 @@ class Chart {
     async sql05(client, from, DB) { 
       const result = await DB.Message.findAll({
         attributes: [
-          [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%Y-%m'), 'month'],
+          [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%M'), 'month'], // Formata a data para o nome do mês
           [DB.sequelize.fn('COUNT', DB.sequelize.fn('DISTINCT', DB.sequelize.col('sender'))), 'count']
         ],
-        group: [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%Y-%m')],
+        group: [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%M')],
         raw: true,
       });
       if (result.length > 0) {
-        // Formate o resultado com o nome do dia
+        // Formate o resultado com o nome do mês
         const formattedResult = result.map((row) => ({
-          name: row.month, // Nome do comando
+          name: row.month, // Nome do mês
           count: row.count, // Contagem de mensagens
         }));
         this.dGraph(client, from, formattedResult, 'Atendimentos por Mês');
@@ -203,6 +219,7 @@ class Chart {
 
     async dGraph(client, from, data, title) {
 
+      
       let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
       // Separe os nomes dos dias e as contagens de mensagens em arrays separados
@@ -262,8 +279,8 @@ class Chart {
       try {
         const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
         const chartImage = await chart.toFile(fN);
-        await client.sendImage(from, fN, `${title}: ${total}.`);
-        if (config.showLog === true) console.log(`${title}: ${total}.`);
+        await client.sendImage(from, fN, `*${title}*`);
+        if (config.showLog === true) console.log(`${title}`);
       } catch (error) {
         console.error('Erro ao criar o gráfico:', error);
       }

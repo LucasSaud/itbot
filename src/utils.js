@@ -9,6 +9,8 @@ const moment = require('moment-timezone');
 const Chart = require('./chart.js');
 const Database = require('./db');
 
+const Graph = new Chart();
+
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
 const formatUptime = (uptimeInSeconds) => {
@@ -96,18 +98,6 @@ const isMonday = () => {
   const dayOfWeek = currentDate.getDay();
   return dayOfWeek === 1;
 };
-
-const currentMonth = () => {
-  const currentDate = new Date();
-  return currentDate.getMonth() + 1;
-}
-
-const nextMonth = () => {
-  return currentMonth() + 1;
-}
-
-const startDate = currentMonth();
-const endDate = nextMonth();
  
 const isBlocked = (numero) => {
   if(doNotHandleNumbers.includes(numero)) {
@@ -470,7 +460,12 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'stats':
           await client.sendMessage(sender, { delete: mek.key });
           if (config.enableStats === true) {
-            await new Chart(client, from, DB);
+            Graph.sql01(client, sender, DB);
+            Graph.sql02(client, sender, DB);
+            Graph.sql03(client, sender, DB);
+            Graph.sql04(client, sender, DB);
+            Graph.sql05(client, sender, DB);
+
           } else {
             await client.sendMessage(config.empresa.botNumber, { text: `A função *stats* está desabilidata.`});
           }
@@ -594,10 +589,6 @@ module.exports = {
   isOpen,
   isBlocked,
   isMonday,
-  currentMonth,
-  nextMonth,
-  startDate,
-  endDate,
   sendImageMessage,
   sendImageMkt,
   sendLocationMessage,

@@ -25,11 +25,13 @@
   "license": "MIT",
   "dependencies": {
     "@hapi/boom": "^10.0.1",
+    "@types/crypto-js": "^4.1.2",
     "@whiskeysockets/baileys": "^6.5.0",
     "awesome-phonenumber": "^2.64.0",
     "axios": "^1.4.0",
     "child_process": "^1.0.2",
     "crypto": "^1.0.1",
+    "crypto-js": "^4.1.1",
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
     "jszip": "^3.10.1",
