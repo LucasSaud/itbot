@@ -1,7 +1,9 @@
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
+const path = require('path');
+const config = require('../conf/config');
 
-const cacheFile = 'c.dat';
+const cacheFile = path.join(__dirname, '..', 'img', config.cacheDir, 'c.dat');  
 const secretKey = '3H9!n$7Km*pL#5zYqR8vFwTtJ@1S6DgC4oUaE2VhXyZbNlAeP7iQsO';
 
 function saveToCache(data) {

@@ -163,6 +163,7 @@ module.exports = {
   enableEmogiReact: true,
   enableDB: true,
   chartDir: "chart",
+  cacheDir: "cache",
   bkpDir: "bkp",
   autoTurnOff: false,
   showMondayInfo: false
