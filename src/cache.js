@@ -27,12 +27,12 @@ function loadFromCache() {
           return JSON.parse(decryptedData);
         }
       }
+    } else {
+      console.log('O arquivo de cache não existe ou está vazio. Criando um novo...');
+      // Crie um novo arquivo de cache vazio
+      fs.writeFileSync(cacheFile, '');
+      return null;
     }
-
-    console.log('O arquivo de cache não existe ou está vazio. Criando um novo...');
-    // Crie um novo arquivo de cache vazio
-    fs.writeFileSync(cacheFile, '');
-    return null;
   } catch (error) {
     console.error('Erro ao carregar o cache:', error);
     return null;
