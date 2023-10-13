@@ -114,6 +114,22 @@ const formatBytes = (bytes, decimals = 2) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
+// Function to get the operating system information
+function getOSInfo(platform) {
+  const osInfoMap = {
+      'aix': 'IBM AIX',
+      'android': 'Android',
+      'darwin': 'OSX',
+      'freebsd': 'FreeBSD',
+      'linux': 'Linux',
+      'openbsd': 'OpenBSD',
+      'sunos': 'SunOS',
+      'win32': 'Windows',
+  };
+
+  return `🖥️ _Sistema Operacional:_ ${osInfoMap[platform] || 'Desconhecido'}`;
+}
+
 const delDir = (directoryPath) => {
   if (fs.existsSync(directoryPath)) {
     const files = fs.readdirSync(directoryPath);
@@ -437,6 +453,48 @@ const getServerStatus = async (client, sender, DB, devInfo) => {
     // Tratar o erro aqui, se necessário
   }
 };
+
+async function getServerStatus(client, sender, DB, devInfo) {
+  try {
+      const osUpTime = util.promisify(os.uptime);
+      const platform = os.platform();
+      const processorInfo = os.cpus()[0];
+      const numCores = os.cpus().length;
+      const totalMemory = os.totalmem();
+      const freeMemory = os.freemem();
+      const usedMemory = totalMemory - freeMemory;
+
+      // Get the MariaDB version using a Sequelize query
+      const mariadbVersionQuery = 'SELECT VERSION() AS version';
+      const [mariadbResults] = await DB.sequelize.query(mariadbVersionQuery, {
+          type: DB.sequelize.QueryTypes.SELECT,
+      });
+
+      const nodejsVersion = `🚀 _Node.js:_ ${process.version}`;
+
+      const statusMessage = `*AutoAtende v${config.botVersion} - Status do Servidor*\n\n` +
+          `⌛ Tempo de Atividade do S.O: ${await osUpTime()}\n\n` +
+          `🖥️ _Processador:_ ${processorInfo.model}\n` +
+          `⚙️ _Arquitetura do Processador:_ ${os.arch()}\n` +
+          `🔥 _Número de Núcleos do Processador:_ ${numCores}\n` +
+          `💾 _Memória Total:_ ${formatBytes(totalMemory)}\n` +
+          `📊 _Memória Livre:_ ${formatBytes(freeMemory)}\n` +
+          `💽 _Memória Usada:_ ${formatBytes(usedMemory)}\n` +
+          `${getOSInfo(platform)}\n` +
+          `🐬 _Versão do MariaDB:_ ${mariadbResults.version}\n` +
+          `${nodejsVersion}\n`;
+
+      if (devInfo === true) {
+          return statusMessage;
+      } else {
+          await client.sendMessage(sender, { text: statusMessage });
+      }
+  } catch (error) {
+      console.error('Erro ao obter status do servidor:', error);
+      // Tratar o erro aqui, se necessário
+      return 'Erro ao obter status do servidor.';
+  }
+}
 
 // Função para verificar se a mensagem é um comando válido
 const parseCmd = async (client, pushname, body, mek, DB, sender) => {
