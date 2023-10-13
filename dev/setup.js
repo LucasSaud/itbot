@@ -41,7 +41,7 @@ function updateVersionAndAddNewConfig() {
       }
     }
 
-    const backupFileName = path.join(__dirname, '..', 'conf', 'bkp', 'config.loja01.backup.js');
+    const backupFileName = path.join(__dirname, '..', config.dir.backup, 'config.loja01.backup.js');
     const configLoja01File = path.join(__dirname, '..', 'conf', 'config.loja01.js');
     
     // Utilize um replacer personalizado para manter o formato do objeto

@@ -168,5 +168,11 @@ module.exports = {
   cacheDir: "cache",
   bkpDir: "bkp",
   autoTurnOff: false,
-  showMondayInfo: false
+  showMondayInfo: false,
+  dir: {
+    backup: "bkp",
+    cache: "cache",
+    charts: "chart",
+    images: "img"
+  }
 };
