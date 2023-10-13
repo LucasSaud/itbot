@@ -6,7 +6,7 @@ const moment = require('moment-timezone');
 const config = require('./conf/config');
 const Database = require('./src/db');
 const Utils = require('./src/utils');
-const Chart = require('./src/chart.js');
+const Chart = require('./src/chart');
 
 module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
   try {
