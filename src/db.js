@@ -219,7 +219,7 @@ class Database {
       // Nome do arquivo de backup com timestamp
       const timestamp = new Date().toISOString().replace(/:/g, '-');
       const sqlBackupFileName = `backup-${timestamp}.sql`;
-      const sqlBackupFilePath = path.join(__dirname, '..', config.bkpDir, sqlBackupFileName);
+      const sqlBackupFilePath = path.join(__dirname, '..', config.dir.backup, sqlBackupFileName);
 
       // Dump the database to a SQL file
       await mysqldump({
@@ -239,7 +239,7 @@ class Database {
 
       // Nome do arquivo ZIP de backup
       const zipBackupFileName = `backup-${timestamp}.zip`;
-      const zipBackupFilePath = path.join(__dirname, '..', config.bkpDir, zipBackupFileName);
+      const zipBackupFilePath = path.join(__dirname, '..', config.dir.backup, zipBackupFileName);
 
       // Crie o arquivo ZIP
       const zipData = await zip.generateAsync({

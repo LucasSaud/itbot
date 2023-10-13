@@ -225,7 +225,7 @@ const isBlocked = (numero) => {
 const sendImageMessage = async (client, chatId, imageFile, caption, fullpath) => {
   let imageFilePath = null;
     if (fullpath === false) {
-      imageFilePath = path.join(__dirname, '..', 'img', imageFile);
+      imageFilePath = path.join(__dirname, '..', config.dir.images, imageFile);
     } else {
       imageFilePath = imageFile;
     }
@@ -235,7 +235,7 @@ const sendImageMessage = async (client, chatId, imageFile, caption, fullpath) =>
 
 // Função para enviar uma imagem de marketing
 const sendImageMkt = async (client, chatId, caption) => {
-    const imageFilePath = path.join(__dirname, '..', 'img', 'mkt01.jpg');
+    const imageFilePath = path.join(__dirname, '..', config.dir.images, 'mkt01.jpg');
     const imageBuffer = await util.promisify(fs.readFile)(imageFilePath);
     await client.sendImage(chatId, imageBuffer, caption);
 };

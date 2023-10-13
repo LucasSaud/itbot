@@ -277,7 +277,7 @@ class Chart {
         .setHeight(400);
 
       try {
-        const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
+        const fN = path.join(__dirname, '..', config.dir.img, config.dir.charts, `${fName}.png`);  
         const chartImage = await chart.toFile(fN);
         await client.sendImage(from, fN, `*${title}*`);
         if (config.showLog === true) console.log(`${title}`);
@@ -385,7 +385,7 @@ class Chart {
           },
         });
         try {
-          const fN = path.join(__dirname, '..', 'img', config.chartDir, `${fName}.png`);  
+          const fN = path.join(__dirname, '..', 'img', config.dir.img, config.dir.charts, `${fName}.png`);  
           const chartImage01 = await chart01.toFile(fN);
           await client.sendImage(from, fN, `Taxa de Conversão de Clientes: ${num}%`);
           if (config.showLog === true) console.log(`Taxa de Conversão de Clientes: ${num}`);

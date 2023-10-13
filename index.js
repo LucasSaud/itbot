@@ -740,7 +740,7 @@ async function startCore(inDebit) {
   return client;
 }
 
-const graphicsFolder = path.join(__dirname, 'img', 'chart');
+const graphicsFolder = path.join(__dirname, config.dir.img, config.dir.charts);
 const sessionFolder = path.join(__dirname, 'sessoes');
 const maxAgeForSessions = 24 * 60 * 60 * 1000;
 
