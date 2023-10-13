@@ -97,6 +97,20 @@ async function isPaid(numeroDoBot) {
   }
 }
 
+const getOSInfo = (platform) => {
+  const osInfoMap = {
+      'aix': 'IBM AIX',
+      'android': 'Android',
+      'darwin': 'OSX',
+      'freebsd': 'FreeBSD',
+      'linux': 'Linux',
+      'openbsd': 'OpenBSD',
+      'sunos': 'SunOS',
+      'win32': 'Windows',
+  };
+  return `🖥️ _Sistema Operacional:_ ${osInfoMap[platform] || 'Desconhecido'}`;
+}
+
 const formatUptime = (uptimeInSeconds) => {
   const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
   const hours = Math.floor(uptimeInSecondsRounded / 3600);
@@ -349,112 +363,9 @@ const sendDevInfo = async (client, sender, DB, msg) => {
                  `Mensagem de erro: ${msg}`;
 
   await client.sendMessage(config.devNumber, { text: devMSG });
-}
-
-// Função para coletar informações do servidor e retornar uma mensagem formatada
-const getServerStatus = async (client, sender, DB, devInfo) => {
-  try {
-
-    // Tempo de atividade do sistema operacional em segundos
-    const osUpTime = await formatUptime(os.uptime());
-
-    // Nome do processador
-    const processorName = os.cpus()[0].model;
-
-    // Arquitetura do processador (e.g., x64)
-    const processorArchitecture = os.arch();
-
-    // Número de núcleos do processador
-    const numCores = os.cpus().length;
-
-    // Informações de memória
-    const totalMemory = os.totalmem();
-    const freeMemory = os.freemem();
-    const usedMemory = totalMemory - freeMemory;
-
-    const totalMemoryF = formatBytes(totalMemory);
-    const freeMemoryF = formatBytes(freeMemory);
-    const usedMemoryF = formatBytes(usedMemory);
-
-    // Consulta SQL para o tamanho do banco de dados
-    const databaseResults = await DB.sequelize.query('SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size_mb FROM information_schema.tables', {
-      type: Sequelize.QueryTypes.SELECT
-    });
-    const databaseSizeMB = databaseResults[0].size_mb;
-
-    // Informações do AutoAtende
-    const lsbotInfo = `🤖 _Versão do AutoAtende:_ ${config.botVersion}`;
-
-    // Informações do sistema operacional
-    let osInfo;
-
-    const platform = os.platform();
-
-    switch (platform) {
-      case 'aix':
-          osInfo = `🖥️ _Sistema Operacional:_ IBM AIX`;
-          break;
-      case 'android':
-          osInfo = `🖥️ _Sistema Operacional:_ Android`;
-          break;
-      case 'darwin':
-          osInfo = `🖥️ _Sistema Operacional:_ OSX`;
-          break;
-      case 'freebsd':
-          osInfo = `🖥️ _Sistema Operacional:_ FreeBSD`;
-          break;
-      case 'linux':
-          osInfo = `🖥️ _Sistema Operacional:_ Linux`;
-          break;
-      case 'openbsd':
-          osInfo = `🖥️ _Sistema Operacional:_ OpenBSD`;
-          break;
-      case 'sunos':
-          osInfo = `🖥️ _Sistema Operacional:_ SunOS`;
-          break;
-      case 'win32':
-          osInfo = `🖥️ _Sistema Operacional:_ Windows`;
-          break;
-      default:
-          osInfo = `🖥️ _Sistema Operacional:_ Desconhecido`;
-    }
-
-    // Consulta SQL para a versão do MariaDB
-    const mariadbResults = await DB.sequelize.query('SELECT VERSION() AS version', {
-      type: Sequelize.QueryTypes.SELECT
-    });
-    const mariadbVersion = `🐬 _Versão do MariaDB:_ ${mariadbResults[0].version}`;
-
-    // Versão do Node.js
-    const nodejsVersion = `🚀 _Node.js:_ ${process.version}`;
-
-    // Montar a mensagem de status
-    const statusMessage = `*AutoAtende - Status do Servidor*\n\n` +
-      `⌛ Tempo de Atividade do S.O: ${osUpTime}\n\n` +
-      `🖥️ _Processador:_ ${processorName}\n` +
-      `⚙️ _Arquitetura do Processador:_ ${processorArchitecture}\n` +
-      `🔥 _Número de Núcleos do Processador:_ ${numCores}\n` +
-      `💾 _Memória Total:_ ${totalMemoryF}\n` +
-      `📊 _Memória Livre:_ ${freeMemoryF}\n` +
-      `💽 _Memória Usada:_ ${usedMemoryF}\n` +
-      `🗄️ _Tamanho do Banco de Dados:_ ${databaseSizeMB} MB\n` +
-      `${osInfo}\n` +
-      `${mariadbVersion}\n` +
-      `${nodejsVersion}\n` +
-      `${lsbotInfo}`;
-
-      if(devInfo === true) {
-        return statusMessage;
-      } else {
-        await client.sendMessage(sender, { text: statusMessage });
-      }  
-  } catch (error) {
-    console.error('Erro ao obter status do servidor:', error);
-    // Tratar o erro aqui, se necessário
-  }
 };
 
-async function getServerStatus(client, sender, DB, devInfo) {
+const getServerStatus = async (client, sender, DB, devInfo) => {
   try {
       const osUpTime = util.promisify(os.uptime);
       const platform = os.platform();
@@ -487,6 +398,7 @@ async function getServerStatus(client, sender, DB, devInfo) {
       if (devInfo === true) {
           return statusMessage;
       } else {
+          // Enviando as informações de status para o cliente
           await client.sendMessage(sender, { text: statusMessage });
       }
   } catch (error) {
@@ -494,7 +406,7 @@ async function getServerStatus(client, sender, DB, devInfo) {
       // Tratar o erro aqui, se necessário
       return 'Erro ao obter status do servidor.';
   }
-}
+};
 
 // Função para verificar se a mensagem é um comando válido
 const parseCmd = async (client, pushname, body, mek, DB, sender) => {
