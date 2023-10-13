@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.2.1",
+  botVersion: "2.2.3",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -163,10 +163,8 @@ module.exports = {
   enableStats: true,
   enableStatus: true,
   enableEmogiReact: true,
+  enableLocalCache: false,
   enableDB: true,
-  chartDir: "chart",
-  cacheDir: "cache",
-  bkpDir: "bkp",
   autoTurnOff: false,
   showMondayInfo: false,
   dir: {

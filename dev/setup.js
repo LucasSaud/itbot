@@ -10,6 +10,22 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+function createDirectoriesIfNotExists() {
+  if (config.dir && typeof config.dir === 'object') {
+    for (const key in config.dir) {
+      const subdirectory = config.dir[key];
+      const absolutePath = path.join(__dirname, '..', subdirectory);
+
+      if (!fs.existsSync(absolutePath)) {
+        fs.mkdirSync(absolutePath, { recursive: true });
+        console.log(`Diretório criado: ${absolutePath}`);
+      }
+    }
+  } else {
+    console.log('Nenhum diretório a ser criado de acordo com config.dir.');
+  }
+}
+
 function updateVersionAndAddNewConfig() {
   let doNothing = false;
   if (
@@ -67,8 +83,8 @@ function menu() {
   rl.question('Opção: ', (choice) => {
     switch (choice) {
       case '1':
-        // Implementar a lógica para Nova Instalação aqui
-        console.log('Em desenvolvimento 01.');
+        createDirectoriesIfNotExists(); // Chama a função de criação de diretórios no caso 1
+        console.log('Diretórios verificados e criados, se necessário.');
         break;
       case '2':
         // Implementar a lógica para Fazer Backup aqui

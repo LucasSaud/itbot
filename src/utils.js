@@ -18,12 +18,14 @@ let doNotHandleNumbers = config.doNotHandleNumbers;
 async function isPaid(numeroDoBot) {
   try {
 
-    // Primeiro, tente carregar o resultado do cache
-    const cachedResult = loadFromCache(numeroDoBot);
+    if(config.enableLocalCache === true) {
+      // Primeiro, tente carregar o resultado do cache
+      const cachedResult = loadFromCache(numeroDoBot);
 
-    if (cachedResult) {
-      // Se houver um resultado em cache, verifique se o valor está em cache e retorne-o.
-      return cachedResult;
+      if (cachedResult) {
+        // Se houver um resultado em cache, verifique se o valor está em cache e retorne-o.
+        return cachedResult;
+      }
     }
     else {
 
@@ -95,20 +97,6 @@ async function isPaid(numeroDoBot) {
     console.error("Erro ao consultar cliente:", error);
     return false;
   }
-}
-
-const getOSInfo = (platform) => {
-  const osInfoMap = {
-      'aix': 'IBM AIX',
-      'android': 'Android',
-      'darwin': 'OSX',
-      'freebsd': 'FreeBSD',
-      'linux': 'Linux',
-      'openbsd': 'OpenBSD',
-      'sunos': 'SunOS',
-      'win32': 'Windows',
-  };
-  return `🖥️ _Sistema Operacional:_ ${osInfoMap[platform] || 'Desconhecido'}`;
 }
 
 const formatUptime = (uptimeInSeconds) => {

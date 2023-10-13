@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.2.1",
+  botVersion: "2.2.3",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -249,9 +249,7 @@ module.exports = {
   enableStats: true,
   enableEmogiReact: true,
   enableDB: true,
-  chartDir: "chart",
   enableStatus: true,
-  bkpDir: "bkp",
   doNotHandleNumbers: [
     "553197137788",
     "5516993710273",
@@ -303,5 +301,11 @@ module.exports = {
   appName: "AutoAtende",
   mostrarValeRefeicoes: true,
   ajudaOp: "ℹ️ *Comando de Ajuda* ℹ️\n\nVocê pode usar os seguintes comandos:\n- *!entrega*: Notifica que o pedido saiu para entrega.\n- *!retirada*: Notifica que o pedido está pronto para retirada.\n- *!bloqueia*: Adiciona o número à lista de exclusão.\n- *!desbloqueia*: Remove o número da lista de exclusão.\n- *!bot*: Notifica o uso do robô.\n- *!status*: Verifica o status do servidor.\n- *!stats*: Obtém estatísticas e relatórios.\n- *!oi*: Recebe uma saudação do bot.\n- *!bv*: Recebe mensagens de boas-vindas.\n- *!cardapio*: Mostra o cardápio.\n- *!endereco*: Mostra o endereço da loja.\n- *!backup*: Realiza um backup do banco de dados.\n- *!ajuda*: Mostra esta mensagem de ajuda.\n\nEspero que isso tenha ajudado! 😊",
-  cacheDir: "cache"
+  enableLocalCache: false,
+  dir: {
+    backup: "bkp",
+    cache: "cache",
+    charts: "chart",
+    images: "img"
+  }
 };
