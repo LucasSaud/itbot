@@ -15,7 +15,7 @@ class Command {
     this.version = '1.0.0';
     // List of specific commands with !
     this.specificCommands = ["!entrega", "!retirada", "!aviso", "!bloqueia", "!desbloqueia", "!stats", "!status", "!restart"];
-    this.botMenuWords = ["sobre","horario","cardapio","endereco","tempo","pedido","pagamento","consumo","atendente"];
+    this.menuWords = ["sobre","horario","cardapio","endereco","tempo","pedido","pagamento","consumo","atendente"];
   }
 
   /**
@@ -89,7 +89,7 @@ class Command {
    */
     checkBotMenuWordsInString(inputString) {
       const normalizedInput = inputString.toLowerCase();
-      const foundWords = this.botMenuWords.filter(word => normalizedInput.includes(word));
+      const foundWords = this.menuWords.filter(word => normalizedInput.includes(word));
       return foundWords;
     }
 }

@@ -1,6 +1,7 @@
 // Import necessary libraries and modules
 const baileys = require('@whiskeysockets/baileys'); // Baileys library for WhatsApp interactions
 const pino = require('pino'); // Logging library
+const util = require('util');
 const { Boom } = require('@hapi/boom'); // Boom library from hapi
 const fs = require('fs'); // Node.js filesystem module
 const path = require('path'); // Node.js path module
@@ -401,7 +402,7 @@ async function startCore(inDebit) {
               if (foundKeyword) {
                 // Send a response message informing about the dish found
                 const cliente = sender.replace('@s.whatsapp.net', '');
-                const response = `⚠️⚠️⚠️ *O número ${cliente} quer fazer um pedido. Palavra-chave encontrada: ${foundKeyword}. Olhar a conversa.* ⚠️⚠️⚠️`;
+                const response = `⚠️ *O número ${cliente} quer fazer um pedido. Palavra-chave encontrada: ${foundKeyword}. Olhar a conversa.* ⚠️⚠️⚠️`;
                 await client.sendMessage(config.empresa.botNumber, { text: response });
                 ignoreNumber = true;
               }
@@ -476,17 +477,17 @@ async function startCore(inDebit) {
     unhandledRejections.set(promise, reason);
 
     // Log the unhandled rejection
-    console.error('Unhandled rejection in:', promise, 'reason:', reason);
+    console.error('Rejeição não tratada em:', promise, 'reação:', reason);
 
     // Check if the maximum number of restarts has not been reached
     if (restartCount < MAX_RESTARTS) {
       restartCount++;
-      if (config.showLog === true) console.log(`Restarting the process (attempt ${restartCount})...`);
+      if (config.showLog === true) console.log(`Reiniciando o processo (tentativa ${restartCount})...`);
       // Restart the core process
       startCore();
     } else {
       // Maximum restarts reached, exit the process
-      if (config.showLog === true) console.log('Maximum number of restarts reached. Exiting the process.');
+      if (config.showLog === true) console.log('Atingiu o limite de tentativas de reinicio. Finalizando o processo.');
       process.exit();
     }
   });
@@ -499,7 +500,7 @@ async function startCore(inDebit) {
   // Listen for 'Something went wrong' event
   process.on('Something went wrong', function (err) {
     // Log the captured exception
-    if (config.showLog === true) console.log('Exception captured: ', err);
+    if (config.showLog === true) console.log('Excessão capturada: ', err);
 
     // Exit the process
     process.exit();
@@ -534,6 +535,7 @@ async function startCore(inDebit) {
       if (store && store.contacts) {
         // Update the 'store.contacts' with the decoded contact information
         store.contacts[id] = { id, name: contact.notify };
+        if (config.showLog === true) console.log(util.inspect(store.contacts[id]));
       }
     }
   });
@@ -621,7 +623,7 @@ async function startCore(inDebit) {
       }
     } else if (connection === 'open') {
       console.log(`AutoAtende v.${config.botVersion} está ligado.`);
-      if (config.showLog === true) console.log(`AutoAtende usando WA v${version.join('.')}, é a mais recente? ${isLatest ? "Sim" : "Não"}`);
+      console.log(`AutoAtende usando WA v${version.join('.')}, é a mais recente? ${isLatest ? "Sim" : "Não"}`);
 
       await client.sendMessage(config.botAdmin, {
         text: `🤖 ${config.empresa.nomeDaLoja} está ligado.`,
@@ -741,16 +743,15 @@ async function startCore(inDebit) {
 }
 
 const graphicsFolder = path.join(__dirname, config.dir.images, config.dir.charts);
-const sessionFolder = path.join(__dirname, 'sessoes');
-const maxAgeForSessions = 24 * 60 * 60 * 1000;
+const sessionFolder = path.join(__dirname, config.dir.session);
 
 setInterval(() => {
-  Utils.cleanOldFiles(graphicsFolder, 3600000);
-}, 3600000);
+  Utils.cleanOldFiles(graphicsFolder, config.maxAgeForGraphs);
+}, config.maxAgeForGraphs);
 
 setInterval(() => {
-  Utils.cleanOldFiles(sessionFolder, maxAgeForSessions);
-}, maxAgeForSessions);
+  Utils.cleanOldFiles(sessionFolder, config.maxAgeForSessions);
+}, config.maxAgeForSessions);
 
 // Crie uma função assíncrona para envolver o código
 async function main() {
@@ -760,7 +761,8 @@ async function main() {
     // Se o bot estiver pago, inicie a função 'startCore' com o parâmetro 'false'
     if(config.showLog === true) console.log(`${config.empresa.nomeDaLoja} está sendo iniciado.`);
     startCore(false);
-  } else {
+  } 
+  else {
     // Se o bot não estiver pago, inicie a função 'startCore' com o parâmetro 'true'
     console.log(`${config.empresa.nomeDaLoja} >> Sua chave de utilização expirou.`);
     console.log(`Favor entrar em contato com o desenvolvedor.`);
@@ -768,5 +770,4 @@ async function main() {
   }
 }
 
-// Chame a função principal assíncrona
 main();

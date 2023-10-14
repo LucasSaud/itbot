@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.2.3",
+  botVersion: "2.2.4",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -87,7 +87,9 @@ module.exports = {
   mostrarRestSuper: false,
   mostrarValeRefeicoes: true,
   numOfDaysOff: 30,
-  tempoEntreMensagens: 1000, 
+  tempoEntreMensagens: 1000,
+  maxAgeForGraphs: 3600000,
+  maxAgeForSessions: 24 * 60 * 60 * 1000, 
   legendaRestSuper: `Obrigado Franca ❤️`,
   msgMkt: `🍝🍝 *Combo Queridinho* 🥤🎉\n\nApresentando o Combo Queridinho da Ital'in House por apenas R$74,90 + taxa de entrega! 😋\n\n*Este combo incrível inclui:*\n2 Boxes de Macarrão com 800 gramas. 🍝🍝\n1 Guaraná de 1 Litro 🥤\nPerfeito para uma refeição deliciosa e prática em casa. Peça agora e deixe-nos cuidar do almoço! 🚀🏠\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n#ComidaDeliciosa #ComboQueridinho #EntregaRápida #Ital'inHouse`,
   msgBV: `🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳`,
