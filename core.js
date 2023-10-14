@@ -122,7 +122,15 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             await Utils.sendInactiveMessage(client, m, DB); 
           }
           else if (config.enableStats === true && args.length === 2 && args[1].startsWith('3')) {
-            new Chart(client, from, DB);
+            if (config.enableStats === true) {
+              await Graph.sql01(client, sender, DB);
+              await Graph.sql02(client, sender, DB);
+              await Graph.sql03(client, sender, DB);
+              await Graph.sql04(client, sender, DB);
+              await Graph.sql05(client, sender, DB);
+            } else {
+              await client.sendMessage(config.empresa.botNumber, { text: `A função *stats* está desabilidata.`});
+            }
           }
           else if (config.enableStatus === true && args.length === 2 && args[1].startsWith('4')) {
             await Utils.getServerStatus(client, sender, DB, mek);

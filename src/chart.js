@@ -22,8 +22,6 @@ const endDate = nextMonth();
 class Chart {
   constructor() {
     this.version = '0.2.0';
-    //const sqlFunctions = Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(name => name.startsWith('sql') && typeof this[name] === 'function');
-    //sqlFunctions.forEach(funcName => this[funcName](client, from, DB));
   }
 
   async sql01 (client, from, DB) {
@@ -277,7 +275,7 @@ class Chart {
         .setHeight(400);
 
       try {
-        const fN = path.join(__dirname, '..', config.dir.img, config.dir.charts, `${fName}.png`);  
+        const fN = path.join(__dirname, '..', config.dir.images, config.dir.charts, `${fName}.png`);  
         const chartImage = await chart.toFile(fN);
         await client.sendImage(from, fN, `*${title}*`);
         if (config.showLog === true) console.log(`${title}`);
@@ -385,7 +383,7 @@ class Chart {
           },
         });
         try {
-          const fN = path.join(__dirname, '..', 'img', config.dir.img, config.dir.charts, `${fName}.png`);  
+          const fN = path.join(__dirname, '..', config.dir.images, config.dir.charts, `${fName}.png`);  
           const chartImage01 = await chart01.toFile(fN);
           await client.sendImage(from, fN, `Taxa de Conversão de Clientes: ${num}%`);
           if (config.showLog === true) console.log(`Taxa de Conversão de Clientes: ${num}`);

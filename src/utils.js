@@ -99,14 +99,6 @@ async function isPaid(numeroDoBot) {
   }
 }
 
-const formatUptime = (uptimeInSeconds) => {
-  const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
-  const hours = Math.floor(uptimeInSecondsRounded / 3600);
-  const minutes = Math.floor((uptimeInSecondsRounded % 3600) / 60);
-  const seconds = uptimeInSecondsRounded % 60;
-  return `${hours} horas, ${minutes} minutos e ${seconds} segundos`;
-}
-
 const formatBytes = (bytes, decimals = 2) => {
   if (!+bytes) return '0 Bytes';
   const k = 1024;
@@ -116,20 +108,12 @@ const formatBytes = (bytes, decimals = 2) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-// Function to get the operating system information
-function getOSInfo(platform) {
-  const osInfoMap = {
-      'aix': 'IBM AIX',
-      'android': 'Android',
-      'darwin': 'OSX',
-      'freebsd': 'FreeBSD',
-      'linux': 'Linux',
-      'openbsd': 'OpenBSD',
-      'sunos': 'SunOS',
-      'win32': 'Windows',
-  };
-
-  return `🖥️ _Sistema Operacional:_ ${osInfoMap[platform] || 'Desconhecido'}`;
+const formatUptime = (uptimeInSeconds) => {
+  const uptimeInSecondsRounded = Math.round(uptimeInSeconds);
+  const hours = Math.floor(uptimeInSecondsRounded / 3600);
+  const minutes = Math.floor((uptimeInSecondsRounded % 3600) / 60);
+  const seconds = uptimeInSecondsRounded % 60;
+  return `${hours} horas, ${minutes} minutos e ${seconds} segundos`;
 }
 
 const delDir = (directoryPath) => {
@@ -353,46 +337,107 @@ const sendDevInfo = async (client, sender, DB, msg) => {
   await client.sendMessage(config.devNumber, { text: devMSG });
 };
 
+
+// Função para coletar informações do servidor e retornar uma mensagem formatada
 const getServerStatus = async (client, sender, DB, devInfo) => {
   try {
-      const osUpTime = util.promisify(os.uptime);
-      const platform = os.platform();
-      const processorInfo = os.cpus()[0];
-      const numCores = os.cpus().length;
-      const totalMemory = os.totalmem();
-      const freeMemory = os.freemem();
-      const usedMemory = totalMemory - freeMemory;
 
-      // Get the MariaDB version using a Sequelize query
-      const mariadbVersionQuery = 'SELECT VERSION() AS version';
-      const [mariadbResults] = await DB.sequelize.query(mariadbVersionQuery, {
-          type: DB.sequelize.QueryTypes.SELECT,
-      });
+    // Tempo de atividade do sistema operacional em segundos
+    const osUpTime = await formatUptime(os.uptime());
 
-      const nodejsVersion = `🚀 _Node.js:_ ${process.version}`;
+    // Nome do processador
+    const processorName = os.cpus()[0].model;
 
-      const statusMessage = `*AutoAtende v${config.botVersion} - Status do Servidor*\n\n` +
-          `⌛ Tempo de Atividade do S.O: ${await osUpTime()}\n\n` +
-          `🖥️ _Processador:_ ${processorInfo.model}\n` +
-          `⚙️ _Arquitetura do Processador:_ ${os.arch()}\n` +
-          `🔥 _Número de Núcleos do Processador:_ ${numCores}\n` +
-          `💾 _Memória Total:_ ${formatBytes(totalMemory)}\n` +
-          `📊 _Memória Livre:_ ${formatBytes(freeMemory)}\n` +
-          `💽 _Memória Usada:_ ${formatBytes(usedMemory)}\n` +
-          `${getOSInfo(platform)}\n` +
-          `🐬 _Versão do MariaDB:_ ${mariadbResults.version}\n` +
-          `${nodejsVersion}\n`;
+    // Arquitetura do processador (e.g., x64)
+    const processorArchitecture = os.arch();
 
-      if (devInfo === true) {
-          return statusMessage;
+    // Número de núcleos do processador
+    const numCores = os.cpus().length;
+
+    // Informações de memória
+    const totalMemory = os.totalmem();
+    const freeMemory = os.freemem();
+    const usedMemory = totalMemory - freeMemory;
+
+    const totalMemoryF = formatBytes(totalMemory);
+    const freeMemoryF = formatBytes(freeMemory);
+    const usedMemoryF = formatBytes(usedMemory);
+
+    // Consulta SQL para o tamanho do banco de dados
+    const databaseResults = await DB.sequelize.query('SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size_mb FROM information_schema.tables', {
+      type: Sequelize.QueryTypes.SELECT
+    });
+    const databaseSizeMB = databaseResults[0].size_mb;
+
+    // Informações do AutoAtende
+    const lsbotInfo = `🤖 _Versão do AutoAtende:_ ${config.botVersion}`;
+
+    // Informações do sistema operacional
+    let osInfo;
+
+    const platform = os.platform();
+
+    switch (platform) {
+      case 'aix':
+          osInfo = `🖥️ _Sistema Operacional:_ IBM AIX`;
+          break;
+      case 'android':
+          osInfo = `🖥️ _Sistema Operacional:_ Android`;
+          break;
+      case 'darwin':
+          osInfo = `🖥️ _Sistema Operacional:_ OSX`;
+          break;
+      case 'freebsd':
+          osInfo = `🖥️ _Sistema Operacional:_ FreeBSD`;
+          break;
+      case 'linux':
+          osInfo = `🖥️ _Sistema Operacional:_ Linux`;
+          break;
+      case 'openbsd':
+          osInfo = `🖥️ _Sistema Operacional:_ OpenBSD`;
+          break;
+      case 'sunos':
+          osInfo = `🖥️ _Sistema Operacional:_ SunOS`;
+          break;
+      case 'win32':
+          osInfo = `🖥️ _Sistema Operacional:_ Windows`;
+          break;
+      default:
+          osInfo = `🖥️ _Sistema Operacional:_ Desconhecido`;
+    }
+
+    // Consulta SQL para a versão do MariaDB
+    const mariadbResults = await DB.sequelize.query('SELECT VERSION() AS version', {
+      type: Sequelize.QueryTypes.SELECT
+    });
+    const mariadbVersion = `🐬 _Versão do MariaDB:_ ${mariadbResults[0].version}`;
+
+    // Versão do Node.js
+    const nodejsVersion = `🚀 _Node.js:_ ${process.version}`;
+
+    // Montar a mensagem de status
+    const statusMessage = `*AutoAtende - Status do Servidor*\n\n` +
+      `⌛ Tempo de Atividade do S.O: ${osUpTime}\n\n` +
+      `🖥️ _Processador:_ ${processorName}\n` +
+      `⚙️ _Arquitetura do Processador:_ ${processorArchitecture}\n` +
+      `🔥 _Número de Núcleos do Processador:_ ${numCores}\n` +
+      `💾 _Memória Total:_ ${totalMemoryF}\n` +
+      `📊 _Memória Livre:_ ${freeMemoryF}\n` +
+      `💽 _Memória Usada:_ ${usedMemoryF}\n` +
+      `🗄️ _Tamanho do Banco de Dados:_ ${databaseSizeMB} MB\n` +
+      `${osInfo}\n` +
+      `${mariadbVersion}\n` +
+      `${nodejsVersion}\n` +
+      `${lsbotInfo}`;
+
+      if(devInfo === true) {
+        return statusMessage;
       } else {
-          // Enviando as informações de status para o cliente
-          await client.sendMessage(sender, { text: statusMessage });
-      }
+        await client.sendMessage(sender, { text: statusMessage });
+      }  
   } catch (error) {
-      console.error('Erro ao obter status do servidor:', error);
-      // Tratar o erro aqui, se necessário
-      return 'Erro ao obter status do servidor.';
+    console.error('Erro ao obter status do servidor:', error);
+    // Tratar o erro aqui, se necessário
   }
 };
 
@@ -493,7 +538,9 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'status':
           await client.sendMessage(sender, { delete: mek.key });
           if (config.enableStatus === true) {
-            getServerStatus(client, sender, DB);
+            console.log("chamada a status");
+            await getServerStatus(client, sender, DB, false);
+            console.log("aqui é depois da chamada.");
           } else {
             await client.sendMessage(config.empresa.botNumber, { text: `A função *status* está desabilidata.`});
           }
@@ -502,11 +549,11 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'stats':
           await client.sendMessage(sender, { delete: mek.key });
           if (config.enableStats === true) {
-            Graph.sql01(client, sender, DB);
-            Graph.sql02(client, sender, DB);
-            Graph.sql03(client, sender, DB);
-            Graph.sql04(client, sender, DB);
-            Graph.sql05(client, sender, DB);
+            await Graph.sql01(client, sender, DB);
+            await Graph.sql02(client, sender, DB);
+            await Graph.sql03(client, sender, DB);
+            await Graph.sql04(client, sender, DB);
+            await Graph.sql05(client, sender, DB);
 
           } else {
             await client.sendMessage(config.empresa.botNumber, { text: `A função *stats* está desabilidata.`});
