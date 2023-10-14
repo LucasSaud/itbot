@@ -538,10 +538,9 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'status':
           await client.sendMessage(sender, { delete: mek.key });
           if (config.enableStatus === true) {
-            console.log("chamada a status");
             await getServerStatus(client, sender, DB, false);
-            console.log("aqui é depois da chamada.");
-          } else {
+          }
+          else {
             await client.sendMessage(config.empresa.botNumber, { text: `A função *status* está desabilidata.`});
           }
           break;
@@ -601,7 +600,23 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem com o endereço.`});
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(sender, { text: config.empresa.nossaLocalizacao });
-          break;          
+          break;   
+          
+        case 'horario':
+          await client.sendMessage(sender, { delete: mek.key });
+          await sendLocationMessage(client, from, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
+          if (config.showMondayInfo === true) {
+            if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
+              await m.reply(
+                config.msgAvisoSegundas
+              );
+            }
+          }
+          await m.reply(
+            config.empresa.nossaLocalizacao
+          );
+          break;
 
         default:
           await client.sendMessage(config.empresa.botNumber, { text: `⚠️ Comando náo reconhecido. Comandos aceitaveis são:\n!entrega\n!retirada\n!bloqueia\n!desbloqueia\n!oi\n!bv`});

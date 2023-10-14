@@ -45,6 +45,7 @@ module.exports = {
     'bv',
     'cardapio',
     'endereco',
+    'horario',
     'backup',
     'ajuda',
   ],
