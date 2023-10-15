@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.3.0",
+  botVersion: "2.3.1",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -191,16 +191,6 @@ module.exports = {
       user: "italinbot",
       pwd: "Brx2045rb@",
       log: false,
-    },
-    bottle: {
-      dialect: "mariadb",
-      host: "localhost",
-      db: "italin_bt",
-      user: "italinbot",
-      pwd: "Brx2045rb@",
-      port: 3306,
-      sync: true,
-      log: true,        
     },
     ispaid: {
       dialect: "mysql",

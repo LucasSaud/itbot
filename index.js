@@ -202,72 +202,28 @@ async function startCore(inDebit) {
 
   // Initialize the WhatsApp client
   client = coreConnect({
-		/** the WS url to connect to WA */
-		//waWebSocketUrl: config.WA_URL,
-		/** Fails the connection if the socket times out in this interval */
 		connectTimeoutMs: 60000,
-		/** Default timeout for queries, undefined for no timeout */
 		defaultQueryTimeoutMs: undefined,
-		/** ping-pong interval for WS connection */
 		keepAliveIntervalMs: 5000,
-		/** proxy agent */
 		agent: undefined,
-		/** pino logger */
 		logger: pino({ level: 'silent' }),
-		/** version to connect with */
 		version: version || undefined,
-		/** override browser config */
 		browser: Browsers.macOS('Desktop'),
-		/** agent used for fetch requests -- uploading/downloading media */
 		fetchAgent: undefined,
-		/** should the QR be printed in the terminal */
 		printQRInTerminal: true,
-		/** should events be emitted for actions done by this socket connection */
 		emitOwnEvents: false,
-		/** provide a cache to store media, so does not have to be re-uploaded */
-		//mediaCache: NodeCache,
-		/** custom upload hosts to upload media to */
-		//customUploadHosts: MediaConnInfo['hosts'],
-		/** time to wait between sending new retry requests */
 		retryRequestDelayMs: 5000,
-		/** time to wait for the generation of the next QR in ms */
 		qrTimeout: 15000,
-		/** provide an auth state object to maintain the auth state */
-		//auth: state,
 		auth: {
 			creds: state.creds,
-				//caching makes the store faster to send/recv messages
 				keys: makeCacheableSignalKeyStore(state.keys, logger),
 		},
-		/** manage history processing with this control; by default will sync up everything */
-		//shouldSyncHistoryMessage: boolean,
-		/** transaction capability options for SignalKeyStore */
-		//transactionOpts: TransactionCapabilityOptions,
-		/** provide a cache to store a user's device list */
-		//userDevicesCache: NodeCache,
-		/** marks the client as online whenever the socket successfully connects */
-		//markOnlineOnConnect: setOnline,
-		/**
-		* map to store the retry counts for failed messages;
-		* used to determine whether to retry a message or not */
 		msgRetryCounterCache: msgRetryCounterCache,
-		/** width for link preview images */
 		linkPreviewImageThumbnailWidth: 192,
-		/** Should Baileys ask the phone for full history, will be received async */
 		syncFullHistory: false,
-		/** Should baileys fire init queries automatically, default true */
 		fireInitQueries: true,
-		/**
-		* generate a high quality link preview,
-		* entails uploading the jpegThumbnail to WA
-		* */
 		generateHighQualityLinkPreview: false,
-		/** options for axios */
-		//options: AxiosRequestConfig || undefined,
-		// ignore all broadcast messages -- to receive the same
-		// comment the line below out
 		shouldIgnoreJid: jid => isJidBroadcast(jid),
-		/** By default true, should history messages be downloaded and processed */
 		downloadHistory: false,
 		/**
 		* fetch a message from your store
@@ -278,11 +234,6 @@ async function startCore(inDebit) {
 			if (store) {
 				const msg = await store?.loadMessage(key?.remoteJid, key?.id);
 				return msg?.message || undefined;
-			}
-			//
-			// only if store is present
-			return {
-				conversation: 'hello'
 			}
 		}
 		});
@@ -303,7 +254,7 @@ async function startCore(inDebit) {
       let ignoreNumber = false;
 
         // Save the sender as a contact if it's not a group or a broadcast
-        if (sender && !sender.endsWith('@g.us') && !sender.endsWith('@broadcast') && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
+        if (sender && !sender.endsWith('@g.us') && !sender.endsWith('@broadcast') && !Utils.isBlocked(DB, sender.replace('@s.whatsapp.net', ''))) {
           // Verifica se o sender não inclui @s.whatsapp.net e adiciona, se necessário.
           if (!sender.includes('@s.whatsapp.net')) {
             sender = sender + '@s.whatsapp.net';
@@ -376,7 +327,7 @@ async function startCore(inDebit) {
           }
         }
 
-        if (!mek.isGroup && typeof m.body === 'string' && !itsMe && !Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
+        if (!mek.isGroup && typeof m.body === 'string' && !itsMe && !Utils.isBlocked(DB, sender.replace('@s.whatsapp.net', ''))) {
           // Convert the message text and keywords to lowercase to avoid case sensitivity issues
           const mensagemLowerCase = m.body.toLowerCase();
           if (!mensagemLowerCase.startsWith('!')) {
@@ -412,7 +363,7 @@ async function startCore(inDebit) {
 
         // Bloqueia o bot se o número do bot enviar uma mensagem ao usuário
         if (config.autoTurnOff === true && userNumber === config.empresa.botNumber && !isCommand) {
-          if (!Utils.doNotHandleNumbers.includes(sender.replace('@s.whatsapp.net', ''))) {
+          if (!Utils.isBlocked(DB, sender.replace('@s.whatsapp.net', ''))) {
             if (config.showLog === true) console.log(`Bot bloqueado automaticamente no número: ${sender}`);
             ignoreNumber = true;
             await DB.saveLogs(`[ REGISTRO ] O número ${sender} foi adicionado à lista de exclusão do atendimento. AutoBlock ON`);

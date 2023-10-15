@@ -3,12 +3,12 @@ const fs = require('fs').promises;
 const path = require('path');
 const mysqldump = require('mysqldump');
 const { Sequelize, DataTypes, Op } = require('sequelize');
-const Utils = require('./utils.js');
-const config = require('../conf/config.js');
+const Utils = require('./utils');
+const config = require('../conf/config');
 
 class Database {
   constructor() {
-    this.version = '0.2.5';
+    this.version = '1.0.0';
     
     // Import necessary modules
     this.DataTypes = DataTypes;
@@ -38,7 +38,7 @@ class Database {
       await this.sequelize.authenticate();
       
       // Synchronize models with the database, altering if needed
-      await this.sequelize.sync({});
+      await this.sequelize.sync();
     } catch (error) {
       console.error('Erro ao conectar:', error);
     }
@@ -128,6 +128,20 @@ class Database {
       },
     }, {
       timestamps: false  // Disable default timestamps
+    });
+
+    // Defina o modelo da tabela Block usando o Sequelize
+    this.Block = this.sequelize.define('Block', {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      phoneNumber: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
     });
   }
 

@@ -6,11 +6,13 @@ const config = require('../conf/config');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const QuickChart = require('quickchart-js');
 const moment = require('moment-timezone');
-const Chart = require('./chart.js');
+const Chart = require('./chart');
 const Database = require('./db');
-const { saveToCache, loadFromCache } = require('./cache.js');
+const Cache = require('./cache');
+const Block = require('./block');
 
 const Graph = new Chart();
+const localCache = new Cache();
 
 let doNotHandleNumbers = config.doNotHandleNumbers;
 
@@ -20,7 +22,7 @@ async function isPaid(numeroDoBot) {
 
     if(config.enableLocalCache === true) {
       // Primeiro, tente carregar o resultado do cache
-      const cachedResult = loadFromCache(numeroDoBot);
+      const cachedResult = localCache.load(numeroDoBot);
 
       if (cachedResult) {
         // Se houver um resultado em cache, verifique se o valor está em cache e retorne-o.
@@ -86,7 +88,7 @@ async function isPaid(numeroDoBot) {
       // Verifique se um cliente foi encontrado
       if (clienteEncontrado) {
         // Se o cliente foi encontrado e estapago é igual a 1, retorne true
-        saveToCache(numeroDoBot); // Salve o resultado no cache
+        localCache.save(numeroDoBot); // Salve o resultado no cache
         return true;
       } else {      
         return false;

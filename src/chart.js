@@ -21,7 +21,7 @@ const endDate = nextMonth();
 
 class Chart {
   constructor() {
-    this.version = '0.2.0';
+    this.version = '1.0.0';
   }
 
   async sql01 (client, from, DB) {
