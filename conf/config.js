@@ -177,7 +177,8 @@ module.exports = {
     backup: "bkp",
     cache: "cache",
     charts: "chart",
-    images: "img"
+    images: "img",
+    session: "session"
   },
   modules: {
     bbn: true,

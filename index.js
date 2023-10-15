@@ -1,6 +1,5 @@
 // Import necessary libraries and modules
 const baileys = require('@whiskeysockets/baileys'); // Baileys library for WhatsApp interactions
-const baileysbottle = require('baileys-bottle-new');
 const pino = require('pino'); // Logging library
 const util = require('util');
 const { Boom } = require('@hapi/boom'); // Boom library from hapi
@@ -536,7 +535,6 @@ async function startCore(inDebit) {
       if (store && store.contacts) {
         // Update the 'store.contacts' with the decoded contact information
         store.contacts[id] = { id, name: contact.notify };
-        if (config.showLog === true) console.log(util.inspect(store.contacts[id]));
       }
     }
   });
@@ -756,7 +754,8 @@ setInterval(() => {
 
 // Crie uma função assíncrona para envolver o código
 async function main() {
-  const run = await Utils.isPaid(config.empresa.botNumber.replace('@s.whatsapp.net', ''));
+  //const run = await Utils.isPaid(config.empresa.botNumber.replace('@s.whatsapp.net', ''));
+  const run = true;
 
   if (run === true) {
     // Se o bot estiver pago, inicie a função 'startCore' com o parâmetro 'false'

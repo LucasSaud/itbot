@@ -30,7 +30,6 @@
     "asciichart": "^1.5.25",
     "awesome-phonenumber": "^2.64.0",
     "axios": "^1.4.0",
-    "baileys-bottle-new": "^2.1.3",
     "child_process": "^1.0.2",
     "crypto": "^1.0.1",
     "crypto-js": "^4.1.1",
@@ -54,6 +53,12 @@
     "util": "^0.12.5"
   },
   "directories": {
-    "src": "src"
+    "src": "src",
+    "img": "img",
+    "bkp": "bkp",
+    "cache": "cache",
+    "conf": "conf",
+    "session": "session",
+    "dev": "dev"
   }
 }
