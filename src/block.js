@@ -5,7 +5,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 class Block {
     constructor() {
-        this.version = "1.0.0";
+        this.version = "1.2.1";
 
         // Configure a Sequelize instance to connect to your MariaDB database
         this.sequelize = new Sequelize(
@@ -55,7 +55,7 @@ class Block {
         }
     }
 
-    async remove(phoneNumber) {
+    async delete(phoneNumber) {
         try {
             // Verifique se o número está na lista de bloqueados no banco de dados
             const existingBlock = await this.Blocked.findOne({ where: { phoneNumber } });
@@ -113,7 +113,7 @@ async function main() {
         }
     });
 
-    await blockList.remove('5516993636362').then((blocked) => {
+    await blockList.delete('5516993636362').then((blocked) => {
         if(blocked) {
             console.log('remove >> Número removido da lista de bloqueio.')
         } else {
