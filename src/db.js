@@ -129,20 +129,6 @@ class Database {
     }, {
       timestamps: false  // Disable default timestamps
     });
-
-    // Defina o modelo da tabela Block usando o Sequelize
-    this.Block = this.sequelize.define('Block', {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      phoneNumber: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-      },
-    });
   }
 
   async saveLogs(logMessage) {

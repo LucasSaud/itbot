@@ -9,7 +9,6 @@ const moment = require('moment-timezone');
 const Chart = require('./chart');
 const Database = require('./db');
 const Cache = require('./cache');
-const Block = require('./block');
 
 const Graph = new Chart();
 const localCache = new Cache();
