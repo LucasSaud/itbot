@@ -5,12 +5,19 @@ const util = require('util');
 const { Boom } = require('@hapi/boom'); // Boom library from hapi
 const fs = require('fs'); // Node.js filesystem module
 const path = require('path');
+const { config } = require('../conf/config.js');
   
   console.clear();
   console.log("Initializing DB...");
   BaileysBottle.init({
-    type: "sqlite",
-    database: "db.sqlite",
+    type: config.datasource.bottle.dialect,
+    host: config.datasource.bottle.host,
+    port: config.datasource.bottle.port,
+    username: config.datasource.bottle.user,
+    password: config.datasource.bottle.pwd,
+    database: config.datasource.bottle.db,
+    synchronize: config.datasource.bottle.sync,
+    logging: config.datasource.bottle.log
   }).then(async (bottle) => {
     console.log("DB initialized");
     const client = async (clientName) => {

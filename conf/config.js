@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.2.4",
+  botVersion: "2.3.0",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -140,7 +140,10 @@ module.exports = {
     "servidão"
   ],
   cmdArray: ['0','1','2','3','4','5','6','7','8'],
-  timeZone: "America/Sao_Paulo",
+  timeZone: {
+    area: "America/Sao_Paulo",
+    value: "-03:00",
+  },
   showLog: true,
   sendDevLog: true,
   sendServerStatusDevMsg: true,
@@ -178,5 +181,33 @@ module.exports = {
   },
   modules: {
     bbn: true,
-  }
+  },
+  datasource: {
+    data: {
+      dialect: "mariadb",
+      host: "localhost",
+      db: "italin_db",
+      user: "italinbot",
+      pwd: "Brx2045rb@",
+      log: false,
+    },
+    bottle: {
+      dialect: "mariadb",
+      host: "localhost",
+      db: "italin_bt",
+      user: "italinbot",
+      pwd: "Brx2045rb@",
+      port: 3306,
+      sync: true,
+      log: true,        
+    },
+    ispaid: {
+      dialect: "mysql",
+      host: "154.56.48.154",
+      db: "u276801829_clientes",
+      user: "u276801829_italinbot",
+      pwd: "?qOi6jM7r6",
+      log: false,
+    }
+  },
 };

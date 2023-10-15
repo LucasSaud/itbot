@@ -31,14 +31,14 @@ async function isPaid(numeroDoBot) {
 
       // Crie uma instância do Sequelize com detalhes de conexão
       const sequelize = new Sequelize(
-        "u276801829_clientes",
-        "u276801829_italinbot",
-        "?qOi6jM7r6",
+        config.datasource.ispaid.db,
+        config.datasource.ispaid.user,
+        config.datasource.ispaid.pwd,
         {
-          host: "154.56.48.154",
-          dialect: "mysql",
-          logging: false,
-          timezone: "-03:00",
+          host: config.datasource.ispaid.host,
+          dialect: config.datasource.ispaid.dialect,
+          logging: config.datasource.ispaid.log,
+          timezone: config.timeZone.value,
         }
       );
 

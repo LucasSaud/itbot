@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.2.3",
+  botVersion: "2.3.0",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -307,5 +307,30 @@ module.exports = {
     cache: "cache",
     charts: "chart",
     images: "img"
+  },
+  maxAgeForGraphs: 3600000,
+  maxAgeForSessions: 86400000,
+  modules: {
+    bbn: true
+  },
+  datasource: {
+    data: {
+      dialect: "mariadb",
+      host: "localhost",
+      db: "italin_db",
+      user: "italinbot",
+      pwd: "Brx2045rb@",
+      log: false
+    },
+    bottle: {
+      dialect: "mariadb",
+      host: "localhost",
+      db: "italin_bt",
+      user: "italinbot",
+      pwd: "Brx2045rb@",
+      port: 3306,
+      sync: true,
+      log: true
+    }
   }
 };

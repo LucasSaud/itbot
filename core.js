@@ -14,7 +14,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
     const DB = new Database();
     const Graphs = new Chart();
     const cmdArray = config.cmdArray;
-    const currentTime = moment.tz(config.timeZone);
+    const currentTime = moment.tz(config.timeZone.area);
     const timestamp = currentTime.format('YYYY-MM-DD HH:mm:ss');
 
     const messageTypeHandlers = {

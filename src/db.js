@@ -15,11 +15,14 @@ class Database {
     this.Op = Op;
 
     // Create a Sequelize instance for database connection
-    this.sequelize = new Sequelize('italin_db', 'italinbot', 'Brx2045rb@', {
-      host: 'localhost',
-      dialect: 'mariadb',
-      logging: false,     // Disable logging
-      timezone: '-03:00'  // Set timezone
+    this.sequelize = new Sequelize(
+      config.datasource.data.db,
+      config.datasource.data.user,
+      config.datasource.data.pwd, {
+        host: config.datasource.data.host,
+        dialect: config.datasource.data.dialect,
+        logging: config.datasource.data.log,     // Disable logging
+        timezone: '-03:00'  // Set timezone
     });
 
     // Define all models
