@@ -1,5 +1,6 @@
 // Import necessary libraries and modules
 const baileys = require('@whiskeysockets/baileys'); // Baileys library for WhatsApp interactions
+const baileysbottle = require('baileys-bottle-new');
 const pino = require('pino'); // Logging library
 const util = require('util');
 const { Boom } = require('@hapi/boom'); // Boom library from hapi

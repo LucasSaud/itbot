@@ -175,5 +175,8 @@ module.exports = {
     cache: "cache",
     charts: "chart",
     images: "img"
+  },
+  modules: {
+    bbn: true,
   }
 };
