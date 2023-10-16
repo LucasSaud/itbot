@@ -459,20 +459,11 @@ async function startCore(inDebit) {
 
   // Define 'decodeJid' in the client object
   client.decodeJid = (jid) => {
-    // Check if 'jid' is defined
     if (!jid) return jid;
-    
-    // Check if 'jid' matches the pattern ':number@' (indicating a specific port)
     if (/:\d+@/gi.test(jid)) {
-      // Decode the 'jid' using 'jidDecode' function or set it as an empty object
       let decode = jidDecode(jid) || {};
-      
-      // Return the decoded user and server if available, or the original 'jid'
-      return (decode.user && decode.server && decode.user + '@' + decode.server) || jid;
-    } else {
-      // Return 'jid' as is if it doesn't match the pattern
-      return jid;
-    }
+      return (decode.user && decode.server && decode.user + "@" + decode.server) || jid;
+    } else return jid;
   };
 
   // Listen for 'contacts.update' event in the client event emitter
