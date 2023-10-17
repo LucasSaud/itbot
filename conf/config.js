@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.3.1",
+  botVersion: "2.3.5",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -178,7 +178,8 @@ module.exports = {
     cache: "cache",
     charts: "chart",
     images: "img",
-    session: "session"
+    session: "session",
+    reports: "reports"
   },
   modules: {
     bbn: true,
