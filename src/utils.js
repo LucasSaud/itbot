@@ -309,9 +309,9 @@ const sendMKT = async (DB, client) => {
     // Loop através dos contatos e enviar marketing
     for (const { phoneNumber } of uniqueWhatsAppNumbers) {
       numOfMsgsSent++;
-      await client.sendMessage(phoneNumber, { text: config.msgMkt });
+      await client.sendMessage(phoneNumber, { text: config.messages.tiramissu });
       await DB.saveLogs(`[ INFO ] Mensagem enviada para ${phoneNumber}.`);
-      await client.sendMessage(config.empresa.botNumber, { text: `✅ Mensagem enviada para ${phoneNumber}.` });
+      await client.sendMessage(config.empresa.botNumber, { text: `sssss✅ Mensagem enviada para ${phoneNumber}.` });
       await DB.Contacts.update({ isMktSent: true }, {
         where: {
           whatsappNumber: phoneNumber,

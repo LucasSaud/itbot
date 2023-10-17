@@ -1,17 +1,18 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.3.5",
+  botVersion: "2.3.6",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
-  doNotHandleNumbers: [ '5516991121744','5516993739942','553197137788','5516993710273','5516994184493','5516981303311','5516991131877',
+  doNotHandleNumbers: [ '5516992916444','5516991121744','5516993739942','553197137788',
+                        '5516993710273','5516994184493','5516981303311','5516991131877',
                         '13109418333','5516994579554','5517996235872','5516992895991',
-                        '5516994622366','5517981436608','5511950825321',
-                        '5516993259097','5519999088888','5511972522364','5516999803888', 
+                        '5516994622366','5517981436608','5511950825321','5516999803888', 
+                        '5516993259097','5519999088888','5511972522364','5516991252590',
                         '5516992877187','5516997980088','5516996180725','5516992552268',
                         '5516992243371','5516992734181','5516992974914','5516988310481', 
                         '5516991251039','5516993203850','5516992304095','5511940632372',
-                        '5516982626317','551637213315','5517992133812', '5516991252590'],
+                        '5516982626317','551637213315','5517992133812'],
   diasSemana: [
     'Domingo',
     'Segunda-Feira',
@@ -150,6 +151,9 @@ module.exports = {
   devNumber: `5516996509803@s.whatsapp.net`,
   errorMsgs: {
     startCore: "Ocorreu um erro ao iniciar a instrução startCore()",
+  },
+  messages: {
+    tiramissu: "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰\n\nAmantes da gastronomia italiana, preparem-se para uma delícia irresistível! Apresentamos o Tiramisú, uma sobremesa clássica italiana.\n\n➡️ Tiramisú Box de 100g por apenas R$16,90!\nMarque sua visita ou faça seu pedido e saboreie essa tentação italiana no Ital'in House! 😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n*Você sabia?*\nO nome do doce provém da expressão em italiano _Tirami Sù_, que significa algo como _puxa-me para cima_ ou _levanta-me_.",
   },
   ajuda: [
     "🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳.\nPara tornar sua experiência mais fácil e conveniente, oferecemos um menu com oito opções.\nPor favor, escolha a opção desejada digitando o número correspondente. Aqui estão as opções disponíveis e para quem serve cada opção:",
