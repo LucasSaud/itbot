@@ -216,12 +216,14 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               break;
             }
             case '1': case 'horario':{
+              DB.contactsUpdatePoints(sender, '1');
               await m.reply(
                 config.empresa.horariosFuncionamento
               );
               break;
             }
             case '2': case 'cardapio':{
+              DB.contactsUpdatePoints(sender, '2');
               try {
                 await Utils.sendImageMessage(client, from, "cardapio.jpg", config.empresa.verCardapio, false);
               } catch (error) {
@@ -230,6 +232,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               break;
             }
             case '3': case 'endereço': {
+              DB.contactsUpdatePoints(sender, '3');
               await Utils.sendLocationMessage(client, from, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
               await new Promise(resolve => setTimeout(resolve, 2000));
               await m.reply(
@@ -238,18 +241,21 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               break;
             }
             case '4': case 'tempo':{
+              DB.contactsUpdatePoints(sender, '4');
               await m.reply(
                 config.empresa.tempoParaEntregar
               );
               break;
             }
             case '5': case 'pedido':{
+              DB.contactsUpdatePoints(sender, '5');
               await m.reply(
                 config.empresa.fazerPedido
               );
               break;
             }
             case '6': case 'pagamento':{
+              DB.contactsUpdatePoints(sender, '6');
               if(config.mostrarValeRefeicoes === true) await Utils.sendImageMessage(client, from, "pagamentos.jpeg", config.empresa.legendaPagamentos, false);
               await new Promise(resolve => setTimeout(resolve, 2000));
               
@@ -259,12 +265,14 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
               break;
             }
             case '7': case 'consumo':{
+              DB.contactsUpdatePoints(sender, '7');
               await m.reply(
                 config.empresa.opcoesRetirada
               );
               break;
             }
             case '8': case 'atendente': {
+              DB.contactsUpdatePoints(sender, '8');
               if (Utils.isBlocked(senderNumber)) {
                 await m.reply(config.msgAtendente);
               } else {

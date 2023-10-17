@@ -21,7 +21,7 @@ const endDate = nextMonth();
 
 class Chart {
   constructor() {
-    this.version = '1.0.0';
+    this.version = '1.0.1';
   }
 
   async sql01 (client, from, DB) {
@@ -215,9 +215,8 @@ class Chart {
       }
     }
 
-    async dGraph(client, from, data, title) {
+    async dGraph(client, from, data, title, returnFile = false) {
 
-      
       let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
       // Separe os nomes dos dias e as contagens de mensagens em arrays separados
@@ -277,7 +276,11 @@ class Chart {
       try {
         const fN = path.join(__dirname, '..', config.dir.images, config.dir.charts, `${fName}.png`);  
         const chartImage = await chart.toFile(fN);
-        await client.sendImage(from, fN, `*${title}*`);
+        if (returnFile === true) {
+          return fN;
+        } else {
+          await client.sendImage(from, fN, `*${title}*`);
+        }
         if (config.showLog === true) console.log(`${title}`);
       } catch (error) {
         console.error('Erro ao criar o gráfico:', error);

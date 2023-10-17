@@ -8,7 +8,7 @@ const config = require('../conf/config');
 
 class Database {
   constructor() {
-    this.version = '1.0.0';
+    this.version = '1.2.0';
     
     // Import necessary modules
     this.DataTypes = DataTypes;
@@ -38,7 +38,7 @@ class Database {
       await this.sequelize.authenticate();
       
       // Synchronize models with the database, altering if needed
-      await this.sequelize.sync();
+      this.sequelize.sync({ alter: true });
     } catch (error) {
       console.error('Erro ao conectar:', error);
     }
@@ -78,6 +78,22 @@ class Database {
         allowNull: false,
       }
     });
+  
+    // Defina o modelo da tabela Block usando o Sequelize
+    this.Blocked = this.sequelize.define('Blocks', {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      phoneNumber: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true, // Defina o número de telefone como único
+      },
+      createdAt: { type: DataTypes.DATE, allowNull: true, defaultValue: this.sequelize.literal('CURRENT_TIMESTAMP') },
+      updatedAt: { type: DataTypes.DATE, allowNull: true, defaultValue: this.sequelize.literal('CURRENT_TIMESTAMP') }
+    });
 
     // Define a model for contacts
     this.Contacts = this.sequelize.define('Contacts', {
@@ -96,6 +112,10 @@ class Database {
       lastOrderDate: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
+      },
+      points: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
       },
       isMktSent: {
         type: DataTypes.BOOLEAN,
@@ -261,6 +281,32 @@ class Database {
       return false;
     }
   }
+
+  async contactsUpdatePoints(num, cmd) {
+    try {
+      // Encontre o contato com base no número de telefone (whatsappNumber)
+      const contact = await this.Contacts.findOne({
+        where: { whatsappNumber: num },
+      });
+  
+      if (contact) {
+        // Verifique se o comandoNum existe na tabela de pontuações
+        if (config._cmdPoints[cmd] !== undefined) {
+          const points = config._cmdPoints[cmd];
+  
+          // Atualize a pontuação do usuário
+          await contact.update({ points: contact.points + points });
+        } else {
+          console.error('Comando numérico inválido');
+        }
+      } else {
+        console.error('Usuário não encontrado');
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar os pontos do usuário:', error);
+    }
+  }
+
 }
 
 module.exports = Database;
