@@ -605,17 +605,8 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           
         case 'horario':
           await client.sendMessage(sender, { delete: mek.key });
-          await sendLocationMessage(client, from, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
-          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
-          if (config.showMondayInfo === true) {
-            if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
-              await m.reply(
-                config.msgAvisoSegundas
-              );
-            }
-          }
           await m.reply(
-            config.empresa.nossaLocalizacao
+            config.empresa.horariosFuncionamento
           );
           break;
 
