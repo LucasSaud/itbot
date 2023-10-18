@@ -4,11 +4,14 @@ const semver = require('semver');
 const readline = require('readline');
 const config = require('../conf/config.js');
 const configLoja01 = require('../conf/config.loja01.js');
+const Database = require('../src/db');
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
+
+const DB = new Database();
 
 function createDirectoriesIfNotExists() {
   if (config.dir && typeof config.dir === 'object') {
@@ -88,7 +91,7 @@ function menu() {
         break;
       case '2':
         // Implementar a lógica para Fazer Backup aqui
-        console.log('Em desenvolvimento 02.');
+        DB.backup();
         break;
       case '3':
         // Implementar a lógica para Procurar Atualizações aqui

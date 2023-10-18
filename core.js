@@ -115,9 +115,13 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
           
           const modifiedPhoneNumber = phoneNumber + '@s.whatsapp.net';
 
+          if(args.length === 2 && args[1].startsWith('9')) {
+            // do here the block code of number
+          }
+
           if (args.length === 2 && args[1].startsWith('1')) {
             await Utils.sendMKT(DB, client);
-          }
+          } 
           else if (args.length === 2 && args[1].startsWith('2')) {
             await Utils.sendInactiveMessage(client, m, DB); 
           }
