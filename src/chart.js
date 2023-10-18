@@ -24,7 +24,7 @@ class Chart {
     this.version = '1.0.1';
   }
 
-  async sql01 (client, from, DB) {
+  async sql01 (client, from, DB, returnFile = false, returnBuffer = false) {
     // Consulta para calcular a taxa de conversão
     const orderCount = await DB.Message.count({
       where: {
@@ -43,10 +43,10 @@ class Chart {
 
     // Calcular a taxa de conversão
     const conversionRate = (uniqueNumbersWithOrdersCount / orderCount) * 100;
-    return this.cGraph(client, from, conversionRate.toFixed(2));
+    return this.cGraph(client, from, conversionRate.toFixed(2), returnFile, returnBuffer);
   }
 
-  async sql01a (client, from, DB) {
+  async sql01a (client, from, DB, returnFile = false, returnBuffer = false) {
     // Obter a data de início e fim do mês atual (outubro)
     const currentDate = new Date();
     const startOfMonth = new Date(currentDate.getFullYear(), startDate, 1); // O mês de outubro é representado como 9 (0-indexed) em JavaScript
@@ -76,10 +76,10 @@ class Chart {
   
     // Calcular a taxa de conversão
     const conversionRate = (uniqueNumbersWithOrdersCount / orderCount) * 100;
-    return this.cGraph(client, from, conversionRate.toFixed(2));
+    return this.cGraph(client, from, conversionRate.toFixed(2), returnFile, returnBuffer);
   }
 
-  async sql02(client, from, DB) {
+  async sql02(client, from, DB, returnFile = false, returnBuffer = false) {
     try {
       // Data de hoje
       const today = new Date();
@@ -116,7 +116,7 @@ class Chart {
         // Agora, formattedResult deve conter os dados no formato correto
   
         // Chame a função para criar o gráfico
-        this.dGraph(client, from, formattedResult, 'Mensagens processadas por dia');
+        this.dGraph(client, from, formattedResult, 'Mensagens processadas por dia', returnFile, returnBuffer);
       } else {
         console.log('A consulta não retornou resultados.');
       }
@@ -126,7 +126,7 @@ class Chart {
   }
   
 
-  async sql03(client, from, DB) { 
+  async sql03(client, from, DB, returnFile = false, returnBuffer = false) { 
     // Data de hoje
     const today = new Date();
 
@@ -154,10 +154,10 @@ class Chart {
       name: config.diasSemana[new Date(row.date).getDay()], // Nome do dia
       count: row.count, // Contagem de mensagens
     }));
-    this.dGraph(client, from, formattedResult, 'Atendimentos por dia');
+    this.dGraph(client, from, formattedResult, 'Atendimentos por dia', returnFile, returnBuffer);
   }
 
-  async sql04(client, from, DB) { 
+  async sql04(client, from, DB, returnFile = false, returnBuffer = false) { 
     // Obter dados de utilização de comandos
     const result = await DB.Message.findAll({
       attributes: [
@@ -191,10 +191,10 @@ class Chart {
         name: commandMapping[row.body], // Nome do comando
         count: row.count, // Contagem de mensagens
       }));
-      this.dGraph(client, from, formattedResult, 'Utilização dos comandos');
+      this.dGraph(client, from, formattedResult, 'Utilização dos comandos', returnFile, returnBuffer);
     }
 
-    async sql05(client, from, DB) { 
+    async sql05(client, from, DB, returnFile = false, returnBuffer = false) { 
       const result = await DB.Message.findAll({
         attributes: [
           [DB.sequelize.fn('DATE_FORMAT', DB.sequelize.col('timestamp'), '%M'), 'month'], // Formata a data para o nome do mês
@@ -209,13 +209,13 @@ class Chart {
           name: row.month, // Nome do mês
           count: row.count, // Contagem de mensagens
         }));
-        this.dGraph(client, from, formattedResult, 'Atendimentos por Mês');
+        this.dGraph(client, from, formattedResult, 'Atendimentos por Mês', returnFile, returnBuffer);
       } else {
         console.error('Nenhum dado retornado pela consulta de atendimentos mensais.');
       }
     }
 
-    async dGraph(client, from, data, title, returnFile = false) {
+    async dGraph(client, from, data, title, returnFile = false, returnBuffer = false) {
 
       let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
 
@@ -276,9 +276,13 @@ class Chart {
       try {
         const fN = path.join(__dirname, '..', config.dir.images, config.dir.charts, `${fName}.png`);  
         const chartImage = await chart.toFile(fN);
-        if (returnFile === true) {
+        if (returnBuffer === true) {
+          return await chart.toBuffer();
+        } 
+        else if(returnFile === true) {
           return fN;
-        } else {
+        }
+        else {
           await client.sendImage(from, fN, `*${title}*`);
         }
         if (config.showLog === true) console.log(`${title}`);
@@ -287,7 +291,7 @@ class Chart {
       }
     }
 
-    async cGraph (client, from, num) {
+    async cGraph (client, from, num, returnFile = false, returnBuffer = false) {
       let chart01 = new QuickChart();
 
       let fName = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
@@ -387,8 +391,16 @@ class Chart {
         });
         try {
           const fN = path.join(__dirname, '..', config.dir.images, config.dir.charts, `${fName}.png`);  
-          const chartImage01 = await chart01.toFile(fN);
-          await client.sendImage(from, fN, `Taxa de Conversão de Clientes: ${num}%`);
+          const chartImage = await chart.toFile(fN);
+          if (returnBuffer === true) {
+            return await chart.toBuffer();
+          } 
+          else if(returnFile === true) {
+            return fN;
+          }
+          else {
+            await client.sendImage(from, fN, `*${title}*`);
+          }
           if (config.showLog === true) console.log(`Taxa de Conversão de Clientes: ${num}`);
         } catch (error) {
           console.error('Erro ao criar o gráfico:', error);
