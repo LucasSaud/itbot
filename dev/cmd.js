@@ -129,7 +129,7 @@ if (foundMenuWords.length > 0) {
 } else {
   console.log("Nenhuma palavra-chave do menu encontrada na entrada.");
 }
-
+/*
 // Bot Status
 const used = process.memoryUsage();
 const cpus = os.cpus().map(cpu => {
@@ -178,11 +178,4 @@ cpus.forEach((cpu, index) => {
     console.log(`⚙️ Tempo do sistema: ` + formatTime(cpu.times.sys));
     console.log(`💤 Tempo inativo: ` + formatTime(cpu.times.idle));
     console.log(`🔒 Tempo 'irq': ` + formatTime(cpu.times.irq));
-});
-
-var asciichart = require ('asciichart')
-var s0 = new Array (120)
-for (var i = 0; i < s0.length; i++)
-    s0[i] = 15 * Math.sin (i * ((Math.PI * 4) / s0.length))
-console.log (asciichart.plot (s0))
-
+});*/
