@@ -8,7 +8,7 @@ const config = require('../conf/config');
 
 class Database {
   constructor() {
-    this.version = '1.2.0';
+    this.version = '1.3.0';
     
     // Import necessary modules
     this.DataTypes = DataTypes;
@@ -100,6 +100,7 @@ class Database {
       whatsappNumber: {
         type: DataTypes.STRING,
         primaryKey: true,
+        unique: true,
       },
       deliveryOrders: {
         type: DataTypes.INTEGER,
