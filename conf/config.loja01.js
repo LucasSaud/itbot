@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.3.0",
+  botVersion: "2.3.6",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -332,5 +332,18 @@ module.exports = {
       sync: true,
       log: true
     }
+  },
+  messages: {
+    tiramissu: "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰\n\nAmantes da gastronomia italiana, preparem-se para uma delícia irresistível! Apresentamos o Tiramisú, uma sobremesa clássica italiana.\n\n➡️ Tiramisú Box de 100g por apenas R$16,90!\nMarque sua visita ou faça seu pedido e saboreie essa tentação italiana no Ital'in House! 😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n*Você sabia?*\nO nome do doce provém da expressão em italiano _Tirami Sù_, que significa algo como _puxa-me para cima_ ou _levanta-me_."
+  },
+  _cmdPoints: {
+    1: 2,
+    2: 10,
+    3: 8,
+    4: 2,
+    5: 15,
+    6: 10,
+    7: 5,
+    8: 1
   }
 };
