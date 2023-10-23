@@ -244,6 +244,7 @@ const sendInactiveMessage = async (client, m, DB) => {
         },
         isInactive: false,
       },
+      limit: config.numMaxMsgMkt,
       raw: true,
     });
 
@@ -269,7 +270,7 @@ const sendInactiveMessage = async (client, m, DB) => {
 
           await DB.saveLogs(`[ INFO ] Mensagem enviada para ${whatsappNumber}`);
           m.reply(`✅ Mensagem enviada para ${whatsappNumber}.`);
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
         } else {
           console.error(`Número de telefone inválido: ${whatsappNumber}`);
         }
@@ -310,6 +311,7 @@ const sendMKT = async (DB, client) => {
     // Loop através dos contatos e enviar marketing
     for (const { phoneNumber } of uniqueWhatsAppNumbers) {
       numOfMsgsSent++;
+      const formattedNumber = phoneNumber.endsWith('@s.whatsapp.net') ? phoneNumber : `${phoneNumber}@s.whatsapp.net`;
       await client.sendMessage(phoneNumber, { text: config.messages.tiramissu });
       await DB.saveLogs(`[ INFO ] Mensagem enviada para ${phoneNumber}.`);
       await client.sendMessage(config.empresa.botNumber, { text: `✅ Mensagem enviada para ${phoneNumber}.` });
@@ -498,6 +500,7 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'ajuda':
           await client.sendMessage(sender, { delete: mek.key });
           await client.sendMessage(sender, { text: config.ajudaOp });
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} solicitou ajuda.`});
           break;
 
@@ -513,13 +516,8 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
         case 'retirada':
           await client.sendMessage(sender, { delete: mek.key });
           DB.updateContact(senderNumber, 0, 1); 
-          
-          if (config.botNumber === "5516997980088@s.whatsapp.net" && Utils.isMonday() === 1) {
-            await client.sendMessage(sender, { text: config.msgAvisoSegundas });
-          } else {
-            await client.sendMessage(sender, { text: config.empresa.pedidoProntoRetirada });
-          }
-          
+          await client.sendMessage(sender, { text: config.empresa.pedidoProntoRetirada });
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} foi avisado para vir buscar o pedido.`});
           if (!isBlocked(senderNumber)) doNotHandleNumbers.push(senderNumber);
           break;

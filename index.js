@@ -216,7 +216,7 @@ async function startCore(inDebit) {
 		qrTimeout: 15000,
 		auth: {
 			creds: state.creds,
-				keys: makeCacheableSignalKeyStore(state.keys, logger),
+			keys: makeCacheableSignalKeyStore(state.keys, logger),
 		},
 		msgRetryCounterCache: msgRetryCounterCache,
 		linkPreviewImageThumbnailWidth: 192,
@@ -225,11 +225,6 @@ async function startCore(inDebit) {
 		generateHighQualityLinkPreview: false,
 		shouldIgnoreJid: jid => isJidBroadcast(jid),
 		downloadHistory: false,
-		/**
-		* fetch a message from your store
-		* implement this so that messages failed to send (solves the "this message can take a while" issue) can be retried
-		* */
-		// implement to handle retries
 		getMessage: async (key) => {
 			if (store) {
 				const msg = await store?.loadMessage(key?.remoteJid, key?.id);

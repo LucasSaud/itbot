@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.3.6",
+  botVersion: "2.3.7",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -152,9 +152,9 @@ module.exports = {
   errorMsgs: {
     startCore: "Ocorreu um erro ao iniciar a instrução startCore()",
   },
-  messages: {
-    tiramissu: "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰\n\nAmantes da gastronomia italiana, preparem-se para uma delícia irresistível! Apresentamos o Tiramisú, uma sobremesa clássica italiana.\n\n➡️ Tiramisú Box de 100g por apenas R$16,90!\nMarque sua visita ou faça seu pedido e saboreie essa tentação italiana no Ital'in House! 😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n*Você sabia?*\nO nome do doce provém da expressão em italiano _Tirami Sù_, que significa algo como _puxa-me para cima_ ou _levanta-me_.",
-  },
+  messages: [
+    "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰\n\nAmantes da gastronomia italiana, preparem-se para uma delícia irresistível! Apresentamos o Tiramisú, uma sobremesa clássica italiana.\n\n➡️ Tiramisú Box de 100g por apenas R$16,90!\nMarque sua visita ou faça seu pedido e saboreie essa tentação italiana no Ital'in House! 😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n*Você sabia?*\nO nome do doce provém da expressão em italiano _Tirami Sù_, que significa algo como _puxa-me para cima_ ou _levanta-me_.",
+  ],
   ajuda: [
     "🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳.\nPara tornar sua experiência mais fácil e conveniente, oferecemos um menu com oito opções.\nPor favor, escolha a opção desejada digitando o número correspondente. Aqui estão as opções disponíveis e para quem serve cada opção:",
     "1️⃣ *- Ver horários de funcionamento 🕗:*\nOlá! Você pode verificar nossos horários de funcionamento digitando o número 1 ou escrevendo horarios.",
