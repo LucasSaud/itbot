@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.3.7",
+  botVersion: "2.3.9",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -44,6 +44,7 @@ module.exports = {
     'stats',
     'oi',
     'bv',
+    'pix',
     'cardapio',
     'endereco',
     'horario',
@@ -124,7 +125,8 @@ module.exports = {
     legendaPagamentos: "*Cartões Vale Refeição*",
     pedidoProntoRetirada: "Notícia boa 🤩\nSeu pedido está pronto, é só vir buscar.\nMuito obrigado, bom apetite e uma super semana.\n📍 Rua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP",
     pedidoSaiuParaEntrega: "🛵 Seu pedido acaba de sair para entrega.\nAgradecemos a preferência! Muito obrigado, bom apetite e uma super semana. Esperamos você para experimentar outros molhos novamente em breve. 😀🥰",
-    msgClientesInativos: "🍝🍷 Olá amante da culinária italiana! Sentimos sua falta na ItalinHouse! 😊\n\nRelembrando nossos pratos deliciosos: Quatro Queijos, Parisiense, Cheddar e Bacon, Ao Sugo, Bolonhesa e mais! Opções de massa: Talharim, Penne, Nhoque e mais. Risotos também disponíveis.\n\n📣 Aproveite para pedir e desfrutar de uma refeição italiana autêntica. Entre em contato pelo WhatsApp: +55 16 99788 8800. Esperamos te atender em breve!\nItal'in House! 💚🤍❤️🍝🧑🏼‍🍳"
+    msgClientesInativos: "🍝🍷 Olá amante da culinária italiana! Sentimos sua falta na ItalinHouse! 😊\n\nRelembrando nossos pratos deliciosos: Quatro Queijos, Parisiense, Cheddar e Bacon, Ao Sugo, Bolonhesa e mais! Opções de massa: Talharim, Penne, Nhoque e mais. Risotos também disponíveis.\n\n📣 Aproveite para pedir e desfrutar de uma refeição italiana autêntica. Entre em contato pelo WhatsApp: +55 16 99788 8800. Esperamos te atender em breve!\nItal'in House! 💚🤍❤️🍝🧑🏼‍🍳",
+    chavePix: "*Chave Celular:* _16997888800_ *Nome:* _M.W.Foods Ltda_"
   },
   tiposDeLogradouros: [
     "rua",
@@ -153,7 +155,7 @@ module.exports = {
     startCore: "Ocorreu um erro ao iniciar a instrução startCore()",
   },
   messages: [
-    "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰\n\nAmantes da gastronomia italiana, preparem-se para uma delícia irresistível! Apresentamos o Tiramisú, uma sobremesa clássica italiana.\n\n➡️ Tiramisú Box de 100g por apenas R$16,90!\nMarque sua visita ou faça seu pedido e saboreie essa tentação italiana no Ital'in House! 😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n*Você sabia?*\nO nome do doce provém da expressão em italiano _Tirami Sù_, que significa algo como _puxa-me para cima_ ou _levanta-me_.",
+    "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n",
   ],
   ajuda: [
     "🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳.\nPara tornar sua experiência mais fácil e conveniente, oferecemos um menu com oito opções.\nPor favor, escolha a opção desejada digitando o número correspondente. Aqui estão as opções disponíveis e para quem serve cada opção:",
@@ -167,7 +169,7 @@ module.exports = {
     "8️⃣ *- Falar com um atendente 🙋‍♂️:*\nSe você preferir falar diretamente com um atendente, você está no lugar certo! Digite o número 8 ou escreva atendente e você será conectado com nossa equipe.",
     "Se você continuar com dúvidas, digite 8 e um atendente irá lhe ajudar. Queremos tornar sua experiência conosco a melhor possível.\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝",
   ],
-  ajudaOp: `ℹ️ *Comando de Ajuda* ℹ️\n\nVocê pode usar os seguintes comandos:\n- *!entrega*: Notifica que o pedido saiu para entrega.\n- *!retirada*: Notifica que o pedido está pronto para retirada.\n- *!bloqueia*: Adiciona o número à lista de exclusão.\n- *!desbloqueia*: Remove o número da lista de exclusão.\n- *!bot*: Notifica o uso do robô.\n- *!status*: Verifica o status do servidor.\n- *!stats*: Obtém estatísticas e relatórios.\n- *!oi*: Recebe uma saudação do bot.\n- *!bv*: Recebe mensagens de boas-vindas.\n- *!cardapio*: Mostra o cardápio.\n- *!endereco*: Mostra o endereço da loja.\n- *!backup*: Realiza um backup do banco de dados.\n- *!ajuda*: Mostra esta mensagem de ajuda.\n\nEspero que isso tenha ajudado! 😊`,
+  ajudaOp: `ℹ️ *Comando de Ajuda* ℹ️\n\nVocê pode usar os seguintes comandos:\n\n- *!entrega*: Notifica que o pedido saiu para entrega.\n- *!retirada*: Notifica que o pedido está pronto para retirada.\n- *!bloqueia*: Adiciona o número à lista de exclusão.\n- *!desbloqueia*: Remove o número da lista de exclusão.\n- *!bot*: Notifica o uso do robô.\n- *!backup*: Realiza um backup do banco de dados.\n- *!bloqueia*: Adiciona o número à lista de exclusão.\n- *!desbloqueia*: Remove o número da lista de exclusão.\n- *!status*: Verifica o status do servidor.\n- *!pix*: Recebe a chave PIX da empresa.\n- *!stats*: Obtém estatísticas e relatórios.\n- *!oi*: Recebe uma saudação do bot.\n- *!bv*: Recebe mensagens de boas-vindas.\n- *!cardápio*: Mostra o cardápio.\n- *!endereco*: Mostra o endereço da loja.\n- *!horario*: Mostra os horários de funcionamento da loja.\n\nEspero que isso tenha ajudado! 😊`,
   enableKeywordDetector: true,
   enableAddrDetector: false,
   enableStats: true,

@@ -312,7 +312,8 @@ const sendMKT = async (DB, client) => {
     for (const { phoneNumber } of uniqueWhatsAppNumbers) {
       numOfMsgsSent++;
       const formattedNumber = phoneNumber.endsWith('@s.whatsapp.net') ? phoneNumber : `${phoneNumber}@s.whatsapp.net`;
-      await client.sendMessage(phoneNumber, { text: config.messages.tiramissu });
+      await sendImageMessage(client, phoneNumber, "tiramissu.jpeg", config.messages[0], false);
+
       await DB.saveLogs(`[ INFO ] Mensagem enviada para ${phoneNumber}.`);
       await client.sendMessage(config.empresa.botNumber, { text: `✅ Mensagem enviada para ${phoneNumber}.` });
       await DB.Contacts.update({ isMktSent: true }, {
@@ -572,6 +573,12 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           else {
             await client.sendMessage(config.empresa.botNumber, { text: `A função *status* está desabilitada.`});
           }
+          break;
+
+        case 'pix':
+          await client.sendMessage(sender, { delete: mek.key});
+          await sendImageMessage(client, sender, "chavepix.png", config.empresa.chavePix, false);
+          await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu a chave pix.`});
           break;
 
         case 'stats':
