@@ -48,10 +48,48 @@ const leis = {
     "Lei 47 – Não vá além da qualidade, a quantidade tem uma qualidade própria": "Foco na qualidade é importante, mas às vezes a quantidade tem sua própria qualidade. Não se estenda muito em busca de perfeição e deixe a busca pela quantidade ser uma estratégia também.",
     "Lei 48 – Assuma a identidade de quem você quer ser": "Se você deseja alcançar algo, comece a agir como se já fosse essa pessoa. Adote a mentalidade, comportamento e aparência da pessoa que você quer se tornar. As pessoas vão te tratar de acordo com a identidade que você assume."
   };
+
+  const arteDaGuerra = {
+    "1. Planejamento e Estratégia": "Vitória é alcançada antes do combate; planejamento é fundamental.",
+    "2. Flexibilidade e Adaptabilidade": "Ajuste estratégias de acordo com as circunstâncias.",
+    "3. Conhecimento do Inimigo e de Si Mesmo": "Compreenda o inimigo e conheça suas próprias forças e fraquezas.",
+    "4. Engano e Desinformação": "Use enganos e desinformação para confundir o inimigo.",
+    "5. Economia de Recursos": "Evite desperdício e gaste recursos eficientemente.",
+    "6. Liderança Eficaz": "Um líder deve ser competente, ético e inspirador.",
+    "7. A Arte de Evitar o Conflito": "A verdadeira maestria é evitar o conflito sempre que possível.",
+    "8. Situacional e Estratégico": "As estratégias variam de acordo com as situações."
+  };
+
+  const oPrincipe = {
+    "1. O Fim Justifica os Meios": "Líderes devem estar dispostos a tomar medidas impopulares em busca do sucesso.",
+    "2. A Necessidade de Habilidade Política": "Habilidade e astúcia são cruciais na política.",
+    "3. A Importância do Realismo": "Compreender a natureza humana e a busca pelo próprio interesse.",
+    "4. Manter o Controle": "Líderes devem manter o controle absoluto para evitar instabilidade.",
+    "5. A Virtù e a Fortuna": "Distinção entre habilidade e eventos imprevisíveis.",
+    "6. Ser Temido em Vez de Amado": "A segurança está na obediência, não no amor.",
+    "7. Divisão entre Ética Pública e Privada": "Separação entre ética pública e privada.",
+    "8. A Inevitabilidade da Conquista": "Conquista é parte inevitável da política."
+  };
+  
+  
   
   for (const leiTitulo in leis) {
     const lei = leis[leiTitulo];
     console.log(`${leiTitulo}`);
     console.log(`${lei}`);
+    console.log("\n");
+  }
+
+  for (const arteTitulo in arteDaGuerra) {
+    const arte = arteDaGuerra[arteTitulo];
+    console.log(`${arteTitulo}`);
+    console.log(`${arte}`);
+    console.log("\n");
+  }
+
+  for (const opTitulo in oPrincipe) {
+    const op = oPrincipe[opTitulo];
+    console.log(`${opTitulo}`);
+    console.log(`${op}`);
     console.log("\n");
   }
