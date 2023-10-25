@@ -312,7 +312,7 @@ const sendMKT = async (DB, client) => {
     for (const { phoneNumber } of uniqueWhatsAppNumbers) {
       numOfMsgsSent++;
       const formattedNumber = phoneNumber.endsWith('@s.whatsapp.net') ? phoneNumber : `${phoneNumber}@s.whatsapp.net`;
-      await sendImageMessage(client, phoneNumber, "tiramissu.jpeg", config.messages[0], false);
+      await sendImageMessage(client, formattedNumber, "tiramissu.jpeg", config.messages[0], false);
 
       await DB.saveLogs(`[ INFO ] Mensagem enviada para ${phoneNumber}.`);
       await client.sendMessage(config.empresa.botNumber, { text: `✅ Mensagem enviada para ${phoneNumber}.` });
