@@ -200,6 +200,7 @@ const sendImageMessage = async (client, chatId, imageFile, caption, fullpath) =>
   let imageFilePath = null;
     if (fullpath === false) {
       imageFilePath = path.join(__dirname, '..', config.dir.images, imageFile);
+      console.log(`Ëncontrei o arquivo de imagem em: ${imageFilePath}`);
     } else {
       imageFilePath = imageFile;
     }

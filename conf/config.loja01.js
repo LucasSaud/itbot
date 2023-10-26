@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.3.6",
+  botVersion: "2.3.9",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
