@@ -42,10 +42,9 @@ build/Release
 node_modules/
 jspm_packages/
 
-sessoes/
-session/
-bkp/
-cache/
+session/*
+bkp/*
+cache/*
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
@@ -147,3 +146,18 @@ session/app-state-sync-key-AAAAAOb2.json
 session/app-state-sync-key-AAAAAOb4.json
 session/app-state-sync-key-AAAAAOb3.json
 session/app-state-sync-key-AAAAAOb5.json
+session/creds.json
+session/session-5516996509803.0.json
+session/session-5516996509803.33.json
+session/session-5516996509803.33.json
+session/session-5516997980088.0.json
+session/session-5516997980088.10.json
+session/session-5516997980088.11.json
+session/session-5516997980088.7.json
+session/session-5516996509803.0.json
+session/session-5516996509803.0.json
+session/session-5516996509803.33.json
+session/session-5516997980088.0.json
+session/session-5516997980088.10.json
+session/session-5516997980088.11.json
+session/session-5516997980088.7.json
