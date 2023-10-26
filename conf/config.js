@@ -1,5 +1,10 @@
 module.exports = {
+<<<<<<< Updated upstream
   botVersion: "2.3.9",
+=======
+  appName: "AutoAtende",
+  botVersion: "2.4.0",
+>>>>>>> Stashed changes
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
