@@ -284,6 +284,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
                 await m.reply(
                   config.msgAvisoAtendente
                 );
+                await client.sendMessage(config.empresa.botNumber, { text: `⚠️⚠️⚠️ O numero ${senderNumber} solicitou um atendente. *OLHAR A CONVERSA* ⚠️⚠️⚠️` });
               }
               break;
             }

@@ -391,15 +391,15 @@ class Chart {
         });
         try {
           const fN = path.join(__dirname, '..', config.dir.images, config.dir.charts, `${fName}.png`);  
-          const chartImage = await chart.toFile(fN);
+          const chartImage = await chart01.toFile(fN);
           if (returnBuffer === true) {
-            return await chart.toBuffer();
+            return await chart01.toBuffer();
           } 
           else if(returnFile === true) {
             return fN;
           }
           else {
-            await client.sendImage(from, fN, `*${title}*`);
+            await client.sendImage(from, fN, `*Taxa de Conversão de Clientes: ${num}*`);
           }
           if (config.showLog === true) console.log(`Taxa de Conversão de Clientes: ${num}`);
         } catch (error) {
