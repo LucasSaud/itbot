@@ -70,6 +70,7 @@ function smsg(conn, m, store) {
     m.isBaileys = m.id.startsWith('BAE5') && m.id.length === 16;
     m.chat = m.key.remoteJid;
     m.fromMe = m.key.fromMe;
+    console.log(`chat ${m.chat}    / fromMe: ${m.fromMe}`);
     m.isGroup = m.chat.endsWith('@g.us');
     m.sender = conn.decodeJid(
       (m.fromMe && conn.user.id) || m.participant || m.key.participant || m.chat || ''
@@ -528,7 +529,7 @@ async function startCore(inDebit) {
       let reason = new Boom(lastDisconnect?.error)?.output.statusCode;
       if (reason === DisconnectReason.badSession) {
         if (config.showLog === true) console.log('Sessão inválida, por favor, exclua a sessão e escaneie novamente');
-        const directoryPath = path.join(__dirname, 'sessoes');
+        const directoryPath = path.join(__dirname, config.dir.session);
         Util.delDirs(directoryPath);
         client.logout()
         process.exit();
@@ -543,8 +544,8 @@ async function startCore(inDebit) {
         process.exit();
       } else if (reason === DisconnectReason.loggedOut) {
         if (config.showLog === true) console.log('Dispositivo desconectado, por favor, exclua a pasta da sessão e escaneie novamente.');
-        const directoryPath = path.join(__dirname, 'sessoes');
-        Util.delDirs(directoryPath);
+        const directoryPath = path.join(__dirname, config.dir.session);
+        Utils.delDir(directoryPath);
         client.logout();
         process.exit();
       } else if (reason === DisconnectReason.restartRequired) {

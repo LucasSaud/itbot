@@ -116,7 +116,12 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
           const modifiedPhoneNumber = phoneNumber + '@s.whatsapp.net';
 
           if(args.length === 2 && args[1].startsWith('9')) {
-            // do here the block code of number
+            if (!Utils.isBlocked(modifiedPhoneNumber)) {
+              Utils.doNotHandleNumbers.push(modifiedPhoneNumber);
+              await m.reply(`✅ Prontinho. O número ${phoneNumber} foi inserido na lista de exclusão.`);
+            } else {
+              await m.reply(`📵 O número ${phoneNumber} já está na lista de exclusão do atendimento.`);
+            }
           }
 
           if (args.length === 2 && args[1].startsWith('1')) {
@@ -207,7 +212,8 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
           !m.isGroup &&
           Utils.isOpen() &&
           !command.startsWith('9') &&
-          !itsMe
+          !m.fromMe &&
+          !m.chat === config.botNumber
         ) {
 
           switch (command) {
