@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.3.9",
+  botVersion: "2.4.2",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -155,7 +155,8 @@ module.exports = {
     startCore: "Ocorreu um erro ao iniciar a instrução startCore()",
   },
   messages: [
-    "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n",
+    "🍰 *Novidade na Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳* Tiramisú por apenas R$16,90 🍰😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n",
+    "*Dia da Massa, promoção no combo Queridinho!* Confira. 🍝\n\nPara realizar um pedido basta clicar no link abaixo: 👇\nhttps://rebrand.ly/italin_franca02",
   ],
   ajuda: [
     "🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳.\nPara tornar sua experiência mais fácil e conveniente, oferecemos um menu com oito opções.\nPor favor, escolha a opção desejada digitando o número correspondente. Aqui estão as opções disponíveis e para quem serve cada opção:",

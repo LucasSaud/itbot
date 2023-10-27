@@ -9,7 +9,6 @@ const moment = require('moment-timezone');
 const Chart = require('./chart');
 const Database = require('./db');
 const Cache = require('./cache');
-const PDFDocument = require('pdfkit');
 
 const Graph = new Chart();
 const localCache = new Cache();
@@ -295,7 +294,7 @@ const sendMKT = async (DB, client) => {
         },
         isMktSent: 0,
       },
-      limit: config.numMaxMsgMkt,
+      limit: 100,
       raw: true,
     });
 
@@ -312,7 +311,7 @@ const sendMKT = async (DB, client) => {
     for (const { phoneNumber } of uniqueWhatsAppNumbers) {
       numOfMsgsSent++;
       const formattedNumber = phoneNumber.endsWith('@s.whatsapp.net') ? phoneNumber : `${phoneNumber}@s.whatsapp.net`;
-      await sendImageMessage(client, formattedNumber, "tiramissu.jpeg", config.messages[0], false);
+      await sendImageMessage(client, formattedNumber, "promo01.jpeg", config.messages[1], false);
 
       await DB.saveLogs(`[ INFO ] Mensagem enviada para ${phoneNumber}.`);
       await client.sendMessage(config.empresa.botNumber, { text: `✅ Mensagem enviada para ${phoneNumber}.` });
@@ -446,35 +445,6 @@ const getServerStatus = async (client, sender, DB, devInfo) => {
   }
 };
 
-async function saveAsPDF(client, sender, DB) {
-  const pdfDoc = new PDFDocument();
-  const fN = path.join(__dirname, '..', config.dir.reports, `charts.pdf`);  
-
-  pdfDoc.pipe(fs.createWriteStream(fN)); // Crie o PDF e redirecione a saída para um arquivo
-
-  pdfDoc
-    .fontSize(12)
-    .text('Gráficos de Dados', { align: 'center' });
-
-  const [sql01ImageBuffer] = await Graph.sql01(client, sender, DB, false, true);
-  const [sql02ImageBuffer] = await Graph.sql02(client, sender, DB, false, true);
-  const [sql03ImageBuffer] = await Graph.sql03(client, sender, DB, false, true);
-  const [sql04ImageBuffer] = await Graph.sql04(client, sender, DB, false, true);
-  const [sql05ImageBuffer] = await Graph.sql05(client, sender, DB, false, true);
-
-  pdfDoc
-    .image(sql01ImageBuffer, 50, 100, { width: 300, height: 200 })
-    .image(sql02ImageBuffer, 50, 320, { width: 200, height: 200 })
-    .image(sql03ImageBuffer, 250, 320, { width: 200, height: 200 })
-    .image(sql04ImageBuffer, 50, 540, { width: 200, height: 200 })
-    .image(sql05ImageBuffer, 250, 540, { width: 200, height: 200 });
-
-  pdfDoc.end(); // Encerre o documento PDF
-
-  await client.sendFile(sender, pdfFileName, 'Charts PDF');
-
-}
-
 // Função para verificar se a mensagem é um comando válido
 const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
@@ -484,7 +454,6 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
 
   const msgBoasVindas = config.msgBV;
   const msgEndCardapio = config.msgBV2.replace('{{enderecoCardapio}}', config.empresa.enderecoCardapio);
-  const msgReforcoCliente = config.msgReforcoCliente.replace('{{pushname}}', pushname);
 
   // Verifica se a mensagem começa com !
   if (body.startsWith('!')) {
