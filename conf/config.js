@@ -37,7 +37,8 @@ module.exports = {
     "cardapio",
     "backup",
     "endereco",
-    "ajuda"
+    "ajuda",
+    "pix",
   ],
   palavrasChave: [
     "queijo",

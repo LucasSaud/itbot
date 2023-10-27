@@ -13,7 +13,7 @@ const Database = require('./src/db'); // Custom Database module
 const Utils = require('./src/utils'); // Custom Utils module
 
 // Define a session name
-const sessionName = config.sessionName;
+const sessionName = config.dir.session;
 
 // Aliases for Baileys library components
 const coreConnect = baileys.default;

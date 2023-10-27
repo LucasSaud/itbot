@@ -42,9 +42,9 @@ build/Release
 node_modules/
 jspm_packages/
 
-session/*
-bkp/*
-cache/*
+session/
+bkp/
+cache/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
@@ -161,3 +161,4 @@ session/session-5516997980088.0.json
 session/session-5516997980088.10.json
 session/session-5516997980088.11.json
 session/session-5516997980088.7.json
+sessoes/creds.json
