@@ -13,7 +13,7 @@ const Database = require('./src/db'); // Custom Database module
 const Utils = require('./src/utils'); // Custom Utils module
 
 // Define a session name
-const sessionName = config.dir.session;
+const sessionName = 'session';
 
 // Aliases for Baileys library components
 const coreConnect = baileys.default;
@@ -70,7 +70,6 @@ function smsg(conn, m, store) {
     m.isBaileys = m.id.startsWith('BAE5') && m.id.length === 16;
     m.chat = m.key.remoteJid;
     m.fromMe = m.key.fromMe;
-    console.log(`chat ${m.chat}    / fromMe: ${m.fromMe}`);
     m.isGroup = m.chat.endsWith('@g.us');
     m.sender = conn.decodeJid(
       (m.fromMe && conn.user.id) || m.participant || m.key.participant || m.chat || ''
@@ -545,7 +544,7 @@ async function startCore(inDebit) {
       } else if (reason === DisconnectReason.loggedOut) {
         if (config.showLog === true) console.log('Dispositivo desconectado, por favor, exclua a pasta da sessão e escaneie novamente.');
         const directoryPath = path.join(__dirname, config.dir.session);
-        Utils.delDir(directoryPath);
+        Util.delDirs(directoryPath);
         client.logout();
         process.exit();
       } else if (reason === DisconnectReason.restartRequired) {

@@ -116,12 +116,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
           const modifiedPhoneNumber = phoneNumber + '@s.whatsapp.net';
 
           if(args.length === 2 && args[1].startsWith('9')) {
-            if (!Utils.isBlocked(modifiedPhoneNumber)) {
-              Utils.doNotHandleNumbers.push(modifiedPhoneNumber);
-              await m.reply(`✅ Prontinho. O número ${phoneNumber} foi inserido na lista de exclusão.`);
-            } else {
-              await m.reply(`📵 O número ${phoneNumber} já está na lista de exclusão do atendimento.`);
-            }
+            // do here the block code of number
           }
 
           if (args.length === 2 && args[1].startsWith('1')) {
@@ -212,8 +207,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
           !m.isGroup &&
           Utils.isOpen() &&
           !command.startsWith('9') &&
-          !m.fromMe &&
-          !m.chat === config.botNumber
+          !itsMe
         ) {
 
           switch (command) {
@@ -235,7 +229,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             case '2': case 'cardapio':{
               DB.contactsUpdatePoints(sender, '2');
               try {
-                await Utils.sendImageMessage(client, sender, "cardapio.jpg", config.empresa.verCardapio, false);
+                await Utils.sendImageMessage(client, from, "cardapio.jpg", config.empresa.verCardapio, false);
               } catch (error) {
                 await DB.saveLogs(`[ ERRO ] Erro ao enviar imagem do cardápio. Motivo: ${error}`);
               }
@@ -243,7 +237,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             }
             case '3': case 'endereço': {
               DB.contactsUpdatePoints(sender, '3');
-              await Utils.sendLocationMessage(client,sender, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
+              await Utils.sendLocationMessage(client, from, config.empresa.latitude, config.empresa.longitude, config.empresa.nomeDaLoja, config.empresa.enderecoDaLoja);
               await new Promise(resolve => setTimeout(resolve, 2000));
               await m.reply(
                 config.empresa.nossaLocalizacao
@@ -266,7 +260,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
             }
             case '6': case 'pagamento':{
               DB.contactsUpdatePoints(sender, '6');
-              if(config.mostrarValeRefeicoes === true) await Utils.sendImageMessage(client, sender, "pagamentos.jpeg", config.empresa.legendaPagamentos, false);
+              if(config.mostrarValeRefeicoes === true) await Utils.sendImageMessage(client, from, "pagamentos.jpeg", config.empresa.legendaPagamentos, false);
               await new Promise(resolve => setTimeout(resolve, 2000));
               
               await m.reply(
@@ -315,7 +309,7 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
                   config.msgEntregaReduzida
                 );
               } else if (config.mostrarRestSuper) {
-                await Utils.sendImageMessage(client, sender, "restsuper.jpeg", config.legendaRestSuper, false);
+                await Utils.sendImageMessage(client, from, "restsuper.jpeg", config.legendaRestSuper, false);
               }
 
               if (isCmd2 && budy.toLowerCase() != undefined) {

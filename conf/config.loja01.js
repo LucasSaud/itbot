@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.3.9",
+  botVersion: "2.3.6",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -24,21 +24,19 @@ module.exports = {
     8: "🙋‍♂️"
   },
   atalhos: [
-    'entrega',
-    'retirada',
-    'bloqueia',
-    'desbloqueia',
-    'bot',
-    'status',
-    'stats',
-    'oi',
-    'bv',
-    'pix',
-    'cardapio',
-    'endereco',
-    'horario',
-    'backup',
-    'ajuda',
+    "entrega",
+    "retirada",
+    "bloqueia",
+    "desbloqueia",
+    "bot",
+    "status",
+    "stats",
+    "oi",
+    "bv",
+    "cardapio",
+    "backup",
+    "endereco",
+    "ajuda"
   ],
   palavrasChave: [
     "queijo",
@@ -302,14 +300,13 @@ module.exports = {
   ],
   appName: "AutoAtende",
   mostrarValeRefeicoes: true,
-  ajudaOp: `ℹ️ *Comando de Ajuda* ℹ️\n\nVocê pode usar os seguintes comandos:\n\n- *!entrega*: Notifica que o pedido saiu para entrega.\n- *!retirada*: Notifica que o pedido está pronto para retirada.\n- *!bloqueia*: Adiciona o número à lista de exclusão.\n- *!desbloqueia*: Remove o número da lista de exclusão.\n- *!bot*: Notifica o uso do robô.\n- *!backup*: Realiza um backup do banco de dados.\n- *!bloqueia*: Adiciona o número à lista de exclusão.\n- *!desbloqueia*: Remove o número da lista de exclusão.\n- *!status*: Verifica o status do servidor.\n- *!pix*: Recebe a chave PIX da empresa.\n- *!stats*: Obtém estatísticas e relatórios.\n- *!oi*: Recebe uma saudação do bot.\n- *!bv*: Recebe mensagens de boas-vindas.\n- *!cardápio*: Mostra o cardápio.\n- *!endereco*: Mostra o endereço da loja.\n- *!horario*: Mostra os horários de funcionamento da loja.\n\nEspero que isso tenha ajudado! 😊`,
+  ajudaOp: "ℹ️ *Comando de Ajuda* ℹ️\n\nVocê pode usar os seguintes comandos:\n- *!entrega*: Notifica que o pedido saiu para entrega.\n- *!retirada*: Notifica que o pedido está pronto para retirada.\n- *!bloqueia*: Adiciona o número à lista de exclusão.\n- *!desbloqueia*: Remove o número da lista de exclusão.\n- *!bot*: Notifica o uso do robô.\n- *!status*: Verifica o status do servidor.\n- *!stats*: Obtém estatísticas e relatórios.\n- *!oi*: Recebe uma saudação do bot.\n- *!bv*: Recebe mensagens de boas-vindas.\n- *!cardapio*: Mostra o cardápio.\n- *!endereco*: Mostra o endereço da loja.\n- *!backup*: Realiza um backup do banco de dados.\n- *!ajuda*: Mostra esta mensagem de ajuda.\n\nEspero que isso tenha ajudado! 😊",
   enableLocalCache: false,
   dir: {
     backup: "bkp",
     cache: "cache",
     charts: "chart",
-    images: "img",
-    session: "session",
+    images: "img"
   },
   maxAgeForGraphs: 3600000,
   maxAgeForSessions: 86400000,
@@ -336,10 +333,9 @@ module.exports = {
       log: true
     }
   },
-  messages: [
-    "🍰 *Novidade na Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳* Tiramisú por apenas R$16,90 🍰😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n",
-    "*Dia da Massa, promoção no combo Queridinho!* Confira. 🍝\n\nPara realizar um pedido basta clicar no link abaixo: 👇\nhttps://rebrand.ly/italin_franca02",
-  ],
+  messages: {
+    tiramissu: "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰\n\nAmantes da gastronomia italiana, preparem-se para uma delícia irresistível! Apresentamos o Tiramisú, uma sobremesa clássica italiana.\n\n➡️ Tiramisú Box de 100g por apenas R$16,90!\nMarque sua visita ou faça seu pedido e saboreie essa tentação italiana no Ital'in House! 😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n*Você sabia?*\nO nome do doce provém da expressão em italiano _Tirami Sù_, que significa algo como _puxa-me para cima_ ou _levanta-me_."
+  },
   _cmdPoints: {
     1: 2,
     2: 10,
