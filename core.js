@@ -86,8 +86,9 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
       return;
     }
 
-    if (body.toLowerCase() === 'promocao' ) {
-      await Utils.sendPromo(client, senderNumber);
+    if (/promo(ção|çao|cao|cão)/i.test(body)) {
+      console.log("Encontrei pedido de PROMO.");
+      await Utils.sendPromo(client, sender);
       return;
     }
 

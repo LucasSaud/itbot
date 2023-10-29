@@ -101,6 +101,12 @@ async function isPaid(numeroDoBot) {
   }
 }
 
+const formatDate = (date) => {
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const dayIndex = date.getDay();
+  return daysOfWeek[dayIndex];
+}
+
 const formatBytes = (bytes, decimals = 2) => {
   if (!+bytes) return '0 Bytes';
   const k = 1024;
@@ -284,52 +290,52 @@ const sendInactiveMessage = async (client, m, DB) => {
 
 const sendPromo = async (client, from) => {
     try {
-      const today = format(new Date(), "EEE");
+      const today = formatDate(new Date());
       switch (today) {
         case "Sat":
-          await Utils.sendImageMessage(client, from, "sabado.png", config.empresa.promocoes.sabado, false);
+          await sendImageMessage(client, from, "sabado.jpg", config.promocoes.sabado, false);
           await new Promise(resolve => setTimeout(resolve, 2000));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de sábado.` }
           );
           break;
         case "Sun":
-          await Utils.sendImageMessage(client, from, "domingo.png", config.empresa.promocoes.domingo, false);
+          await sendImageMessage(client, from, "domingo.jpg", config.promocoes.domingo, false);
           await new Promise(resolve => setTimeout(resolve, 2000));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de domingo.` }
           );
           break;
         case "Mon":
-          await Utils.sendImageMessage(client, from, "segunda.png", config.empresa.promocoes.segunda, false);
+          await sendImageMessage(client, from, "segunda.jpg", config.promocoes.segunda, false);
           await new Promise(resolve => setTimeout(resolve, 2000));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de segunda.` }
           );
           break;
         case "Tue":
-            await Utils.sendImageMessage(client, from, "terca.png", config.empresa.promocoes.terca, false);
+            await sendImageMessage(client, from, "terca.jpg", config.promocoes.terca, false);
             await new Promise(resolve => setTimeout(resolve, 2000));
             await client.sendMessage(config.empresa.botNumber, 
               { text: `✅ Prontinho. O número ${from} recebeu a promoção de terca.` }
             );
             break;
         case "Wed":
-          await Utils.sendImageMessage(client, from, "quarta.png", config.empresa.promocoes.quarta, false);
+          await sendImageMessage(client, from, "quarta.jpg", config.promocoes.quarta, false);
           await new Promise(resolve => setTimeout(resolve, 2000));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de quarta.` }
           );
           break;
         case "Thu":
-          await Utils.sendImageMessage(client, from, "quinta.png", config.empresa.promocoes.quinta, false);
+          await sendImageMessage(client, from, "quinta.jpg", config.promocoes.quinta, false);
           await new Promise(resolve => setTimeout(resolve, 2000));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de quinta.` }
           );
           break;
         case "Fri":
-          await Utils.sendImageMessage(client, from, "sexta.png", config.empresa.promocoes.sexta, false);
+          await sendImageMessage(client, from, "sexta.jpg", config.promocoes.sexta, false);
           await new Promise(resolve => setTimeout(resolve, 2000));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de sexta.` }
@@ -690,6 +696,13 @@ const parseCmd = async (client, pushname, body, mek, DB, sender) => {
           await sendImageMessage(client, sender, "cardapio.jpg", config.empresa.verCardapio01, false);
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem com o cardápio.`});
+          break;
+
+        case 'massas':
+          await client.sendMessage(sender, { delete: mek.key });
+          await sendImageMessage(client, sender, "massas.jpeg", config.msgMassas, false);
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
+          await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. O número ${senderNumber} recebeu mensagem com as opções de massas.`});
           break;
 
         case 'endereco':

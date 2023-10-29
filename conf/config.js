@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.4.0",
+  botVersion: "2.4.1",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -50,6 +50,7 @@ module.exports = {
     'horario',
     'backup',
     'ajuda',
+    'massas'
   ],
   palavrasChave: [
     'queijo', 'mussarela', 'quatro queijos', '4 queijos', '4 queijo',
@@ -97,7 +98,7 @@ module.exports = {
   msgMkt: `🍝🍝 *Combo Queridinho* 🥤🎉\n\nApresentando o Combo Queridinho da Ital'in House por apenas R$74,90 + taxa de entrega! 😋\n\n*Este combo incrível inclui:*\n2 Boxes de Macarrão com 800 gramas. 🍝🍝\n1 Guaraná de 1 Litro 🥤\nPerfeito para uma refeição deliciosa e prática em casa. Peça agora e deixe-nos cuidar do almoço! 🚀🏠\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n#ComidaDeliciosa #ComboQueridinho #EntregaRápida #Ital'inHouse`,
   msgBV: `🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳`,
   msgBV0: `🤩 Olá, {{pushname}} 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳`,
-  msgBV1: `Digite a opção desejada:\n1️⃣ - Ver horários de funcionamento 🕗\n2️⃣ - Ver Cárdapio 👀\n3️⃣ - Nossa localização 🗺\n4️⃣ - Tempo para entregar ⌛\n5️⃣ - Fazer um pedido 😋\n6️⃣ - Ver opções de pagamento 💲\n7️⃣ - Opções de consumo/entrega 🛎\n8️⃣ - Falar com um atendente 🙋‍♂️\n\n⚠️ *Se tiver alguma dúvida referente ao menu, digite ajuda.*`,
+  msgBV1: `Digite a opção desejada:\n1️⃣ - Ver horários de funcionamento 🕗\n2️⃣ - Ver Cárdapio 👀\n3️⃣ - Nossa localização 🗺\n4️⃣ - Tempo para entregar ⌛\n5️⃣ - Fazer um pedido 😋\n6️⃣ - Ver opções de pagamento 💲\n7️⃣ - Opções de consumo/entrega 🛎\n8️⃣ - Falar com um atendente 🙋‍♂️\n\n⚠️ Se tiver alguma dúvida digite ajuda.\n💥 Para ver a promoção do dia, digite promoção.`,
   msgBV2: `Para realizar um pedido basta clicar no link abaixo: 👇\n{{enderecoCardapio}}\n\nSe precisar *MESMO* da ajuda de um atendente, envie 8 e aguarde, ok?`,
   msgLojaFechada: "Boas vindas à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳\n\n*Nossa loja está fechada.*\n",
   msgAvisoBot: "⚠️ Nós usamos um robô para atendimento de WhatsApp. quando você recebe a mensagem acima, com os números de 1 a 8, caso não queira ser atendido pelo robô, por gentileza informe 8 para falar com um atendente.",
@@ -107,6 +108,7 @@ module.exports = {
   msgEntregaReduzida: `🍝🏙️ Descubra a Ital'In House no bairro Cidade Nova! Nossos deliciosos pratos de macarrão estão a poucos passos de você. E tem mais: se você mora nos bairros da zona NORTE, NORDESTE ou NOROESTE, aproveite nossas taxas de entrega reduzidas. 🛵🤑`,
   msgMotoEntrega: `🤩 Olá 👋! Passando pra dizer que seu pedido já esta pronto.\nSe tiver qualquer problema, pode me enviar aqui mesmo, ou nos ligar no telefone (16) 99788-8800 para resolvermos imediatamente.\n\nE se tiver gostado, a sua avaliação nos ajuda MUITO a crescer, e se destacar entre tantos.\n\nEstamos participando de uma competição, e se nos der 5 estrelas, nos deixará mais próximo de vencer ! ✨\n\nO SEU FEEDBACK SERÁ SEMPRE MUITO IMPORTANTE PARA NÓS.\n\nMil vezes obrigado!\nItal'in House! 💚🤍❤️🍝🧑🏼‍🍳\n\nAhh, outra coisa… Se puder, nos marque como “favoritos”, assim você receberá promoções exclusivas 😍🍝`,
   msgAvisoSegundas: "☝🏼 *Aviso:* As segundas-feiras a Loja01 da Ital'in House Franca funciona em outra localização. 📁\n\nRua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP",
+  msgMassas: "💚🤍❤️🍝🧑🏼‍🍳 *Escolha sua massa.*",
   empresa: {
     nomeDaLoja: "Ital'in House Franca Loja 02",
     enderecoDaLoja: "Rua Alváro Abranches, 1057, Cidade Nova, Franca-SP, CEP 14401-094",
@@ -127,15 +129,15 @@ module.exports = {
     pedidoSaiuParaEntrega: "🛵 Seu pedido acaba de sair para entrega.\nAgradecemos a preferência! Muito obrigado, bom apetite e uma super semana. Esperamos você para experimentar outros molhos novamente em breve. 😀🥰",
     msgClientesInativos: "🍝🍷 Olá amante da culinária italiana! Sentimos sua falta na ItalinHouse! 😊\n\nRelembrando nossos pratos deliciosos: Quatro Queijos, Parisiense, Cheddar e Bacon, Ao Sugo, Bolonhesa e mais! Opções de massa: Talharim, Penne, Nhoque e mais. Risotos também disponíveis.\n\n📣 Aproveite para pedir e desfrutar de uma refeição italiana autêntica. Entre em contato pelo WhatsApp: +55 16 99788 8800. Esperamos te atender em breve!\nItal'in House! 💚🤍❤️🍝🧑🏼‍🍳",
     chavePix: "*Chave Celular:* _16997888800_ *Nome:* _M.W.Foods Ltda_",
-    promocoes: {
-      sat: "Promoção de sabádo",
-      sun: "Promoção de domingo",
-      mon: "Promoção de segunda-feira",
-      tue: "Promoção de terça-feira",
-      wed: "Promoção de quarta-feira",
-      thu: "Promoção de quinta-feira",
-      fri: "Promoção de sexta-feira"
-    }
+  },
+  promocoes: {
+    sabado: "Promoção de sabádo",
+    domingo: "Promoção de domingo",
+    segunda: "Promoção de segunda-feira",
+    terca: "Promoção de terça-feira",
+    quarta: "Promoção de quarta-feira",
+    quinta: "Promoção de quinta-feira",
+    sexta: "Promoção de sexta-feira"
   },
   tiposDeLogradouros: [
     "rua",
