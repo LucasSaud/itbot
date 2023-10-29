@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.3.9",
+  botVersion: "2.4.0",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -126,7 +126,16 @@ module.exports = {
     pedidoProntoRetirada: "Notícia boa 🤩\nSeu pedido está pronto, é só vir buscar.\nMuito obrigado, bom apetite e uma super semana.\n📍 Rua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP",
     pedidoSaiuParaEntrega: "🛵 Seu pedido acaba de sair para entrega.\nAgradecemos a preferência! Muito obrigado, bom apetite e uma super semana. Esperamos você para experimentar outros molhos novamente em breve. 😀🥰",
     msgClientesInativos: "🍝🍷 Olá amante da culinária italiana! Sentimos sua falta na ItalinHouse! 😊\n\nRelembrando nossos pratos deliciosos: Quatro Queijos, Parisiense, Cheddar e Bacon, Ao Sugo, Bolonhesa e mais! Opções de massa: Talharim, Penne, Nhoque e mais. Risotos também disponíveis.\n\n📣 Aproveite para pedir e desfrutar de uma refeição italiana autêntica. Entre em contato pelo WhatsApp: +55 16 99788 8800. Esperamos te atender em breve!\nItal'in House! 💚🤍❤️🍝🧑🏼‍🍳",
-    chavePix: "*Chave Celular:* _16997888800_ *Nome:* _M.W.Foods Ltda_"
+    chavePix: "*Chave Celular:* _16997888800_ *Nome:* _M.W.Foods Ltda_",
+    promocoes: {
+      sat: "Promoção de sabádo",
+      sun: "Promoção de domingo",
+      mon: "Promoção de segunda-feira",
+      tue: "Promoção de terça-feira",
+      wed: "Promoção de quarta-feira",
+      thu: "Promoção de quinta-feira",
+      fri: "Promoção de sexta-feira"
+    }
   },
   tiposDeLogradouros: [
     "rua",

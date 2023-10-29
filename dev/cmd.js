@@ -179,3 +179,11 @@ cpus.forEach((cpu, index) => {
     console.log(`💤 Tempo inativo: ` + formatTime(cpu.times.idle));
     console.log(`🔒 Tempo 'irq': ` + formatTime(cpu.times.irq));
 });*/
+
+const palavraBase = 'promo[cç][ãáàâ][oõô][e]?[s]?'; // Acentos opcionais e plural opcional
+const regex = new RegExp(`${palavraBase}\\b`, 'gi');
+
+const texto = 'promocao promoção promoções promoçao promoçoes promoção promoções promoçao promoçoes';
+const palavrasDerivadas = texto.match(regex);
+
+console.log(palavrasDerivadas);

@@ -282,6 +282,68 @@ const sendInactiveMessage = async (client, m, DB) => {
   }
 };
 
+const sendPromo = async (client, from) => {
+    try {
+      const today = format(new Date(), "EEE");
+      switch (today) {
+        case "Sat":
+          await Utils.sendImageMessage(client, from, "sabado.png", config.empresa.promocoes.sabado, false);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await client.sendMessage(config.empresa.botNumber, 
+            { text: `✅ Prontinho. O número ${from} recebeu a promoção de sábado.` }
+          );
+          break;
+        case "Sun":
+          await Utils.sendImageMessage(client, from, "domingo.png", config.empresa.promocoes.domingo, false);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await client.sendMessage(config.empresa.botNumber, 
+            { text: `✅ Prontinho. O número ${from} recebeu a promoção de domingo.` }
+          );
+          break;
+        case "Mon":
+          await Utils.sendImageMessage(client, from, "segunda.png", config.empresa.promocoes.segunda, false);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await client.sendMessage(config.empresa.botNumber, 
+            { text: `✅ Prontinho. O número ${from} recebeu a promoção de segunda.` }
+          );
+          break;
+        case "Tue":
+            await Utils.sendImageMessage(client, from, "terca.png", config.empresa.promocoes.terca, false);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            await client.sendMessage(config.empresa.botNumber, 
+              { text: `✅ Prontinho. O número ${from} recebeu a promoção de terca.` }
+            );
+            break;
+        case "Wed":
+          await Utils.sendImageMessage(client, from, "quarta.png", config.empresa.promocoes.quarta, false);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await client.sendMessage(config.empresa.botNumber, 
+            { text: `✅ Prontinho. O número ${from} recebeu a promoção de quarta.` }
+          );
+          break;
+        case "Thu":
+          await Utils.sendImageMessage(client, from, "quinta.png", config.empresa.promocoes.quinta, false);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await client.sendMessage(config.empresa.botNumber, 
+            { text: `✅ Prontinho. O número ${from} recebeu a promoção de quinta.` }
+          );
+          break;
+        case "Fri":
+          await Utils.sendImageMessage(client, from, "sexta.png", config.empresa.promocoes.sexta, false);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          await client.sendMessage(config.empresa.botNumber, 
+            { text: `✅ Prontinho. O número ${from} recebeu a promoção de sexta.` }
+          );
+          break;
+        default:
+          console.info("Erro na lib de datas");
+          break;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+}
+
 const sendMKT = async (DB, client) => {
   try {
     // Consultar contatos únicos que não receberam marketing
@@ -726,6 +788,7 @@ module.exports = {
   sendImageMkt,
   sendLocationMessage,
   sendInactiveMessage,
+  sendPromo,
   sendMKT,
   sendDevInfo,
   getServerStatus,

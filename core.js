@@ -86,6 +86,11 @@ module.exports = core = async (client, m, chatUpdate, ignoreNumber) => {
       return;
     }
 
+    if (body.toLowerCase() === 'promocao' ) {
+      await Utils.sendPromo(client, senderNumber);
+      return;
+    }
+
     if (Utils.isBlocked(senderNumber)) {
       return;
     }
