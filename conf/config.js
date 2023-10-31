@@ -87,12 +87,12 @@ module.exports = {
     'água fors de 2 litros', 'água fors de 2 litros', 'agua fors de 2 litros',
   ], 
   mostrarMsgEntregaReduzida: false,
-  numMaxMsgMkt: 50,
+  numMaxMsgMkt: 150,
   mostrarAjuda: false,
   mostrarRestSuper: false,
   mostrarValeRefeicoes: true,
   numOfDaysOff: 30,
-  tempoEntreMensagens: 1000,
+  tempoEntreMensagens: 1500,
   maxAgeForGraphs: 3600000,
   maxAgeForSessions: 24 * 60 * 60 * 1000, 
   legendaRestSuper: `Obrigado Franca ❤️`,
@@ -168,6 +168,7 @@ module.exports = {
   },
   messages: [
     "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n",
+    "💚🤍❤️🍝🧑🏼‍🍳 Na Ital'in House, celebramos o Halloween o dia inteiro com o dobro de queijo! 🎃🧀 Uma delícia assustadoramente irresistível que você pode desfrutar a qualquer hora. Trick or cheese! 🕒",
   ],
   ajuda: [
     "🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳.\nPara tornar sua experiência mais fácil e conveniente, oferecemos um menu com oito opções.\nPor favor, escolha a opção desejada digitando o número correspondente. Aqui estão as opções disponíveis e para quem serve cada opção:",

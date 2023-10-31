@@ -294,49 +294,49 @@ const sendPromo = async (client, from) => {
       switch (today) {
         case "Sat":
           await sendImageMessage(client, from, "sabado.jpg", config.promocoes.sabado, false);
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de sábado.` }
           );
           break;
         case "Sun":
           await sendImageMessage(client, from, "domingo.jpg", config.promocoes.domingo, false);
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de domingo.` }
           );
           break;
         case "Mon":
           await sendImageMessage(client, from, "segunda.jpg", config.promocoes.segunda, false);
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de segunda.` }
           );
           break;
         case "Tue":
             await sendImageMessage(client, from, "terca.jpg", config.promocoes.terca, false);
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
             await client.sendMessage(config.empresa.botNumber, 
               { text: `✅ Prontinho. O número ${from} recebeu a promoção de terca.` }
             );
             break;
         case "Wed":
           await sendImageMessage(client, from, "quarta.jpg", config.promocoes.quarta, false);
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de quarta.` }
           );
           break;
         case "Thu":
           await sendImageMessage(client, from, "quinta.jpg", config.promocoes.quinta, false);
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de quinta.` }
           );
           break;
         case "Fri":
           await sendImageMessage(client, from, "sexta.jpg", config.promocoes.sexta, false);
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de sexta.` }
           );
@@ -380,7 +380,7 @@ const sendMKT = async (DB, client) => {
     for (const { phoneNumber } of uniqueWhatsAppNumbers) {
       numOfMsgsSent++;
       const formattedNumber = phoneNumber.endsWith('@s.whatsapp.net') ? phoneNumber : `${phoneNumber}@s.whatsapp.net`;
-      await sendImageMessage(client, formattedNumber, "tiramissu.jpeg", config.messages[0], false);
+      await sendImageMessage(client, formattedNumber, "mkt_halloween.jpeg", config.messages[1], false);
 
       await DB.saveLogs(`[ INFO ] Mensagem enviada para ${phoneNumber}.`);
       await client.sendMessage(config.empresa.botNumber, { text: `✅ Mensagem enviada para ${phoneNumber}.` });
@@ -389,7 +389,7 @@ const sendMKT = async (DB, client) => {
           whatsappNumber: phoneNumber,
         }
       });
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
     }
 
     await client.sendMessage(config.empresa.botNumber, { text: `✅ Prontinho. ${numOfMsgsSent} mensagens enviadas.` });
