@@ -11,7 +11,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const DB = new Database();
+//const DB = new Database();
 
 function createDirectoriesIfNotExists() {
   if (config.dir && typeof config.dir === 'object') {

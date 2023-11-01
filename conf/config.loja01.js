@@ -1,5 +1,5 @@
 module.exports = {
-  botVersion: "2.3.6",
+  botVersion: "2.4.1",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -33,10 +33,13 @@ module.exports = {
     "stats",
     "oi",
     "bv",
+    "pix",
     "cardapio",
-    "backup",
     "endereco",
-    "ajuda"
+    "horario",
+    "backup",
+    "ajuda",
+    "massas"
   ],
   palavrasChave: [
     "queijo",
@@ -173,25 +176,29 @@ module.exports = {
     "agua fors de 2 litros"
   ],
   mostrarMsgEntregaReduzida: false,
-  numMaxMsgMkt: 50,
+  numMaxMsgMkt: 150,
   mostrarAjuda: false,
   mostrarRestSuper: false,
+  mostrarValeRefeicoes: true,
   numOfDaysOff: 30,
-  tempoEntreMensagens: 1000,
+  tempoEntreMensagens: 1500,
+  maxAgeForGraphs: 3600000,
+  maxAgeForSessions: 86400000,
   legendaRestSuper: "Obrigado Franca ❤️",
   msgMkt: "🍝🍝 *Combo Queridinho* 🥤🎉\n\nApresentando o Combo Queridinho da Ital'in House por apenas R$74,90 + taxa de entrega! 😋\n\n*Este combo incrível inclui:*\n2 Boxes de Macarrão com 800 gramas. 🍝🍝\n1 Guaraná de 1 Litro 🥤\nPerfeito para uma refeição deliciosa e prática em casa. Peça agora e deixe-nos cuidar do almoço! 🚀🏠\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n#ComidaDeliciosa #ComboQueridinho #EntregaRápida #Ital'inHouse",
   msgBV: "🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳",
   msgBV0: "🤩 Olá, {{pushname}} 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳",
-  msgBV1: "Digite a opção desejada:\n1️⃣ - Ver horários de funcionamento 🕗\n2️⃣ - Ver Cárdapio 👀\n3️⃣ - Nossa localização 🗺\n4️⃣ - Tempo para entregar ⌛\n5️⃣ - Fazer um pedido 😋\n6️⃣ - Ver opções de pagamento 💲\n7️⃣ - Opções de consumo/entrega 🛎\n8️⃣ - Falar com um atendente 🙋‍♂️",
-  msgBV2: "Para realizar um pedido basta clicar no link abaixo: 👇\n{{enderecoCardapio}}\n\nSe precisar *MESMO* da ajuda de um atendente, envie \"*8*\" e aguarde, ok?",
+  msgBV1: "Digite a opção desejada:\n1️⃣ - Ver horários de funcionamento 🕗\n2️⃣ - Ver Cárdapio 👀\n3️⃣ - Nossa localização 🗺\n4️⃣ - Tempo para entregar ⌛\n5️⃣ - Fazer um pedido 😋\n6️⃣ - Ver opções de pagamento 💲\n7️⃣ - Opções de consumo/entrega 🛎\n8️⃣ - Falar com um atendente 🙋‍♂️\n\n⚠️ Se tiver alguma dúvida digite ajuda.\n💥 Para ver a promoção do dia, digite promoção.",
+  msgBV2: "Para realizar um pedido basta clicar no link abaixo: 👇\n{{enderecoCardapio}}\n\nSe precisar *MESMO* da ajuda de um atendente, envie 8 e aguarde, ok?",
   msgLojaFechada: "Boas vindas à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳\n\n*Nossa loja está fechada.*\n",
-  msgAvisoBot: "⚠️ Nós usamos um robô para atendimento de WhatsApp. quando você recebe a mensagem acima, com os números de 1 a 8, caso não queira ser atendido pelo robô, por gentileza informe *8* para falar com um atendente.",
+  msgAvisoBot: "⚠️ Nós usamos um robô para atendimento de WhatsApp. quando você recebe a mensagem acima, com os números de 1 a 8, caso não queira ser atendido pelo robô, por gentileza informe 8 para falar com um atendente.",
   msgAtendente: "⚠️ Você já solicitou atendimento. Por favor, aguarde um momento. Obrigado!",
   msgAvisoAtendente: "🙋‍♂️ Um atendente logo estará disponível para te ajudar. Aguarde um momento. Obrigado!",
-  msgReforcoCliente: "👋 Olá, novamente! Parece que você está explorando nosso atendimento virtual. Se precisar de ajuda com nosso cardápio delicioso ou quiser fazer um pedido, é só me chamar! Estou aqui para tornar sua experiência na Ital'in House incrível. 😊🍝🥂\n\nSe você tiver qualquer dúvida, envie \"8\" e aguarde, ok?",
+  msgReforcoCliente: "👋 Olá, novamente! Parece que você está explorando nosso atendimento virtual. Se precisar de ajuda com nosso cardápio delicioso ou quiser fazer um pedido, é só me chamar! Estou aqui para tornar sua experiência na Ital'in House incrível. 😊🍝🥂\n\nSe você tiver qualquer dúvida, envie 8 e aguarde, ok?",
   msgEntregaReduzida: "🍝🏙️ Descubra a Ital'In House no bairro Cidade Nova! Nossos deliciosos pratos de macarrão estão a poucos passos de você. E tem mais: se você mora nos bairros da zona NORTE, NORDESTE ou NOROESTE, aproveite nossas taxas de entrega reduzidas. 🛵🤑",
   msgMotoEntrega: "🤩 Olá 👋! Passando pra dizer que seu pedido já esta pronto.\nSe tiver qualquer problema, pode me enviar aqui mesmo, ou nos ligar no telefone (16) 99788-8800 para resolvermos imediatamente.\n\nE se tiver gostado, a sua avaliação nos ajuda MUITO a crescer, e se destacar entre tantos.\n\nEstamos participando de uma competição, e se nos der 5 estrelas, nos deixará mais próximo de vencer ! ✨\n\nO SEU FEEDBACK SERÁ SEMPRE MUITO IMPORTANTE PARA NÓS.\n\nMil vezes obrigado!\nItal'in House! 💚🤍❤️🍝🧑🏼‍🍳\n\nAhh, outra coisa… Se puder, nos marque como “favoritos”, assim você receberá promoções exclusivas 😍🍝",
   msgAvisoSegundas: "☝🏼 *Aviso:* As segundas-feiras a Loja01 da Ital'in House Franca funciona em outra localização. 📁\n\nRua Alvaro Abranches, 1057 - Cidade Nova, Franca/SP",
+  msgMassas: "💚🤍❤️🍝🧑🏼‍🍳 *Escolha sua massa.*",
   empresa: {
     nomeDaLoja: "Ital'in House Franca Loja 01",
     enderecoDaLoja: "Rua Emília Scalabrini, 5055, Residencial José de Carlos, Franca-SP, CEP: 14403-831",
@@ -201,6 +208,7 @@ module.exports = {
     longitude: "-47.36965987483271",
     horariosFuncionamento: "⏰ Nossos horários de funcionamento são:\n\n*Domingo* das 11:00h às 23:00h.\n\n*Segunda* das 11:00h às 23:00h.\n\n*Terça* das 11:00h às 23:00h.\n\n*Quarta* das 11:00 às 23:00h.\n\n*Quinta* das 11:00 às 23:00h.\n\n*Sexta* das 11:00 às 23:00h.\n\n*Sábado* das 11:00 às 23:00h",
     verCardapio: "☝🏼 Nosso cardápio.\nNem consigo te recomendar um prato, porque eu amo todos! 😍\n\nLembrando que nossos box vem 800g de um delicioso macarrão gourmet e 650g de um maravilhoso risoto.\n\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝",
+    verCardapio01: "☝🏼 Nosso cardápio.\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca01\n\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝",
     nossaLocalizacao: "📍 Um momento, vou te encaminhar nosso *endereço* e *telefone*... 📁\n\nRua Emilia Scalabrini, 5055 - Residêncial José de Carlos, Franca/SP, CEP: 14403-831\n\nSe preferir, você também pode ver pelo Maps! 🗺️👇\nhttps://goo.gl/maps/m1H3yEABetJzPvEZ8\n\n*Contato*\n📱 (16) 99798-0088",
     tempoParaEntregar: "⏱️ O nosso tempo de *retirada* é de 10 à 25 minutos, já o nosso tempo de *entrega* é de 15 à 30 minutos.",
     fazerPedido: "🍽️ O cardápio está no link abaixo, o que escolher chega na hora pra mim! 👇\n\nhttps://rebrand.ly/italin_franca01",
@@ -209,7 +217,8 @@ module.exports = {
     legendaPagamentos: "*Cartões Vale Refeição*",
     pedidoProntoRetirada: "Notícia boa 🤩\nSeu pedido está pronto, é só vir buscar.\nMuito obrigado, bom apetite e uma super semana.\n📍 Rua Emília Scalabrini, 5055 - Residencial José de Carlos, Franca/SP",
     pedidoSaiuParaEntrega: "🛵 Seu pedido acaba de sair para entrega.\nAgradecemos a preferência! Muito obrigado, bom apetite e uma super semana. Esperamos você para experimentar outros molhos novamente em breve. 😀🥰",
-    msgClientesInativos: "🍝🍷 Olá amante da culinária italiana! Sentimos sua falta na ItalinHouse! 😊\n\nRelembrando nossos pratos deliciosos: Quatro Queijos, Parisiense, Cheddar e Bacon, Ao Sugo, Bolonhesa e mais! Opções de massa: Talharim, Penne, Nhoque e mais. Risotos também disponíveis.\n\n📣 Aproveite para pedir e desfrutar de uma refeição italiana autêntica. Entre em contato pelo WhatsApp: +55 16 99798 0088. Esperamos te atender em breve!\nItal'in House! 💚🤍❤️🍝🧑🏼‍🍳"
+    msgClientesInativos: "🍝🍷 Olá amante da culinária italiana! Sentimos sua falta na ItalinHouse! 😊\n\nRelembrando nossos pratos deliciosos: Quatro Queijos, Parisiense, Cheddar e Bacon, Ao Sugo, Bolonhesa e mais! Opções de massa: Talharim, Penne, Nhoque e mais. Risotos também disponíveis.\n\n📣 Aproveite para pedir e desfrutar de uma refeição italiana autêntica. Entre em contato pelo WhatsApp: +55 16 99798 0088. Esperamos te atender em breve!\nItal'in House! 💚🤍❤️🍝🧑🏼‍🍳",
+    chavePix: "*Chave Celular:* _16997980088_ *Nome:* _M.W.Foods Ltda_"
   },
   tiposDeLogradouros: [
     "rua",
@@ -236,7 +245,10 @@ module.exports = {
     "7",
     "8"
   ],
-  timeZone: "America/Sao_Paulo",
+  timeZone: {
+    area: "America/Sao_Paulo",
+    value: "-03:00"
+  },
   showLog: false,
   sendDevLog: true,
   sendServerStatusDevMsg: true,
@@ -299,7 +311,6 @@ module.exports = {
     "Se você continuar com dúvidas, digite 8 e um atendente irá lhe ajudar. Queremos tornar sua experiência conosco a melhor possível.\n🤤A Ital'in House agradece a preferência, bom apetite 😀🤌🏼🍝"
   ],
   appName: "AutoAtende",
-  mostrarValeRefeicoes: true,
   ajudaOp: "ℹ️ *Comando de Ajuda* ℹ️\n\nVocê pode usar os seguintes comandos:\n- *!entrega*: Notifica que o pedido saiu para entrega.\n- *!retirada*: Notifica que o pedido está pronto para retirada.\n- *!bloqueia*: Adiciona o número à lista de exclusão.\n- *!desbloqueia*: Remove o número da lista de exclusão.\n- *!bot*: Notifica o uso do robô.\n- *!status*: Verifica o status do servidor.\n- *!stats*: Obtém estatísticas e relatórios.\n- *!oi*: Recebe uma saudação do bot.\n- *!bv*: Recebe mensagens de boas-vindas.\n- *!cardapio*: Mostra o cardápio.\n- *!endereco*: Mostra o endereço da loja.\n- *!backup*: Realiza um backup do banco de dados.\n- *!ajuda*: Mostra esta mensagem de ajuda.\n\nEspero que isso tenha ajudado! 😊",
   enableLocalCache: false,
   dir: {
@@ -308,8 +319,6 @@ module.exports = {
     charts: "chart",
     images: "img"
   },
-  maxAgeForGraphs: 3600000,
-  maxAgeForSessions: 86400000,
   modules: {
     bbn: true
   },
@@ -333,9 +342,10 @@ module.exports = {
       log: true
     }
   },
-  messages: {
-    tiramissu: "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰\n\nAmantes da gastronomia italiana, preparem-se para uma delícia irresistível! Apresentamos o Tiramisú, uma sobremesa clássica italiana.\n\n➡️ Tiramisú Box de 100g por apenas R$16,90!\nMarque sua visita ou faça seu pedido e saboreie essa tentação italiana no Ital'in House! 😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n*Você sabia?*\nO nome do doce provém da expressão em italiano _Tirami Sù_, que significa algo como _puxa-me para cima_ ou _levanta-me_."
-  },
+  messages: [
+    "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n",
+    "💚🤍❤️🍝🧑🏼‍🍳 Na Ital'in House, celebramos o Halloween o dia inteiro com o dobro de queijo! 🎃🧀 Uma delícia assustadoramente irresistível que você pode desfrutar a qualquer hora. Trick or cheese! 🕒"
+  ],
   _cmdPoints: {
     1: 2,
     2: 10,
@@ -345,5 +355,14 @@ module.exports = {
     6: 10,
     7: 5,
     8: 1
+  },
+  promocoes: {
+    sabado: "Promoção de sabádo",
+    domingo: "Promoção de domingo",
+    segunda: "Promoção de segunda-feira",
+    terca: "Promoção de terça-feira",
+    quarta: "Promoção de quarta-feira",
+    quinta: "Promoção de quinta-feira",
+    sexta: "Promoção de sexta-feira"
   }
 };
