@@ -13,7 +13,7 @@ module.exports = {
                         '5516992877187','5516997980088','5516996180725','5516992552268',
                         '5516992243371','5516992734181','5516992974914','5516988310481', 
                         '5516991251039','5516993203850','5516992304095','5511940632372',
-                        '5516994639264'],
+                        '5516994639264', '5516997152093'],
   diasSemana: [
     'Domingo',
     'Segunda-Feira',
@@ -169,6 +169,7 @@ module.exports = {
   messages: [
     "🍰 *Novidade na Ital'in House!* Tiramisú por apenas R$16,90 🍰😋\n\n*Para realizar um pedido basta clicar no link abaixo:* 👇\nhttps://rebrand.ly/italin_franca02\n\n",
     "💚🤍❤️🍝🧑🏼‍🍳 Na Ital'in House, celebramos o Halloween o dia inteiro com o dobro de queijo! 🎃🧀 Uma delícia assustadoramente irresistível que você pode desfrutar a qualquer hora. Trick or cheese! 🕒",
+    "⚠️ *Atenção ao horário de funcionamento.*",
   ],
   ajuda: [
     "🤩 Olá 👋!\nBem vindo à Ital'in House! 💚🤍❤️🍝🧑🏼‍🍳.\nPara tornar sua experiência mais fácil e conveniente, oferecemos um menu com oito opções.\nPor favor, escolha a opção desejada digitando o número correspondente. Aqui estão as opções disponíveis e para quem serve cada opção:",
