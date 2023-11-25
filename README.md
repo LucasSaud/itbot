@@ -1,5 +1,7 @@
 # AutoAtende WhatsApp Bot
 
+If you like my work or if you use this code please consider donate to me. https://www.buymeacoffee.com/elsaud
+
 ## Table of Contents
 
 - [Description](#description)
