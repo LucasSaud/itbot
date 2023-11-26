@@ -1,6 +1,6 @@
 module.exports = {
   appName: "AutoAtende",
-  botVersion: "2.4.1",
+  botVersion: "2.5.0",
   botAdmin: "5516996509803@s.whatsapp.net",
   botCountryCode: "55",
   botDDDCode: "16",
@@ -132,13 +132,13 @@ module.exports = {
     chavePix: "*Chave Celular:* _16997888800_ *Nome:* _M.W.Foods Ltda_",
   },
   promocoes: {
-    sabado: "Promoção de sabádo",
-    domingo: "Promoção de domingo",
-    segunda: "Promoção de segunda-feira",
-    terca: "Promoção de terça-feira",
-    quarta: "Promoção de quarta-feira",
-    quinta: "Promoção de quinta-feira",
-    sexta: "Promoção de sexta-feira"
+    sabado: "Promoção de sabádo - Combo QUERIDINHO por apenas R$74,90",
+    domingo: "Promoção de sabádo - Combo QUERIDINHO por apenas R$74,90",
+    segunda: "Promoção de segunda-feira - Combo MATCH GOURMET por apenas R$37,90",
+    terca: "Promoção de terça-feira - Combo SABOR SUCESSO por apenas R$37,90",
+    quarta: "Promoção de segunda-feira - Combo MATCH GOURMET por apenas R$37,90",
+    quinta: "Promoção de quinta-feira - Combo SABOR SUCESSO por apenas R$37,90",
+    sexta: "Promoção de segunda-feira - Combo MATCH GOURMET por apenas R$37,90"
   },
   tiposDeLogradouros: [
     "rua",

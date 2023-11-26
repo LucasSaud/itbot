@@ -293,49 +293,49 @@ const sendPromo = async (client, from) => {
       const today = formatDate(new Date());
       switch (today) {
         case "Sat":
-          await sendImageMessage(client, from, "sabado.jpg", config.promocoes.sabado, false);
+          await sendImageMessage(client, from, "sabado.jpeg", config.promocoes.sabado, false);
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de sábado.` }
           );
           break;
         case "Sun":
-          await sendImageMessage(client, from, "domingo.jpg", config.promocoes.domingo, false);
+          await sendImageMessage(client, from, "domingo.jpeg", config.promocoes.domingo, false);
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de domingo.` }
           );
           break;
         case "Mon":
-          await sendImageMessage(client, from, "segunda.jpg", config.promocoes.segunda, false);
+          await sendImageMessage(client, from, "segunda.jpeg", config.promocoes.segunda, false);
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de segunda.` }
           );
           break;
         case "Tue":
-            await sendImageMessage(client, from, "terca.jpg", config.promocoes.terca, false);
+            await sendImageMessage(client, from, "terca.jpeg", config.promocoes.terca, false);
             await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
             await client.sendMessage(config.empresa.botNumber, 
               { text: `✅ Prontinho. O número ${from} recebeu a promoção de terca.` }
             );
             break;
         case "Wed":
-          await sendImageMessage(client, from, "quarta.jpg", config.promocoes.quarta, false);
+          await sendImageMessage(client, from, "quarta.jpeg", config.promocoes.quarta, false);
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de quarta.` }
           );
           break;
         case "Thu":
-          await sendImageMessage(client, from, "quinta.jpg", config.promocoes.quinta, false);
+          await sendImageMessage(client, from, "quinta.jpeg", config.promocoes.quinta, false);
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de quinta.` }
           );
           break;
         case "Fri":
-          await sendImageMessage(client, from, "sexta.jpg", config.promocoes.sexta, false);
+          await sendImageMessage(client, from, "sexta.jpeg", config.promocoes.sexta, false);
           await new Promise(resolve => setTimeout(resolve, config.tempoEntreMensagens));
           await client.sendMessage(config.empresa.botNumber, 
             { text: `✅ Prontinho. O número ${from} recebeu a promoção de sexta.` }
