@@ -132,13 +132,13 @@ module.exports = {
     chavePix: "*Chave Celular:* _16997888800_ *Nome:* _M.W.Foods Ltda_",
   },
   promocoes: {
-    sabado: "Promoção de sabádo - Combo QUERIDINHO por apenas R$74,90",
-    domingo: "Promoção de sabádo - Combo QUERIDINHO por apenas R$74,90",
-    segunda: "Promoção de segunda-feira - Combo MATCH GOURMET por apenas R$37,90",
-    terca: "Promoção de terça-feira - Combo SABOR SUCESSO por apenas R$37,90",
-    quarta: "Promoção de segunda-feira - Combo MATCH GOURMET por apenas R$37,90",
-    quinta: "Promoção de quinta-feira - Combo SABOR SUCESSO por apenas R$37,90",
-    sexta: "Promoção de segunda-feira - Combo MATCH GOURMET por apenas R$37,90"
+    sabado: "💚🤍❤️🍝🧑🏼‍🍳 *Combo QUERIDINHO por apenas R$74,90*\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02",
+    domingo: "💚🤍❤️🍝🧑🏼‍🍳 *Combo QUERIDINHO por apenas R$74,90*\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02",
+    segunda: "💚🤍❤️🍝🧑🏼‍🍳 *Combo MATCH GOURMET por apenas R$37,90*\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02",
+    terca: "💚🤍❤️🍝🧑🏼‍🍳 *Combo SABOR SUCESSO por apenas R$37,90*\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02",
+    quarta: "💚🤍❤️🍝🧑🏼‍🍳 *Combo MATCH GOURMET por apenas R$37,90*\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02",
+    quinta: "💚🤍❤️🍝🧑🏼‍🍳 *Combo SABOR SUCESSO por apenas R$37,90*\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02",
+    sexta: "💚🤍❤️🍝🧑🏼‍🍳 *Combo MATCH GOURMET por apenas R$37,90*\nPara pedir, acesse:\nhttps://rebrand.ly/italin_franca02"
   },
   tiposDeLogradouros: [
     "rua",
