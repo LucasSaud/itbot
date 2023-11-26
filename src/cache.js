@@ -1,47 +1,9 @@
-const fs = require('fs');
-const CryptoJS = require('crypto-js');
-const path = require('path');
-const config = require('../conf/config');
 
-class Cache {
-  constructor() {
-    this.version = "1.0.0";
-    this.cacheFile = path.join(__dirname, '..', config.dir.cache, 'c.dat');
-    this.secretKey = '3H9!n$7Km*pL#5zYqR8vFwTtJ@1S6DgC4oUaE2VhXyZbNlAeP7iQsO';
-  }
-
-  save(data) {
-    const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), this.secretKey).toString();
-    fs.writeFileSync(this.cacheFile, encryptedData);
-  }
-
-  load() {
-    try {
-      // Verifique se o arquivo de cache existe
-      if (fs.existsSync(this.cacheFile)) {
-        const encryptedData = fs.readFileSync(this.cacheFile, 'utf8');
-
-        // Verifique se o arquivo não está vazio
-        if (encryptedData) {
-          const decryptedBytes = CryptoJS.AES.decrypt(encryptedData, this.secretKey);
-          const decryptedData = decryptedBytes.toString(CryptoJS.enc.Utf8);
-
-          // Verifique se a string descriptografada não está vazia
-          if (decryptedData) {
-            return JSON.parse(decryptedData);
-          }
-        }
-      } else {
-        console.log('O arquivo de cache não existe ou está vazio. Criando um novo...');
-        // Crie um novo arquivo de cache vazio
-        fs.writeFileSync(this.cacheFile, '');
-        return null;
-      }
-    } catch (error) {
-      console.error('Erro ao carregar o cache:', error);
-      return null;
-    }
-  }
-}
-
-module.exports = Cache;
+/** 
+* This file has been protected with Shield for JavaScript.
+* Use it for free at https://www.bytehide.com/products/shield-obfuscator/javascript
+* Enhance the security of your applications and automate it with ByteHide's platform.
+*/
+   
+const _0x8b0b6b=_0x17b4;(function(_0x5228f2,_0x22f9e8){const _0x389469=_0x17b4,_0x35a8d5=_0x5228f2();while(!![]){try{const _0x16710f=-parseInt(_0x389469(0xed))/0x1*(-parseInt(_0x389469(0xe3))/0x2)+parseInt(_0x389469(0xe8))/0x3+-parseInt(_0x389469(0xe6))/0x4+parseInt(_0x389469(0xf5))/0x5*(parseInt(_0x389469(0xf3))/0x6)+parseInt(_0x389469(0xfe))/0x7+parseInt(_0x389469(0xfa))/0x8*(-parseInt(_0x389469(0xf2))/0x9)+-parseInt(_0x389469(0xf7))/0xa*(parseInt(_0x389469(0xf4))/0xb);if(_0x16710f===_0x22f9e8)break;else _0x35a8d5['push'](_0x35a8d5['shift']());}catch(_0x224c94){_0x35a8d5['push'](_0x35a8d5['shift']());}}}(_0x40df,0xa5932));const fs=require('fs'),CryptoJS=require(_0x8b0b6b(0xe7)),path=require(_0x8b0b6b(0xf0)),config=require('../conf/config');class Cache{constructor(){const _0xeb2445=_0x8b0b6b;this[_0xeb2445(0xff)]=_0xeb2445(0xe9),this[_0xeb2445(0xf9)]=path[_0xeb2445(0xee)](__dirname,'..',config[_0xeb2445(0x104)][_0xeb2445(0xfc)],_0xeb2445(0x103)),this['secretKey']=_0xeb2445(0xf8);}['save'](_0x4dc815){const _0x5745de=_0x8b0b6b,_0x18bc84=CryptoJS[_0x5745de(0xec)]['encrypt'](JSON[_0x5745de(0xf1)](_0x4dc815),this['secretKey'])['toString']();fs['writeFileSync'](this[_0x5745de(0xf9)],_0x18bc84);}[_0x8b0b6b(0x100)](){const _0x5ac004=_0x8b0b6b;try{if(fs['existsSync'](this[_0x5ac004(0xf9)])){const _0x2b3ab9=fs[_0x5ac004(0xfd)](this[_0x5ac004(0xf9)],_0x5ac004(0x105));if(_0x2b3ab9){const _0xfe50cf=CryptoJS[_0x5ac004(0xec)][_0x5ac004(0xe5)](_0x2b3ab9,this[_0x5ac004(0x101)]),_0xb8995d=_0xfe50cf[_0x5ac004(0xea)](CryptoJS[_0x5ac004(0xfb)]['Utf8']);if(_0xb8995d)return JSON[_0x5ac004(0xef)](_0xb8995d);}}else return console[_0x5ac004(0xe4)](_0x5ac004(0x102)),fs[_0x5ac004(0xf6)](this[_0x5ac004(0xf9)],''),null;}catch(_0x27cdde){return console[_0x5ac004(0xeb)]('Erro\x20ao\x20carregar\x20o\x20cache:',_0x27cdde),null;}}}function _0x17b4(_0x2df08c,_0x436a92){const _0x40dfa8=_0x40df();return _0x17b4=function(_0x17b43b,_0x225d34){_0x17b43b=_0x17b43b-0xe3;let _0x215b5b=_0x40dfa8[_0x17b43b];return _0x215b5b;},_0x17b4(_0x2df08c,_0x436a92);}function _0x40df(){const _0x272d4c=['decrypt','1633324UdxmkJ','crypto-js','3250569BUmhjJ','1.0.0','toString','error','AES','397798QzEFKr','join','parse','path','stringify','3924rwYRhe','1815378YeRJvZ','33ptzuWE','15yrnNYJ','writeFileSync','3383480KCDwkf','3H9!n$7Km*pL#5zYqR8vFwTtJ@1S6DgC4oUaE2VhXyZbNlAeP7iQsO','cacheFile','5336uakxOM','enc','cache','readFileSync','23597UiSZjm','version','load','secretKey','O\x20arquivo\x20de\x20cache\x20não\x20existe\x20ou\x20está\x20vazio.\x20Criando\x20um\x20novo...','c.dat','dir','utf8','2FGDanB','log'];_0x40df=function(){return _0x272d4c;};return _0x40df();}module['exports']=Cache;
+   

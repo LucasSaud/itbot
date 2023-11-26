@@ -1,68 +1,9 @@
-const fs = require('fs');
-const util = require('util');
-const path = require('path');
-const { Sequelize, DataTypes, Op } = require('sequelize');
-const moment = require('moment-timezone');
-const config = require('../conf/config');
-const Utils = require('./utils');
-const Chart = require('./chart');
 
-// Importe as bibliotecas necessárias
-const PDFDocument = require('pdfkit');
-const QuickChart = require('quickchart-js');
-
-// Importe o módulo de configuração do banco de dados (db.js)
-const Database = require('./db');
-const DB = new Database();
-const Graphs = new Chart(); 
-
-// Função para gerar o relatório em PDF
-async function generateLeadScoreReport() {
-    // Crie um novo documento PDF
-    const doc = new PDFDocument();
-    const fN = path.join(__dirname, '..', config.dir.reports, `AA-LEAD-REPORT.pdf`);  
-    doc.pipe(fs.createWriteStream(fN));
-  
-    // Título do relatório
-    doc.fontSize(18).text('Relatório de Pontuação de Leads (Top 5 no Gráfico)', { align: 'center' });
-    doc.moveDown();
-  
-    try {
-      const leadScoresData = await DB.Contacts.findAll({
-        attributes: ['whatsappNumber', 'points'],
-        order: [['points', 'DESC']],
-        limit: 30, // Limita a consulta aos 30 melhores resultados
-      });
-        
-      // Formate os dados para o gráfico (limitando a 5 para o gráfico)
-      const chartData = leadScoresData.slice(0, 5).map((lead) => ({
-        name: lead.whatsappNumber,
-        count: lead.points,
-      }));
-        
-      // Gere o gráfico de pontuação de leads usando a função do módulo Chart
-      const fN = await Graphs.dGraph(null, null, chartData, 'Pontuação dos 5 Melhores Leads', true);
-        
-      // Adicione a imagem do gráfico ao PDF
-      doc.image(fN, 100, doc.y, { width: 400 });
-  
-      // Lista de pontuações dos 30 melhores leads no relatório escrito
-      doc.moveDown();
-      doc.fontSize(14).text('Pontuações dos 30 Melhores Leads (Top 5 no Gráfico):', { underline: true });
-  
-      leadScoresData.forEach((lead) => {
-        doc.fontSize(12).text(`${lead.whatsappNumber}: ${lead.points}`);
-      });
-  
-      // Finalize o PDF
-      doc.end();
-  
-      console.log('Relatório de pontuação dos 30 melhores leads gerado com sucesso.');
-    } catch (error) {
-      console.error('Erro ao gerar o relatório:', error);
-    }
-  }
-  
-  // Chame a função para gerar o relatório
-  generateLeadScoreReport();
-  
+/** 
+* This file has been protected with Shield for JavaScript.
+* Use it for free at https://www.bytehide.com/products/shield-obfuscator/javascript
+* Enhance the security of your applications and automate it with ByteHide's platform.
+*/
+   
+const _0x40920c=_0x2cf5;(function(_0x18f748,_0x3f086a){const _0x4d0cd=_0x2cf5,_0x5eac49=_0x18f748();while(!![]){try{const _0x4ff66d=parseInt(_0x4d0cd(0x12f))/0x1*(parseInt(_0x4d0cd(0x142))/0x2)+parseInt(_0x4d0cd(0x143))/0x3+parseInt(_0x4d0cd(0x137))/0x4*(-parseInt(_0x4d0cd(0x148))/0x5)+parseInt(_0x4d0cd(0x14b))/0x6+-parseInt(_0x4d0cd(0x140))/0x7*(-parseInt(_0x4d0cd(0x12b))/0x8)+parseInt(_0x4d0cd(0x12c))/0x9*(-parseInt(_0x4d0cd(0x134))/0xa)+-parseInt(_0x4d0cd(0x13d))/0xb*(parseInt(_0x4d0cd(0x141))/0xc);if(_0x4ff66d===_0x3f086a)break;else _0x5eac49['push'](_0x5eac49['shift']());}catch(_0x22beb4){_0x5eac49['push'](_0x5eac49['shift']());}}}(_0x2fea,0x9b511));function _0x2cf5(_0x20df66,_0x1d09d7){const _0x2fea86=_0x2fea();return _0x2cf5=function(_0x2cf56a,_0x5ae19b){_0x2cf56a=_0x2cf56a-0x12b;let _0xa66b14=_0x2fea86[_0x2cf56a];return _0xa66b14;},_0x2cf5(_0x20df66,_0x1d09d7);}const fs=require('fs'),util=require('util'),path=require('path'),{Sequelize,DataTypes,Op}=require('sequelize'),moment=require('moment-timezone'),config=require(_0x40920c(0x144)),Utils=require('./utils'),Chart=require('./chart'),PDFDocument=require(_0x40920c(0x13b)),QuickChart=require(_0x40920c(0x136)),Database=require('./db'),DB=new Database(),Graphs=new Chart();function _0x2fea(){const _0x3ac922=['pipe','6794526lnTnzu','points','image','dGraph','Pontuação\x20dos\x205\x20Melhores\x20Leads','8RLwqDx','9yapOHa','Relatório\x20de\x20Pontuação\x20de\x20Leads\x20(Top\x205\x20no\x20Gráfico)','dir','1XfBVPw','createWriteStream','fontSize','error','Relatório\x20de\x20pontuação\x20dos\x2030\x20melhores\x20leads\x20gerado\x20com\x20sucesso.','3479510WmDYOt','center','quickchart-js','5948miscgT','Erro\x20ao\x20gerar\x20o\x20relatório:','join','reports','pdfkit','findAll','12815VlNjGl','map','Contacts','1684333oOTtnm','20472ymvppv','2184382hDPMuA','2219538acBzUK','../conf/config','text','moveDown','whatsappNumber','785CoCdLX','end'];_0x2fea=function(){return _0x3ac922;};return _0x2fea();}async function generateLeadScoreReport(){const _0x3b4b82=_0x40920c,_0x2a15c1=new PDFDocument(),_0x5ba801=path[_0x3b4b82(0x139)](__dirname,'..',config[_0x3b4b82(0x12e)][_0x3b4b82(0x13a)],'AA-LEAD-REPORT.pdf');_0x2a15c1[_0x3b4b82(0x14a)](fs[_0x3b4b82(0x130)](_0x5ba801)),_0x2a15c1[_0x3b4b82(0x131)](0x12)[_0x3b4b82(0x145)](_0x3b4b82(0x12d),{'align':_0x3b4b82(0x135)}),_0x2a15c1['moveDown']();try{const _0x13621a=await DB[_0x3b4b82(0x13f)][_0x3b4b82(0x13c)]({'attributes':[_0x3b4b82(0x147),_0x3b4b82(0x14c)],'order':[[_0x3b4b82(0x14c),'DESC']],'limit':0x1e}),_0x264c7b=_0x13621a['slice'](0x0,0x5)[_0x3b4b82(0x13e)](_0x2ab77f=>({'name':_0x2ab77f[_0x3b4b82(0x147)],'count':_0x2ab77f[_0x3b4b82(0x14c)]})),_0x3a526e=await Graphs[_0x3b4b82(0x14e)](null,null,_0x264c7b,_0x3b4b82(0x14f),!![]);_0x2a15c1[_0x3b4b82(0x14d)](_0x3a526e,0x64,_0x2a15c1['y'],{'width':0x190}),_0x2a15c1[_0x3b4b82(0x146)](),_0x2a15c1[_0x3b4b82(0x131)](0xe)[_0x3b4b82(0x145)]('Pontuações\x20dos\x2030\x20Melhores\x20Leads\x20(Top\x205\x20no\x20Gráfico):',{'underline':!![]}),_0x13621a['forEach'](_0x2a4f29=>{const _0x5b55be=_0x3b4b82;_0x2a15c1[_0x5b55be(0x131)](0xc)[_0x5b55be(0x145)](_0x2a4f29['whatsappNumber']+':\x20'+_0x2a4f29[_0x5b55be(0x14c)]);}),_0x2a15c1[_0x3b4b82(0x149)](),console['log'](_0x3b4b82(0x133));}catch(_0x514301){console[_0x3b4b82(0x132)](_0x3b4b82(0x138),_0x514301);}}generateLeadScoreReport();
+   
