@@ -179,7 +179,7 @@ If you would like to contribute to this project, please follow these guidelines:
 
 ## License
 
-[Hippocratic + Do Not Harm Version 1.0](https://github.com/lucassaud/autoatende/blob/master/LICENSE.md)
+[Hippocratic + Do Not Harm Version 1.0](https://github.com/lucassaud/autoatende/blob/master/LICENSE)
 
 ## Legal
 
