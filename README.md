@@ -47,7 +47,7 @@ To install the AutoAtende WhatsApp Bot, follow these steps:
    npm install
    ```
 
-4. Set up your MariaDB database. You may need to create a database, configure the connection settings in the `config.json` file, and run any necessary migrations.
+4. Set up your MariaDB database. You may need to create a database, configure the connection settings in the `conf/config.js` file, and run any necessary migrations.
 
 5. Start the bot:
 
