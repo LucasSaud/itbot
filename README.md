@@ -61,6 +61,110 @@ The AutoAtende WhatsApp Bot should now be up and running.
 
 To use the bot, you can interact with it via WhatsApp. The bot can perform various tasks depending on its configuration and your specific use case.
 
+## List of commands 
+
+You can use the following commands in your WhatsApp conversations:
+
+- **!delivery:** Notifies that the order is out for delivery.
+  ```bash
+  !entrega
+  ```
+
+  Example: Send `!entrega` to notify the customer that their order is out for delivery.
+
+- **!pickup:** Notifies that the order is ready for pickup.
+  ```bash
+  !retirada
+  ```
+
+  Example: Send `!retirada` to inform the customer that their order is ready for pickup.
+
+- **!block:** Adds the number to the exclusion list.
+  ```bash
+  !bloqueia
+  ```
+
+  Example: Send `!bloqueia` to add a number to the exclusion list.
+
+- **!unblock:** Removes the number from the exclusion list.
+  ```bash
+  !desbloqueia
+  ```
+
+  Example: Send `!desbloqueia` to remove a number from the exclusion list.
+
+- **!bot:** Notifies the use of the bot.
+  ```bash
+  !bot
+  ```
+
+  Example: Send `!bot` to receive information about the bot.
+
+- **!backup:** Performs a database backup.
+  ```bash
+  !backup
+  ```
+
+  Example: Send `!backup` to initiate a backup of the database.
+
+- **!status:** Checks the server status.
+  ```bash
+  !status
+  ```
+
+  Example: Send `!status` to get information about the server status.
+
+- **!pix:** Receives the company's PIX key.
+  ```bash
+  !pix
+  ```
+
+  Example: Send `!pix` to receive the company's PIX key for payment.
+
+- **!stats:** Gets statistics and reports.
+  ```bash
+  !stats
+  ```
+
+  Example: Send `!stats` to retrieve statistics and reports.
+
+- **!hello:** Receives a greeting from the bot.
+  ```bash
+  !oi
+  ```
+
+  Example: Send `!oi` to receive a friendly greeting from the bot.
+
+- **!welcome:** Receives welcome messages.
+  ```bash
+  !bv
+  ```
+
+  Example: Send `!bv` to receive welcome messages.
+
+- **!menu:** Shows the menu.
+  ```bash
+  !cardapio
+  ```
+
+  Example: Send `!cardapio` to view the menu.
+
+- **!address:** Shows the store's address.
+  ```bash
+  !endereco
+  ```
+
+  Example: Send `!endereco` to get the store's address.
+
+- **!hours:** Shows the store's operating hours.
+  ```bash
+  !horario
+  ```
+
+  Example: Send `!horario` to check the store's operating hours.
+
+# All commands can be changed by accessing the config.js file. To make alterations, please access the config.js file.
+
 ## Contributing
 
 If you would like to contribute to this project, please follow these guidelines:
