@@ -82,6 +82,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - Author: Lucas Marinho Saud
 - GitHub: [https://github.com/lucassaud](https://github.com/lucassaud)
 
----
+## Cryptography Notice
 
-Feel free to customize this README to include any additional information specific to your project. Good luck with your AutoAtende WhatsApp Bot! If you have any questions or need further assistance, don't hesitate to reach out.
+This distribution includes cryptographic software. The country in which you currently reside may have restrictions on the import, possession, use, and/or re-export to another country, of encryption software. BEFORE using any encryption software, please check your country's laws, regulations and policies concerning the import, possession, or use, and re-export of encryption software, to see if this is permitted. See [http://www.wassenaar.org/](http://www.wassenaar.org/) for more information.
+
+The U.S. Government Department of Commerce, Bureau of Industry and Security (BIS), has classified this software as Export Commodity Control Number (ECCN) 5D002.C.1, which includes information security software using or performing cryptographic functions with asymmetric algorithms. The form and manner of this distribution makes it eligible for export under the License Exception ENC Technology Software Unrestricted (TSU) exception (see the BIS Export Administration Regulations, Section 740.13) for both object code and source code.
