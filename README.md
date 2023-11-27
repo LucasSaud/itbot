@@ -75,7 +75,11 @@ If you would like to contribute to this project, please follow these guidelines:
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+[Hippocratic + Do Not Harm Version 1.0](https://github.com/lucassaud/autoatende/blob/master/LICENSE.md)
+
+## Legal
+
+This code is in no way affiliated with, authorized, maintained, sponsored or endorsed by WA or any of its affiliates or subsidiaries. This is an independent and unofficial software. Use at your own risk.
 
 ## Author
 
